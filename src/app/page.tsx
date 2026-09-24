@@ -13,6 +13,7 @@ import {
   Trophy,
   X,
   Sparkles,
+  Award,
 } from 'lucide-react';
 import { GameMode } from '../types/packs';
 import { Badge } from '../components/ui/Badge';
@@ -21,6 +22,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { CreateRoomModal } from '../components/modals/CreateRoomModal';
 import { RulesModal } from '../components/modals/RulesModal';
 import { LeaderboardModal } from '../components/modals/LeaderboardModal';
+import { AchievementsModal } from '../components/modals/AchievementsModal';
 import { GameModesCatalogModal } from '../components/modals/GameModesCatalogModal';
 import { PublicRoomSummary } from './api/rooms/route';
 
@@ -28,6 +30,7 @@ export default function HomePage() {
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState<boolean>(false);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
+  const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
   const [selectedPackForModal, setSelectedPackForModal] = useState<GameMode>('SE7EN_DEADLY_SINS');
 
@@ -133,10 +136,19 @@ export default function HomePage() {
             </Button>
 
             <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setIsAchievementsOpen(true)}
+              icon={<Award className="w-4 h-4 text-amber-500" />}
+            >
+              72 Nailiyyət & XP
+            </Button>
+
+            <Button
               variant="ghost"
               size="lg"
               onClick={() => setIsCatalogOpen(true)}
-              icon={<Layers className="w-4 h-4 text-amber-500" />}
+              icon={<Layers className="w-4 h-4 text-indigo-500" />}
             >
               15 Rejim Kataloqu
             </Button>
@@ -369,6 +381,11 @@ export default function HomePage() {
       <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
 
       <LeaderboardModal isOpen={isLeaderboardOpen} onClose={() => setIsLeaderboardOpen(false)} />
+
+      <AchievementsModal
+        isOpen={isAchievementsOpen}
+        onClose={() => setIsAchievementsOpen(false)}
+      />
     </div>
   );
 }

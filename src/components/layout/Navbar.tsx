@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ExternalLink,
   Coins,
+  Medal,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -24,6 +25,7 @@ import { ThemeToggle } from '../theme/ThemeToggle';
 import { AuthModal, UserSessionState } from '../modals/AuthModal';
 import { RulesModal } from '../modals/RulesModal';
 import { LeaderboardModal } from '../modals/LeaderboardModal';
+import { AchievementsModal } from '../modals/AchievementsModal';
 import { GameModesCatalogModal } from '../modals/GameModesCatalogModal';
 import { CreateRoomModal } from '../modals/CreateRoomModal';
 import { GameMode } from '../../types/packs';
@@ -33,6 +35,7 @@ export const Navbar: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
+  const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState<boolean>(false);
   const [catalogSelectedMode, setCatalogSelectedMode] = useState<GameMode>('SE7EN_DEADLY_SINS');
@@ -267,6 +270,22 @@ export const Navbar: React.FC = () => {
             <span>Canlı Reytinq</span>
           </button>
 
+          {/* Achievements Button */}
+          <button
+            type="button"
+            onClick={() => {
+              playCard();
+              setIsAchievementsOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all duration-150 cursor-pointer"
+          >
+            <Medal className="w-3.5 h-3.5 text-amber-500" />
+            <span>Nailiyyətlər</span>
+            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              72
+            </span>
+          </button>
+
           {/* TDV Ekosistemi Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -487,6 +506,11 @@ export const Navbar: React.FC = () => {
       <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
 
       <LeaderboardModal isOpen={isLeaderboardOpen} onClose={() => setIsLeaderboardOpen(false)} />
+
+      <AchievementsModal
+        isOpen={isAchievementsOpen}
+        onClose={() => setIsAchievementsOpen(false)}
+      />
 
       <GameModesCatalogModal
         isOpen={isCatalogOpen}
