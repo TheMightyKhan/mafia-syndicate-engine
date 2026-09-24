@@ -1,13 +1,19 @@
 /**
- * TDV BTL MAFIA - Web Audio API Zero-Latency Sound Synthesis Engine
- * No external .mp3 or .wav assets required. 100% browser-native synthesis.
+ * TDV BTL MAFIA - Cinematic & Realistic Audio SFX Engine
+ * Soft, muted ("boğuq, tok"), non-fatiguing sound effects with 35% Master Volume.
+ * Uses high-fidelity acoustic audio with resilient Web Audio API zero-latency fallback.
  */
 
 const STORAGE_KEY = 'tdv_mafia_sound_muted';
 const SOUND_EVENT_KEY = 'tdv_mafia_sound_change';
 
-let audioCtx: AudioContext | null = null;
+/** Standardized comfortable Master Volume (35%) */
+const MASTER_VOLUME = 0.35;
 
+let audioCtx: AudioContext | null = null;
+const audioCache: Record<string, HTMLAudioElement> = {};
+
+/** Get or initialize AudioContext safely */
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -69,233 +75,305 @@ export function subscribeSound(callback: (muted: boolean) => void): () => void {
 }
 
 /**
- * 1. NIGHT PHASE TRANSITION
- * Deep, atmospheric sub-bass drone and ominous pitch drop.
+ * Safely plays a realistic audio sound from /sounds directory with Master Volume.
+ * Returns true if played successfully, or false to trigger the Web Audio fallback.
  */
+function playAudioFile(soundPath: string, volumeScale: number = 1.0): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    let audio = audioCache[soundPath];
+    if (!audio) {
+      audio = new Audio(soundPath);
+      audio.preload = 'auto';
+      audioCache[soundPath] = audio;
+    }
+
+    audio.volume = Math.max(0, Math.min(1, MASTER_VOLUME * volumeScale));
+    audio.currentTime = 0;
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Fallback silently if autoplay policy blocked or not loaded yet
+      });
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. GECƏ FAZASI (playNight)
+// Dərin, alçaq tezlikli duman bası və uzaqdan gələn sirli qədim saat zəngi.
+// ─────────────────────────────────────────────────────────────────────────────
 export function playNight(): void {
   if (isSoundMuted()) return;
+
+  try {
+    const played = playAudioFile('/sounds/night.wav', 1.0);
+    if (played) return;
+  } catch {
+    // Continue to resilient fallback
+  }
+
+  // Resilient Web Audio Fallback: Warm sub-bass fog drone (no buzz)
   const ctx = getAudioContext();
   if (!ctx) return;
 
   try {
     const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(MASTER_VOLUME * 0.7, now);
+    masterGain.connect(ctx.destination);
 
-    // Sub-bass glide
+    // Deep sub sine (52Hz)
     const subOsc = ctx.createOscillator();
     const subGain = ctx.createGain();
+    const subFilter = ctx.createBiquadFilter();
+
     subOsc.type = 'sine';
-    subOsc.frequency.setValueAtTime(65, now);
-    subOsc.frequency.exponentialRampToValueAtTime(32, now + 2.4);
+    subOsc.frequency.setValueAtTime(52, now);
+
+    subFilter.type = 'lowpass';
+    subFilter.frequency.setValueAtTime(140, now);
 
     subGain.gain.setValueAtTime(0.001, now);
-    subGain.gain.linearRampToValueAtTime(0.35, now + 0.3);
+    subGain.gain.linearRampToValueAtTime(0.4, now + 0.4);
     subGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
 
-    subOsc.connect(subGain);
-    subGain.connect(ctx.destination);
+    subOsc.connect(subFilter);
+    subFilter.connect(subGain);
+    subGain.connect(masterGain);
+
     subOsc.start(now);
     subOsc.stop(now + 2.6);
 
-    // Ominous low drone with low-pass filter
-    const droneOsc = ctx.createOscillator();
-    const droneFilter = ctx.createBiquadFilter();
-    const droneGain = ctx.createGain();
+    // Distant warm clock chime (130.8Hz C3)
+    const chimeOsc = ctx.createOscillator();
+    const chimeGain = ctx.createGain();
+    const chimeFilter = ctx.createBiquadFilter();
 
-    droneOsc.type = 'sawtooth';
-    droneOsc.frequency.setValueAtTime(82.4, now); // Low E
-    droneOsc.frequency.exponentialRampToValueAtTime(73.4, now + 2.2);
+    chimeOsc.type = 'triangle';
+    chimeOsc.frequency.setValueAtTime(130.8, now + 0.2);
 
-    droneFilter.type = 'lowpass';
-    droneFilter.frequency.setValueAtTime(260, now);
-    droneFilter.frequency.exponentialRampToValueAtTime(70, now + 2.2);
+    chimeFilter.type = 'lowpass';
+    chimeFilter.frequency.setValueAtTime(320, now);
 
-    droneGain.gain.setValueAtTime(0.001, now);
-    droneGain.gain.linearRampToValueAtTime(0.18, now + 0.4);
-    droneGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+    chimeGain.gain.setValueAtTime(0.001, now + 0.2);
+    chimeGain.gain.linearRampToValueAtTime(0.25, now + 0.23);
+    chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
 
-    droneOsc.connect(droneFilter);
-    droneFilter.connect(droneGain);
-    droneGain.connect(ctx.destination);
-    droneOsc.start(now);
-    droneOsc.stop(now + 2.6);
+    chimeOsc.connect(chimeFilter);
+    chimeFilter.connect(chimeGain);
+    chimeGain.connect(masterGain);
+
+    chimeOsc.start(now + 0.2);
+    chimeOsc.stop(now + 2.3);
   } catch {
-    // Graceful fallback
+    // Never crash
   }
 }
 
-/**
- * 2. DAY PHASE TRANSITION
- * Uplifting, crystal-clear morning bell chord (C-E-G-C arpeggio).
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. SƏHƏR FAZASI (playDay)
+// Yumşaq səhər kilsə/şəhər zəngi zərbəsi və yüngül qəzet xışıltısı.
+// ─────────────────────────────────────────────────────────────────────────────
 export function playDay(): void {
   if (isSoundMuted()) return;
-  const ctx = getAudioContext();
-  if (!ctx) return;
 
   try {
-    const now = ctx.currentTime;
-    const chordNotes = [
-      { freq: 523.25, time: 0.0 }, // C5
-      { freq: 659.25, time: 0.08 }, // E5
-      { freq: 783.99, time: 0.16 }, // G5
-      { freq: 1046.5, time: 0.24 }, // C6
-    ];
-
-    chordNotes.forEach(({ freq, time }) => {
-      const noteTime = now + time;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, noteTime);
-
-      gain.gain.setValueAtTime(0.001, noteTime);
-      gain.gain.linearRampToValueAtTime(0.2, noteTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 1.2);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start(noteTime);
-      osc.stop(noteTime + 1.3);
-    });
+    const played = playAudioFile('/sounds/day.wav', 1.0);
+    if (played) return;
   } catch {
-    // Graceful fallback
+    // Continue to resilient fallback
   }
-}
 
-/**
- * 3. GAVEL STRIKE (JUDGE / VOTING COURT)
- * Sharp, double wooden gavel impact.
- */
-export function playGavel(): void {
-  if (isSoundMuted()) return;
+  // Resilient Web Audio Fallback: Mellow warm bell chord
   const ctx = getAudioContext();
   if (!ctx) return;
 
   try {
     const now = ctx.currentTime;
-    const strikes = [0, 0.09]; // Double knock
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(MASTER_VOLUME * 0.65, now);
+    masterGain.connect(ctx.destination);
 
-    strikes.forEach((st) => {
-      const strikeTime = now + st;
-
-      // Body of gavel
+    const notes = [329.6, 440.0]; // Warm E4 & A4
+    notes.forEach((freq, idx) => {
+      const noteTime = now + idx * 0.06;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       const filter = ctx.createBiquadFilter();
 
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(240, strikeTime);
-      osc.frequency.exponentialRampToValueAtTime(50, strikeTime + 0.08);
+      osc.frequency.setValueAtTime(freq, noteTime);
 
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(320, strikeTime);
-      filter.Q.setValueAtTime(4, strikeTime);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, noteTime);
 
-      gain.gain.setValueAtTime(0.35, strikeTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, strikeTime + 0.12);
+      gain.gain.setValueAtTime(0.001, noteTime);
+      gain.gain.linearRampToValueAtTime(0.2, noteTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 1.8);
 
       osc.connect(filter);
       filter.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(masterGain);
 
-      osc.start(strikeTime);
-      osc.stop(strikeTime + 0.13);
+      osc.start(noteTime);
+      osc.stop(noteTime + 1.9);
     });
   } catch {
-    // Graceful fallback
+    // Never crash
   }
 }
 
-/**
- * 4. CARD SELECTION / INTERACTION
- * Subtle crisp card swoosh and snap.
- */
-export function playCard(): void {
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. MƏHKƏMƏ / EDAM (playGavel)
+// Quru, əks-sədasız, təmiz və ağır ikiqat taxta məhkəmə çəkici taqqıltısı (tok... tok!).
+// ─────────────────────────────────────────────────────────────────────────────
+export function playGavel(): void {
   if (isSoundMuted()) return;
+
+  try {
+    const played = playAudioFile('/sounds/gavel.wav', 1.0);
+    if (played) return;
+  } catch {
+    // Continue to resilient fallback
+  }
+
+  // Resilient Web Audio Fallback: Dry dense wood knocks
   const ctx = getAudioContext();
   if (!ctx) return;
 
   try {
     const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(MASTER_VOLUME * 0.8, now);
+    masterGain.connect(ctx.destination);
+
+    const strikes = [0.01, 0.12];
+    strikes.forEach((st, idx) => {
+      const strikeTime = now + st;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(idx === 0 ? 150 : 130, strikeTime);
+      osc.frequency.exponentialRampToValueAtTime(55, strikeTime + 0.06);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(280, strikeTime);
+
+      gain.gain.setValueAtTime(0.5, strikeTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, strikeTime + 0.07);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(strikeTime);
+      osc.stop(strikeTime + 0.08);
+    });
+  } catch {
+    // Never crash
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. KART VƏ YA DÜYMƏ KLİKLƏNMƏSİ (playCard)
+// Rahatsız etməyən, çox zərif "mat klik" (soft tactile micro-click) toxunuşu.
+// ─────────────────────────────────────────────────────────────────────────────
+export function playCard(): void {
+  if (isSoundMuted()) return;
+
+  try {
+    const played = playAudioFile('/sounds/card.wav', 0.85);
+    if (played) return;
+  } catch {
+    // Continue to resilient fallback
+  }
+
+  // Resilient Web Audio Fallback: Ultra-soft tactile micro-click
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(MASTER_VOLUME * 0.45, now);
+    masterGain.connect(ctx.destination);
+
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, now);
-    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.04);
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.exponentialRampToValueAtTime(90, now + 0.025);
 
-    filter.type = 'highpass';
-    filter.frequency.setValueAtTime(500, now);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(350, now);
 
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
 
     osc.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(masterGain);
 
     osc.start(now);
-    osc.stop(now + 0.07);
+    osc.stop(now + 0.035);
   } catch {
-    // Graceful fallback
+    // Never crash
   }
 }
 
-/**
- * 5. ELIMINATION / LYNCHING / MURDER
- * Dramatic suspense sting with deep tritone drop and heavy impact.
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. EDAM / QƏTL (playElimination)
+// Dərin, boğuq kinematoqrafik sub-thud zərbəsi.
+// ─────────────────────────────────────────────────────────────────────────────
 export function playElimination(): void {
   if (isSoundMuted()) return;
+
+  try {
+    const played = playAudioFile('/sounds/elimination.wav', 1.0);
+    if (played) return;
+  } catch {
+    // Continue to resilient fallback
+  }
+
+  // Resilient Web Audio Fallback: Muted cinematic sub-impact
   const ctx = getAudioContext();
   if (!ctx) return;
 
   try {
     const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(MASTER_VOLUME * 0.75, now);
+    masterGain.connect(ctx.destination);
 
-    // Heavy low impact
-    const punchOsc = ctx.createOscillator();
-    const punchGain = ctx.createGain();
-    punchOsc.type = 'sine';
-    punchOsc.frequency.setValueAtTime(120, now);
-    punchOsc.frequency.exponentialRampToValueAtTime(25, now + 0.4);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
 
-    punchGain.gain.setValueAtTime(0.4, now);
-    punchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(50, now);
+    osc.frequency.exponentialRampToValueAtTime(25, now + 0.5);
 
-    punchOsc.connect(punchGain);
-    punchGain.connect(ctx.destination);
-    punchOsc.start(now);
-    punchOsc.stop(now + 0.65);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(120, now);
 
-    // Ominous dissonant tritone (A2 = 110Hz + D#3 = 155.56Hz)
-    const tones = [110, 155.56];
-    tones.forEach((f) => {
-      const osc = ctx.createOscillator();
-      const filter = ctx.createBiquadFilter();
-      const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
 
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(f, now);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
 
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(450, now);
-      filter.frequency.exponentialRampToValueAtTime(60, now + 1.6);
-
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
-
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start(now);
-      osc.stop(now + 1.9);
-    });
+    osc.start(now);
+    osc.stop(now + 1.3);
   } catch {
-    // Graceful fallback
+    // Never crash
   }
 }
