@@ -1,0 +1,490 @@
+/**
+ * Deterministic Night Action Resolver
+ * Processes buffered actions in strict priority order 1–6 with trait modifiers.
+ *
+ * Phase 2 Priority Map (as specified):
+ *   1 — BLOCK / Disruption
+ *   2 — MISDIRECT / Redirection
+ *   3 — PROTECT (Doctor heal + vest charge)
+ *   4 — KILL & Crossfire (bounded by globalNightKillCap)
+ *   5 — FRAME / Deception
+ *   6 — INVESTIGATE / Intel
+ *
+ * Enterprise Mafia / Social Deduction Platform - Phase 2
+ */
+
+import {
+  LobbyState,
+  NightActionBufferItem,
+  NightActionPriority,
+  NightActionType,
+  PlayerSession,
+} from '../../types/game';
+import { CoreFaction, InnateTraitType } from '../../types/roles';
+import { DantesInfernoState } from '../../types/minigames';
+import {
+  DeathCause,
+  InvestigationResult,
+  MorningNewspaper,
+  NightDeathRecord,
+  NightResolutionFlags,
+  NightResolutionOutput,
+} from '../../types/engine';
+
+// ─── Trait Helpers ──────────────────────────────────────────────────────────
+
+function hasTrait(player: PlayerSession, trait: InnateTraitType): boolean {
+  return player.allInIdentity?.layer3Trait === trait;
+}
+
+function getFaction(player: PlayerSession): CoreFaction {
+  return player.allInIdentity?.layer1Faction ?? 'TOWN';
+}
+
+function isKillerFaction(faction: CoreFaction): boolean {
+  return (
+    faction === 'MAFIA' ||
+    faction === 'YAKUZA' ||
+    faction === 'VOID_CULT' ||
+    faction === 'NEUTRAL_KILLER'
+  );
+}
+
+function deathCauseForFaction(faction: CoreFaction): DeathCause {
+  switch (faction) {
+    case 'MAFIA':           return 'MAFIA_KILL';
+    case 'YAKUZA':          return 'YAKUZA_KILL';
+    case 'VOID_CULT':       return 'VOID_CULT_SACRIFICE';
+    case 'NEUTRAL_KILLER':  return 'NEUTRAL_KILLER_KILL';
+    default:                return 'CROSSFIRE';
+  }
+}
+
+// ─── Crypto-quality jitter (no crypto module needed; uses Date precision + XOR) ──
+
+/**
+ * Returns a deterministic-looking 3–7 second jitter in milliseconds
+ * using timestamp XOR for entropy (avoids requiring node:crypto in the module).
+ */
+export function computeCryptoJitterMs(minS = 3, maxS = 7): number {
+  const nowBits = Date.now();
+  const xored = (nowBits ^ (nowBits >>> 13) ^ (nowBits >>> 7));
+  const rangeMs = (maxS - minS) * 1000;
+  return minS * 1000 + (Math.abs(xored) % rangeMs);
+}
+
+// ─── Per-player flag builder ─────────────────────────────────────────────────
+
+function buildInitialFlags(players: Readonly<Record<string, PlayerSession>>): Record<string, NightResolutionFlags> {
+  const flags: Record<string, NightResolutionFlags> = {};
+  for (const [id, p] of Object.entries(players)) {
+    flags[id] = {
+      isBlocked:             false,
+      isProtected:           false,
+      vestChargesRemaining:  hasTrait(p, 'BULLETPROOF_VEST') ? 1 : hasTrait(p, 'SURGICAL_RESILIENCE') ? 2 : 0,
+      redirectedTargetId:    null,
+      isFramed:              false,
+      factionMaskOverride:   hasTrait(p, 'FALSE_DOCUMENTATION') ? ('TOWN' as CoreFaction) : null,
+      retaliationFuseActive: hasTrait(p, 'RETALIATION_FUSE'),
+      coldBloodedImmune:     hasTrait(p, 'COLD_BLOODED'),
+      poisonImmune:          hasTrait(p, 'POISON_IMMUNITY'),
+    };
+  }
+  return flags;
+}
+
+// ─── Priority 1: BLOCK ───────────────────────────────────────────────────────
+
+/**
+ * Marks actors as blocked. COLD_BLOODED players ignore blocks.
+ * A blocked actor's actions are voided at all subsequent priorities.
+ */
+function applyBlocks(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>,
+  players: Readonly<Record<string, PlayerSession>>
+): void {
+  for (const action of actions) {
+    if (action.priority !== 1) continue;
+    if (action.actionType !== 'BLOCK') continue;
+
+    const targetActor = action.targetPlayerId;
+    const targetPlayer = players[targetActor];
+    if (!targetPlayer) continue;
+
+    // COLD_BLOODED trait: immune to BLOCK
+    if (flags[targetActor]?.coldBloodedImmune) continue;
+
+    flags[targetActor] = { ...(flags[targetActor] as NightResolutionFlags), isBlocked: true };
+  }
+}
+
+// ─── Priority 2: MISDIRECT ──────────────────────────────────────────────────
+
+/**
+ * Reroutes subsequent actions that target `targetPlayerId` to `redirectedTargetId` instead.
+ * Actors with PHANTOM_STEP can misdirect without being tracked.
+ */
+function applyMisdirections(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>,
+  players: Readonly<Record<string, PlayerSession>>
+): void {
+  for (const action of actions) {
+    if (action.priority !== 2) continue;
+    if (action.actionType !== 'MISDIRECT') continue;
+    if (flags[action.actorPlayerId]?.isBlocked) continue; // blocked misdirector
+
+    const targetPlayer = players[action.targetPlayerId];
+    if (!targetPlayer) continue;
+
+    // The misdirection target gets the redirect stored
+    flags[action.targetPlayerId] = {
+      ...(flags[action.targetPlayerId] as NightResolutionFlags),
+      redirectedTargetId: action.actorPlayerId, // misdirector routes their own target's attention
+    };
+  }
+}
+
+/** Resolve the effective target for an action, following misdirection chains (loop-safe) */
+function resolveEffectiveTarget(
+  originalTarget: string,
+  flags: Record<string, NightResolutionFlags>,
+  depth = 0
+): string {
+  if (depth > 5) return originalTarget; // loop guard
+  const redirect = flags[originalTarget]?.redirectedTargetId;
+  if (!redirect || redirect === originalTarget) return originalTarget;
+  return resolveEffectiveTarget(redirect, flags, depth + 1);
+}
+
+// ─── Priority 3: PROTECT ────────────────────────────────────────────────────
+
+/**
+ * Doctor / CITY_SURGEON grants protection flag.
+ * SURGICAL_RESILIENCE holders self-protect for 2 nights.
+ */
+function applyProtections(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>
+): void {
+  for (const action of actions) {
+    if (action.priority !== 3) continue;
+    if (action.actionType !== 'PROTECT') continue;
+    if (flags[action.actorPlayerId]?.isBlocked) continue;
+
+    const effectiveTarget = resolveEffectiveTarget(action.targetPlayerId, flags);
+    if (!flags[effectiveTarget]) continue;
+
+    flags[effectiveTarget] = { ...(flags[effectiveTarget] as NightResolutionFlags), isProtected: true };
+  }
+
+  // Self-vest: players with vestChargesRemaining > 0 are implicitly protected
+  for (const [id, f] of Object.entries(flags)) {
+    if (f.vestChargesRemaining > 0) {
+      flags[id] = { ...f, isProtected: true };
+    }
+  }
+}
+
+// ─── Priority 4: KILL & Crossfire ───────────────────────────────────────────
+
+interface KillAttempt {
+  readonly actorId: string;
+  readonly effectiveTargetId: string;
+  readonly killerFaction: CoreFaction;
+  readonly pierceProtection: boolean; // SILENCER_ATTACHMENT bypasses protection once
+}
+
+function applyKills(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>,
+  players: Readonly<Record<string, PlayerSession>>,
+  globalNightKillCap: number,
+  danteState: DantesInfernoState | undefined,
+  roundNumber: number
+): { deaths: NightDeathRecord[]; updatedPlayers: Record<string, PlayerSession>; updatedFlags: Record<string, NightResolutionFlags> } {
+  const deaths: NightDeathRecord[] = [];
+  const playerMap: Record<string, PlayerSession> = { ...players };
+  let killsThisNight = 0;
+
+  // Collect all kill attempts
+  const attempts: KillAttempt[] = [];
+  for (const action of actions) {
+    if (action.priority !== 4) continue;
+    if (action.actionType !== 'KILL') continue;
+    if (flags[action.actorPlayerId]?.isBlocked) continue;
+
+    const actor = players[action.actorPlayerId];
+    if (!actor || !actor.isAlive) continue;
+
+    const effectiveTarget = resolveEffectiveTarget(action.targetPlayerId, flags);
+    const killerFaction = getFaction(actor);
+    const pierceProtection = hasTrait(actor, 'SILENCER_ATTACHMENT');
+
+    attempts.push({ actorId: action.actorPlayerId, effectiveTargetId: effectiveTarget, killerFaction, pierceProtection });
+  }
+
+  // Group attempts by effective target (crossfire resolution)
+  const byTarget: Record<string, KillAttempt[]> = {};
+  for (const att of attempts) {
+    if (!byTarget[att.effectiveTargetId]) byTarget[att.effectiveTargetId] = [];
+    (byTarget[att.effectiveTargetId] as KillAttempt[]).push(att);
+  }
+
+  for (const [targetId, targetAttempts] of Object.entries(byTarget)) {
+    if (killsThisNight >= globalNightKillCap) break;
+
+    const targetPlayer = playerMap[targetId];
+    if (!targetPlayer || !targetPlayer.isAlive) continue;
+
+    const targetFlags = flags[targetId] as NightResolutionFlags;
+    const piercePresent = targetAttempts.some(a => a.pierceProtection);
+
+    // Protected and not pierced → no kill
+    if (targetFlags.isProtected && !piercePresent) {
+      // Vest charge deduction when protection came from vest
+      if (targetFlags.vestChargesRemaining > 0) {
+        flags[targetId] = {
+          ...targetFlags,
+          vestChargesRemaining: targetFlags.vestChargesRemaining - 1,
+          isProtected: targetFlags.vestChargesRemaining - 1 > 0,
+        };
+      }
+      // RETALIATION_FUSE: attacker(s) die when attack is absorbed
+      for (const att of targetAttempts) {
+        if (targetFlags.retaliationFuseActive && killsThisNight < globalNightKillCap) {
+          const attacker = playerMap[att.actorId];
+          if (attacker && attacker.isAlive) {
+            playerMap[att.actorId] = { ...attacker, isAlive: false };
+            deaths.push({
+              victimPlayerId: att.actorId,
+              cause: 'RETALIATION_FUSE_COUNTER',
+              killerFaction: null,
+              isCleaned: false,
+            });
+            killsThisNight++;
+          }
+        }
+      }
+      continue;
+    }
+
+    // POISON_IMMUNITY: immune to indirect/cult-vector kills (not direct faction kill)
+    if (targetFlags.poisonImmune) {
+      const directKill = targetAttempts.filter(a => a.killerFaction === 'MAFIA' || a.killerFaction === 'YAKUZA');
+      if (directKill.length === 0) continue;
+    }
+
+    // Determine cause: if multiple factions hit the same target → CROSSFIRE
+    const factions = new Set(targetAttempts.map(a => a.killerFaction));
+    const cause: DeathCause = factions.size > 1
+      ? 'CROSSFIRE'
+      : deathCauseForFaction(targetAttempts[0]!.killerFaction);
+
+    // VIOLENCE circle: cleaned lynch applies to day — night deaths are cleaned only if Coroner active
+    const isCleaned = false; // Night deaths uncleaned; cleaning handled in day phase
+
+    playerMap[targetId] = { ...targetPlayer, isAlive: false };
+    deaths.push({ victimPlayerId: targetId, cause, killerFaction: factions.size === 1 ? targetAttempts[0]!.killerFaction : null, isCleaned });
+    killsThisNight++;
+
+    // RETALIATION_FUSE: non-protected target, attacker still dies (kamikaze on hit)
+    for (const att of targetAttempts) {
+      const attacker = playerMap[att.actorId];
+      if (attacker && attacker.isAlive && flags[att.actorId]?.retaliationFuseActive) {
+        if (killsThisNight < globalNightKillCap) {
+          playerMap[att.actorId] = { ...attacker, isAlive: false };
+          deaths.push({ victimPlayerId: att.actorId, cause: 'RETALIATION_FUSE_COUNTER', killerFaction: null, isCleaned: false });
+          killsThisNight++;
+        }
+      }
+    }
+  }
+
+  return { deaths, updatedPlayers: playerMap, updatedFlags: flags };
+}
+
+// ─── Priority 5: FRAME / Deception ──────────────────────────────────────────
+
+/**
+ * Marks players as framed so subsequent investigations see false guilt.
+ * Does not apply if actor was blocked.
+ */
+function applyFrames(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>
+): void {
+  for (const action of actions) {
+    if (action.priority !== 5) continue;
+    if (action.actionType !== 'FRAME') continue;
+    if (flags[action.actorPlayerId]?.isBlocked) continue;
+
+    const effectiveTarget = resolveEffectiveTarget(action.targetPlayerId, flags);
+    if (!flags[effectiveTarget]) continue;
+
+    flags[effectiveTarget] = { ...(flags[effectiveTarget] as NightResolutionFlags), isFramed: true, factionMaskOverride: 'MAFIA' };
+  }
+}
+
+// ─── Priority 6: INVESTIGATE / Intel ─────────────────────────────────────────
+
+/**
+ * Produces private InvestigationResult records.
+ * CIRCLE_8_FRAUD: 50% chance result is blurred (random alternate faction).
+ * INSIDER_ACCESS trait: reveals true faction bypassing FRAME.
+ */
+const FACTION_POOL: readonly CoreFaction[] = ['TOWN', 'MAFIA', 'YAKUZA', 'VOID_CULT', 'NEUTRAL_EVIL'];
+
+function pickAlternateFaction(trueFaction: CoreFaction): CoreFaction {
+  const others = FACTION_POOL.filter(f => f !== trueFaction);
+  return others[Math.floor(Math.random() * others.length)] ?? 'TOWN';
+}
+
+function applyInvestigations(
+  actions: readonly NightActionBufferItem[],
+  flags: Record<string, NightResolutionFlags>,
+  players: Readonly<Record<string, PlayerSession>>,
+  fraudBlurActive: boolean
+): InvestigationResult[] {
+  const results: InvestigationResult[] = [];
+
+  for (const action of actions) {
+    if (action.priority !== 6) continue;
+    if (action.actionType !== 'INVESTIGATE') continue;
+    if (flags[action.actorPlayerId]?.isBlocked) continue;
+
+    const investigator = players[action.actorPlayerId];
+    if (!investigator || !investigator.isAlive) continue;
+
+    const effectiveTarget = resolveEffectiveTarget(action.targetPlayerId, flags);
+    const target = players[effectiveTarget];
+    if (!target) continue;
+
+    const targetFlags = flags[effectiveTarget] as NightResolutionFlags;
+    const hasInsiderAccess = hasTrait(investigator, 'INSIDER_ACCESS');
+
+    // Determine revealed faction
+    let revealedFaction: CoreFaction;
+    if (hasInsiderAccess) {
+      // INSIDER_ACCESS: bypass all masking
+      revealedFaction = getFaction(target);
+    } else if (targetFlags.factionMaskOverride !== null) {
+      revealedFaction = targetFlags.factionMaskOverride;
+    } else if (targetFlags.isFramed) {
+      revealedFaction = 'MAFIA';
+    } else {
+      revealedFaction = getFaction(target);
+    }
+
+    // CIRCLE_8_FRAUD: blur 50/50
+    const isBlurred = fraudBlurActive && Math.random() < 0.5;
+    const alternateBlurredFaction: CoreFaction | null = isBlurred ? pickAlternateFaction(revealedFaction) : null;
+
+    results.push({
+      investigatorPlayerId: action.actorPlayerId,
+      targetPlayerId: effectiveTarget,
+      revealedFaction,
+      isBlurred,
+      alternateBlurredFaction,
+    });
+  }
+
+  return results;
+}
+
+// ─── Heresy Clue Generator ────────────────────────────────────────────────────
+
+function generateHeresyClue(
+  players: Readonly<Record<string, PlayerSession>>,
+  roundNumber: number
+): string | null {
+  const deadPlayers = Object.values(players).filter(p => !p.isAlive);
+  if (deadPlayers.length === 0) return null;
+
+  const chosen = deadPlayers[Math.floor(Math.random() * deadPlayers.length)]!;
+  const faction = getFaction(chosen);
+  return `A whisper from Limbo: ${chosen.username} walked among the ${faction}.`;
+}
+
+// ─── Main Resolver ────────────────────────────────────────────────────────────
+
+export interface NightResolverInput {
+  readonly lobby: LobbyState;
+}
+
+export function resolveNightActions(input: NightResolverInput): NightResolutionOutput {
+  const { lobby } = input;
+  const { bufferedNightActions, players, globalNightKillCap, roundNumber, minigameSubStates } = lobby;
+
+  const danteState = minigameSubStates.dantesInferno;
+  const fraudBlurActive = danteState?.fraudBlurActive ?? false;
+  const heresyActive = danteState?.currentCircle === 'CIRCLE_6_HERESY';
+  const violenceCleaningActive = danteState?.currentCircle === 'CIRCLE_7_VIOLENCE';
+
+  const jitterMs = computeCryptoJitterMs(3, 7);
+
+  // Build mutable flags per player
+  let flags = buildInitialFlags(players);
+
+  // Dante CIRCLE_2_LUST: 20% deflection on all targeted actions
+  const deflectionRate = danteState?.deflectionRate ?? 0;
+  let actions = bufferedNightActions;
+  if (deflectionRate > 0) {
+    const playerIds = Object.keys(players);
+    actions = actions.map(a => {
+      if (Math.random() < deflectionRate) {
+        const adjacent = playerIds.filter(id => id !== a.targetPlayerId);
+        const deflectTo = adjacent[Math.floor(Math.random() * adjacent.length)] ?? a.targetPlayerId;
+        return { ...a, targetPlayerId: deflectTo };
+      }
+      return a;
+    });
+  }
+
+  // P1: Block
+  applyBlocks(actions, flags, players);
+
+  // P2: Misdirect
+  applyMisdirections(actions, flags, players);
+
+  // P3: Protect
+  applyProtections(actions, flags);
+
+  // P4: Kill & Crossfire
+  const killResult = applyKills(actions, flags, players, globalNightKillCap, danteState, roundNumber);
+  flags = killResult.updatedFlags;
+  const killedPlayers = killResult.updatedPlayers;
+  const publicDeaths: NightDeathRecord[] = killResult.deaths.map(d => ({
+    ...d,
+    isCleaned: violenceCleaningActive ? true : d.isCleaned,
+  }));
+
+  // P5: Frame
+  applyFrames(actions, flags);
+
+  // P6: Investigate
+  const investigationResults = applyInvestigations(actions, flags, players, fraudBlurActive);
+
+  // Heresy clue
+  const heresyClue = heresyActive ? generateHeresyClue(players, roundNumber) : null;
+
+  // Compile updated player map (combine alive status changes)
+  const updatedPlayers: Record<string, PlayerSession> = { ...players };
+  for (const [id, p] of Object.entries(killedPlayers)) {
+    updatedPlayers[id] = p;
+  }
+
+  const newspaper: MorningNewspaper = {
+    publicDeaths,
+    privateInvestigationResults: investigationResults,
+    heresyClue,
+    jitterAppliedMs: jitterMs,
+  };
+
+  return {
+    newspaper,
+    updatedPlayers,
+    killCount: publicDeaths.filter(d => d.cause !== 'RETALIATION_FUSE_COUNTER').length,
+  };
+}

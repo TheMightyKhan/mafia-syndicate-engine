@@ -1,0 +1,24 @@
+{
+  "name": "tdv-mafia-engine",
+  "version": "1.0.0",
+  "description": "TDV Community Labs Enterprise Mafia / Social Deduction Platform with Zero-Knowledge Socket Layer, Localized UI, and Dual-Admin Governance",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "^2.3.0",
+    "next": "^14.2.24",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.7.3"
+  }
+}
