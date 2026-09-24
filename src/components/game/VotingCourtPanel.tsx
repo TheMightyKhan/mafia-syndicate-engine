@@ -1,6 +1,7 @@
 'use client';
 
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import { Gavel, AlertCircle, EyeOff, Users, ArrowRight } from 'lucide-react';
 import { LobbyState, PlayerSession } from '../../types/game';
 import { AllInDistrict } from '../../types/roles';
 import { AZ_DISTRICTS, AZ_UI } from '../../config/i18n/az';
@@ -35,43 +36,30 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
   const isAlive = currentUser?.isAlive ?? false;
   const currentVotedCandidateId = lobbyState.liveVotes[currentUserId];
 
-  // Calculate vote tallies per candidate
-  const tallies: Record<string, number> = {};
-  for (const candidateId of Object.values(lobbyState.liveVotes)) {
-    tallies[candidateId] = (tallies[candidateId] ?? 0) + 1;
-  }
-
-  // Quorum threshold: strict majority of alive players
   const alivePlayers = Object.values(lobbyState.players).filter((p) => p.isAlive);
   const majorityThreshold = Math.floor(alivePlayers.length / 2) + 1;
 
-  const panelStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid #1e293b',
-    borderRadius: '10px',
-    padding: '18px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)',
-  };
-
   return (
-    <div style={panelStyle}>
+    <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
       {/* Court Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-        <div>
-          <span style={{ fontSize: '12px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            {isAllIn ? AZ_UI.districtPlebiscite : AZ_UI.currentPhase}
-          </span>
-          <h2 style={{ margin: '2px 0 0 0', color: '#f8fafc', fontSize: '18px', fontWeight: 800 }}>
-            {AZ_UI.accuse} & {AZ_UI.vote} Ziyili
-          </h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+            <Gavel className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
+              {isAllIn ? AZ_UI.districtPlebiscite : AZ_UI.currentPhase}
+            </span>
+            <h3 className="font-extrabold text-lg text-zinc-950 dark:text-white leading-tight">
+              {AZ_UI.accuse} & {AZ_UI.vote} Məclisi
+            </h3>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge tone="neutral">
-            Tələb Olunan Çoxluq: {majorityThreshold} / {alivePlayers.length} səs
+            Tələb: {majorityThreshold} / {alivePlayers.length} səs
           </Badge>
 
           {isWrath && (
@@ -81,7 +69,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
           )}
 
           {isTreacheryBlind && (
-            <Badge tone="purple">
+            <Badge tone="purple" icon={<EyeOff className="w-3 h-3" />}>
               {AZ_UI.blindVoting} (IX Dairə)
             </Badge>
           )}
@@ -90,66 +78,42 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
       {/* Dante Special Mode Notices */}
       {isWrath && (
-        <div
-          style={{
-            backgroundColor: 'rgba(220, 38, 38, 0.12)',
-            border: '1px solid #ef4444',
-            padding: '10px 14px',
-            borderRadius: '6px',
-            fontSize: '13px',
-            color: '#fca5a5',
-          }}
-        >
-          <strong>Dantenin V Dairəsi (Qəzəb):</strong> Bitərəf qalmaq və ya səsverməni keçmək qadağandır! Hər bir canlı vətəndaş
-          hökm verməlidir.
+        <div className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+          <span>
+            <strong>Dantenin V Dairəsi (Qəzəb):</strong> Bitərəf qalmaq qadağandır! Hər bir canlı vətəndaş hökm verməlidir.
+          </span>
         </div>
       )}
 
       {isTreacheryBlind && (
-        <div
-          style={{
-            backgroundColor: 'rgba(168, 85, 247, 0.12)',
-            border: '1px solid #a855f7',
-            padding: '10px 14px',
-            borderRadius: '6px',
-            fontSize: '13px',
-            color: '#d8b4fe',
-          }}
-        >
-          <strong>Dantenin IX Dairəsi (Xəyanət / Kokit):</strong> {AZ_UI.blindVotingDesc} Heç kim kimin kimə səs verdiyini
-          mərhələ kilidlənənə qədər görə bilməz.
+        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-800 dark:text-purple-300 text-xs flex items-center gap-2">
+          <EyeOff className="w-4 h-4 shrink-0 text-purple-600" />
+          <span>
+            <strong>Dantenin IX Dairəsi (Xəyanət / Kokit):</strong> {AZ_UI.blindVotingDesc}
+          </span>
         </div>
       )}
 
-      {/* All-In District Caucus Finalist Visualizer */}
+      {/* All-In District Finalists */}
       {isAllIn && districtFinalists.length > 0 && (
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid #3b82f6',
-            padding: '12px',
-            borderRadius: '8px',
-          }}
-        >
-          <div style={{ fontSize: '12px', color: '#93c5fd', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
+        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/5 dark:bg-blue-950/20">
+          <div className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-2">
             {AZ_UI.districtFinalists} (3 Kvartal Finalisti)
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {districtFinalists.map((finalistId, index) => {
               const p = lobbyState.players[finalistId];
-              const distName = p?.currentDistrict ? AZ_DISTRICTS[p.currentDistrict] : `Rayon #${index + 1}`;
+              const distName = p?.currentDistrict
+                ? AZ_DISTRICTS[p.currentDistrict]
+                : `Rayon #${index + 1}`;
               return (
                 <div
                   key={finalistId}
-                  style={{
-                    backgroundColor: '#1e293b',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    borderLeft: '3px solid #38bdf8',
-                  }}
+                  className="p-3 rounded-lg border border-blue-500/20 bg-white dark:bg-zinc-900 border-l-4 border-l-blue-500"
                 >
-                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{distName}</div>
-                  <div style={{ fontWeight: 700, color: '#f8fafc', fontSize: '14px' }}>
+                  <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{distName}</div>
+                  <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                     {p?.displayRole.formatted ?? finalistId}
                   </div>
                 </div>
@@ -160,35 +124,26 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
       )}
 
       {/* Active Selection & Action Controls */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: '#0f172a',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          border: '1px solid #334155',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
+      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span style={{ fontSize: '12px', color: '#94a3b8' }}>Seçilmiş İttiham Hədəfi:</span>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: selectedCandidateId ? '#f8fafc' : '#64748b' }}>
+          <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            Seçilmiş İttiham Hədəfi:
+          </span>
+          <div className="text-sm font-extrabold text-zinc-900 dark:text-zinc-100">
             {selectedCandidateId
               ? lobbyState.players[selectedCandidateId]?.displayRole.formatted ?? selectedCandidateId
-              : 'Heç bir oyunçu seçilməyib'}
+              : 'Heç bir oyunçu seçilməyib (kartlardan birinə toxunun)'}
           </div>
           {currentVotedCandidateId && (
-            <div style={{ fontSize: '12px', color: '#fbbf24', marginTop: '2px' }}>
+            <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
               Sizin cari səsiniz:{' '}
-              <strong>{lobbyState.players[currentVotedCandidateId]?.displayRole.nickname ?? currentVotedCandidateId}</strong>
+              {lobbyState.players[currentVotedCandidateId]?.displayRole.nickname ??
+                currentVotedCandidateId}
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="flex items-center gap-2 flex-wrap">
           {currentVotedCandidateId && (
             <Button variant="secondary" size="md" onClick={onRetractVote} disabled={!isAlive}>
               {AZ_UI.retractVote}
@@ -204,7 +159,9 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
           <Button
             variant="danger"
             size="md"
-            disabled={!isAlive || !selectedCandidateId || currentVotedCandidateId === selectedCandidateId}
+            disabled={
+              !isAlive || !selectedCandidateId || currentVotedCandidateId === selectedCandidateId
+            }
             onClick={() => selectedCandidateId && onCastVote(selectedCandidateId)}
           >
             {AZ_UI.vote}

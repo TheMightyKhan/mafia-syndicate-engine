@@ -1,6 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  Trophy,
+  Award,
+  Shield,
+  User,
+  X,
+  Info,
+  CheckCircle,
+  TrendingUp,
+} from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { UserSessionState } from './AuthModal';
@@ -26,218 +36,156 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
 
   if (!isOpen) return null;
 
-  const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.88)',
-    backdropFilter: 'blur(12px)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10000,
-    padding: '20px',
-  };
-
-  const modalStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid rgba(245, 158, 11, 0.35)',
-    borderRadius: '18px',
-    padding: '26px 28px',
-    maxWidth: '740px',
-    width: '100%',
-    maxHeight: '88vh',
-    overflowY: 'auto',
-    boxShadow: '0 25px 50px -12px rgba(245, 158, 11, 0.2), 0 0 50px rgba(0, 0, 0, 0.9)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  };
-
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl flex flex-col gap-6 max-h-[88vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '24px' }}>🏆</span>
-              <h2 style={{ margin: 0, color: '#f8fafc', fontSize: '22px', fontWeight: 900 }}>
-                TDV MAFIA - Klub Məktəb Liqası
-              </h2>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <Trophy className="w-5 h-5" />
             </div>
-            <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
-              Mövsüm #1: Bakı Deduksiya və İntellektual Reytinq Sistemi
-            </p>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
+                TDV MAFIA — Klub Məktəb Liqası
+              </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Mövsüm #1: Bakı Deduksiya və İntellektual Reytinq Sistemi
+              </p>
+            </div>
           </div>
+
           <button
+            type="button"
             onClick={onClose}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '8px',
-              color: '#94a3b8',
-              fontSize: '16px',
-              cursor: 'pointer',
-              padding: '6px 12px',
-              lineHeight: 1,
-            }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Current User Card */}
-        <div
-          style={{
-            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(180, 83, 9, 0.15) 100%)',
-            border: '1px solid rgba(245, 158, 11, 0.35)',
-            borderRadius: '14px',
-            padding: '16px 20px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '14px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                fontWeight: 900,
-                boxShadow: '0 0 16px rgba(245, 158, 11, 0.4)',
-              }}
-            >
+        <div className="p-4 sm:p-5 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full bg-amber-500 text-white font-black text-lg flex items-center justify-center shadow-sm">
               {currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : '👤'}
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '16px', fontWeight: 800, color: '#f8fafc' }}>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-base text-zinc-900 dark:text-zinc-100">
                   {currentUser?.username || 'Qonaq Oyunçu'}
                 </span>
-                <Badge tone={currentUser?.tier === 'TIER_3' ? 'purple' : currentUser?.tier === 'TIER_2' ? 'amber' : 'neutral'}>
+                <Badge
+                  tone={
+                    currentUser?.tier === 'TIER_3'
+                      ? 'purple'
+                      : currentUser?.tier === 'TIER_2'
+                      ? 'amber'
+                      : 'neutral'
+                  }
+                >
                   {currentUser?.tier || 'TIER_1'}
                 </Badge>
               </div>
-              <span style={{ fontSize: '12px', color: '#fbbf24', fontWeight: 600 }}>
+              <span className="text-xs text-amber-700 dark:text-amber-400 font-medium">
                 {currentUser?.roleTitle || 'Sıravi İştirakçı (Giriş edilməyib)'}
               </span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '11px', color: '#94a3b8' }}>Mövsüm Xalı (ELO)</div>
-              <div style={{ fontSize: '16px', fontWeight: 900, color: '#34d399' }}>
+          <div className="flex items-center gap-4 sm:gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-amber-500/20">
+            <div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">Mövsüm Xalı (ELO)</div>
+              <div className="text-base font-black text-emerald-600 dark:text-emerald-400">
                 {currentUser ? '1500 ELO' : '—'}
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '11px', color: '#94a3b8' }}>Status</div>
-              <div style={{ fontSize: '12px', fontWeight: 800, color: '#38bdf8' }}>
+            <div>
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">Status</div>
+              <div className="text-xs font-bold text-blue-600 dark:text-blue-400">
                 {currentUser ? 'Aktiv İştirakçı' : 'Qonaq'}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Season Status Notice */}
-        <div
-          style={{
-            backgroundColor: '#0f172a',
-            border: '1px solid #1e293b',
-            borderRadius: '12px',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#38bdf8', fontWeight: 800, fontSize: '14px' }}>
-            <i className="fa-solid fa-circle-info" />
+        {/* Season Notice */}
+        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400">
+            <Info className="w-4 h-4 shrink-0" />
             <span>Klub Turnir və Reytinq Qaydası</span>
           </div>
-          <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1', lineHeight: 1.6 }}>
-            TDV Mafia platformasında saxta və ya uydurma reytinq xalları istifadə edilmir! Reytinq cədvəli yalnız <strong>klub masalarda başa çatan canlı oyunlar</strong> və <strong>şagirdlərin şəxsi hesabları</strong> əsasında avtomatik formalaşır. Masalara qoşularaq və dostlarınızla intellektual duellərdə qələbə qazanaraq şəhərin ən güclü deduksiya ustaları sırasına yüksələ bilərsiniz.
+          <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            TDV Mafia platformasında reytinq xalları yalnız{' '}
+            <strong className="text-zinc-900 dark:text-zinc-100">
+              başa çatan canlı oyunlar
+            </strong>{' '}
+            və{' '}
+            <strong className="text-zinc-900 dark:text-zinc-100">
+              iştirakçıların fərdi profilləri
+            </strong>{' '}
+            əsasında qeydə alınır. Masalara qoşularaq və intellektual duellərdə qələbə qazanaraq
+            şəhərin ən güclü deduksiya ustaları sırasına yüksələ bilərsiniz.
           </p>
         </div>
 
         {/* Tier Hierarchy Guide */}
         <div>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 800, color: '#f8fafc' }}>
+          <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">
             Liqa Dərəcələri və Tələblər (Tier Structure)
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
-            <div
-              style={{
-                backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '10px',
-                padding: '12px 14px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 800, color: '#94a3b8', fontSize: '13px' }}>Tier 1: Əsgər</span>
-                <Badge tone="neutral">0 - 1499 ELO</Badge>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-800/40">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                  Tier 1: Əsgər
+                </span>
+                <Badge tone="neutral">0–1499</Badge>
               </div>
-              <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Başlanğıc dərəcə. Standart 12 nəfərlik masalarda iştirak hüququ.
               </p>
             </div>
 
-            <div
-              style={{
-                backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                borderRadius: '10px',
-                padding: '12px 14px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 800, color: '#fbbf24', fontSize: '13px' }}>Tier 2: Kapo</span>
-                <Badge tone="amber">1500 - 2199 ELO</Badge>
+            <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
+                  Tier 2: Kapo
+                </span>
+                <Badge tone="amber">1500–2199</Badge>
               </div>
-              <p style={{ margin: 0, fontSize: '11px', color: '#cbd5e1' }}>
+              <p className="text-[11px] text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Təcrübəli oyunçu. Dante 9 və 20 nəfərlik xüsusi masalarda masa açmaq icazəsi.
               </p>
             </div>
 
-            <div
-              style={{
-                backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                border: '1px solid rgba(168, 85, 247, 0.35)',
-                borderRadius: '10px',
-                padding: '12px 14px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 800, color: '#c084fc', fontSize: '13px' }}>Tier 3: Don</span>
-                <Badge tone="purple">2200+ ELO</Badge>
+            <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                  Tier 3: Don
+                </span>
+                <Badge tone="purple">2200+</Badge>
               </div>
-              <p style={{ margin: 0, fontSize: '11px', color: '#e9d5ff' }}>
-                Elit Usta. 40-50 nəfərlik All-In kütləvi məktəb turnir masalarında rəhbərlik hüququ.
+              <p className="text-[11px] text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                Elit Usta. 40–50 nəfərlik All-In kütləvi turnir masalarında rəhbərlik hüququ.
               </p>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', borderTop: '1px solid #1e293b', paddingTop: '14px' }}>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
-            Klub Nəticələr • Kriptoqrafik Qoruma • Anti-Cheat
+        <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Kriptoqrafik Qoruma & Anti-Cheat</span>
           </span>
-          <Button variant="outline" size="sm" onClick={onClose} style={{ borderColor: '#334155' }}>
+          <Button variant="secondary" size="sm" onClick={onClose}>
             Bağla
           </Button>
         </div>

@@ -1,6 +1,20 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Link as LinkIcon,
+  Check,
+  Play,
+  Bot,
+  Zap,
+  Users,
+  Shield,
+  Eye,
+  Clock,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
 import { BailiffConsole } from '../../../components/admin/BailiffConsole';
@@ -219,10 +233,13 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   // Start Game Trigger (Only for Host)
   const handleStartGame = () => {
     if (totalPlayersCount < 3) {
-      alert('Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ 5 Botla Doldur" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!');
+      alert(
+        'Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ 5 Botla Doldur" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!'
+      );
       return;
     }
-    const nextPhase: GamePhase = lobbyState.mode === 'ALL_IN' ? 'DAY_REGIONAL_CAUCUS' : 'NIGHT_BUFFER';
+    const nextPhase: GamePhase =
+      lobbyState.mode === 'ALL_IN' ? 'DAY_REGIONAL_CAUCUS' : 'NIGHT_BUFFER';
     const duration = lobbyState.mode === 'ALL_IN' ? 180 : 90;
     dispatchAction({ action: 'START_GAME', nextPhase, durationSeconds: duration });
   };
@@ -256,13 +273,14 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     alert(`Əmr serverə göndərildi: ${actionType} -> ${targetPlayerId}`);
   };
 
-  const isHost = lobbyState.hostUserId === currentUserId || Object.keys(lobbyState.players).length <= 1;
+  const isHost =
+    lobbyState.hostUserId === currentUserId || Object.keys(lobbyState.players).length <= 1;
   const isLobbyPhase = lobbyState.phase === 'LOBBY';
   const playersList = Object.values(lobbyState.players);
   const totalPlayersCount = playersList.length;
   const currentPack = PACKS_CONFIG[lobbyState.mode];
 
-  // Derive my faction for voice phase gating (MAFIA = can hear mafia during night)
+  // Derive my faction for voice phase gating
   const myPlayerSession = lobbyState.players[currentUserId];
   const myFaction: string | null = myPlayerSession
     ? myPlayerSession.displayRole?.formatted?.toLowerCase().includes('mafiya') ||
@@ -271,7 +289,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       : 'TOWN'
     : null;
 
-  // Voice-chat peers: all other players (bots can be ignored in voice)
+  // Voice-chat peers
   const voicePeers = playersList
     .filter((p) => p.userId !== currentUserId && !p.isAiBotControlled)
     .map((p) => ({
@@ -279,7 +297,6 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       isAlive: p.isAlive,
     }));
 
-  // Newspaper Modal State (only used during game)
   const [isNewspaperOpen, setIsNewspaperOpen] = useState<boolean>(false);
   const [newspaper] = useState<MorningNewspaper | null>({
     publicDeaths: [],
@@ -289,68 +306,56 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '0 16px' }}>
-      {/* ─── LOBBY HEADER BAR (RICH OBSIDIAN GLASS) ───────────────────────── */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-          background: 'linear-gradient(145deg, rgba(18, 22, 34, 0.85) 0%, rgba(10, 14, 24, 0.95) 100%)',
-          backdropFilter: 'blur(16px)',
-          padding: '22px 26px',
-          borderRadius: '14px',
-          border: '1px solid rgba(239, 68, 68, 0.25)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
-        }}
-      >
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 transition-colors duration-200">
+      {/* ─── LOBBY HEADER BAR ───────────────────────────────────────── */}
+      <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-200">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="flex items-center gap-2.5">
             <span
-              style={{
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                backgroundColor: isLobbyPhase ? '#3b82f6' : '#22c55e',
-                boxShadow: isLobbyPhase ? '0 0 10px #3b82f6' : '0 0 10px #22c55e',
-                display: 'inline-block',
-              }}
+              className={`w-2.5 h-2.5 rounded-full ${
+                isLobbyPhase ? 'bg-blue-500 ring-2 ring-blue-500/20' : 'bg-emerald-500 ring-2 ring-emerald-500/20 animate-pulse'
+              }`}
             />
-            <h1 style={{ fontSize: '22px', margin: 0, color: '#f8fafc', fontWeight: 900 }}>
-              {isLobbyPhase ? 'Gözləmə Otağı (Lobby)' : AZ_PHASES[lobbyState.phase] ?? lobbyState.phase} — {lobbyId}
+            <h1 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white tracking-tight">
+              {isLobbyPhase ? 'Gözləmə Otağı (Lobby)' : AZ_PHASES[lobbyState.phase] ?? lobbyState.phase}{' '}
+              <span className="text-sm font-semibold text-zinc-400 font-mono">— {lobbyId}</span>
             </h1>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-2.5 mt-2 flex-wrap text-xs text-zinc-600 dark:text-zinc-400">
             <Badge tone="purple">{currentPack?.name || lobbyState.mode.replace(/_/g, ' ')}</Badge>
-            <span style={{ fontSize: '13px', color: '#94a3b8' }}>
-              Masada: <strong style={{ color: '#38bdf8' }}>{totalPlayersCount} Oyunçu</strong>
+            <span>•</span>
+            <span>
+              Masada:{' '}
+              <strong className="text-zinc-900 dark:text-zinc-100">{totalPlayersCount} Oyunçu</strong>
             </span>
-            <span style={{ fontSize: '13px', color: '#64748b' }}>•</span>
-            <span style={{ fontSize: '13px', color: '#94a3b8' }}>
-              Siz: <strong style={{ color: '#f8fafc' }}>{currentUsername}</strong> {isHost && <span style={{ color: '#fbbf24' }}>(Host)</span>}
+            <span>•</span>
+            <span>
+              Siz:{' '}
+              <strong className="text-zinc-900 dark:text-zinc-100">{currentUsername}</strong>{' '}
+              {isHost && <span className="text-amber-600 dark:text-amber-400 font-bold">(Host)</span>}
             </span>
           </div>
 
           {currentPack?.roleBreakdown && (
-            <div style={{ marginTop: '8px', fontSize: '12px', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span>🎭</span>
-              <span><strong>Masa Rolları:</strong> {currentPack.roleBreakdown}</span>
+            <div className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1.5 font-medium">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>
+                <strong>Masa Rolları:</strong> {currentPack.roleBreakdown}
+              </span>
             </div>
           )}
         </div>
 
         {/* Top Header Actions */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="flex items-center gap-2.5 flex-wrap">
           <Button
-            variant={copiedLink ? 'secondary' : 'primary'}
+            variant={copiedLink ? 'secondary' : 'outline'}
             size="sm"
             onClick={handleCopyLink}
-            style={{ fontWeight: 800 }}
+            icon={copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <LinkIcon className="w-4 h-4" />}
           >
-            {copiedLink ? '✅ Link Kopyalandı!' : '🔗 Masanın Linkini Kopyala'}
+            {copiedLink ? 'Link Kopyalandı' : 'Linki Kopyala'}
           </Button>
 
           {isLobbyPhase && (
@@ -358,9 +363,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               variant={isReadyLocal ? 'secondary' : 'warning'}
               size="sm"
               onClick={handleToggleReady}
-              style={{ fontWeight: 700 }}
+              icon={isReadyLocal ? <Check className="w-4 h-4 text-emerald-600" /> : <Clock className="w-4 h-4" />}
             >
-              {isReadyLocal ? '✅ Mən Hazıram' : '⏳ Hazır Ol'}
+              {isReadyLocal ? 'Mən Hazıram' : 'Hazır Ol'}
             </Button>
           )}
 
@@ -370,25 +375,25 @@ export default function LobbyPage({ params }: LobbyPageProps) {
                 variant="secondary"
                 size="sm"
                 onClick={() => dispatchAction({ action: 'ADD_BOT' })}
-                style={{ fontWeight: 700, backgroundColor: '#1e1b4b', border: '1px solid #4f46e5', color: '#c7d2fe' }}
+                icon={<Bot className="w-4 h-4" />}
               >
-                🤖 +1 AI Bot
+                +1 AI Bot
               </Button>
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => dispatchAction({ action: 'FILL_BOTS', targetCount: 5 })}
-                style={{ fontWeight: 700, backgroundColor: '#312e81', border: '1px solid #6366f1', color: '#e0e7ff' }}
+                icon={<Zap className="w-4 h-4 text-amber-500" />}
               >
-                ⚡ 5 Botla Doldur
+                5 Botla Doldur
               </Button>
               <Button
-                variant="danger"
+                variant="primary"
                 size="sm"
                 onClick={handleStartGame}
-                style={{ fontWeight: 900, boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)' }}
+                icon={<Play className="w-4 h-4" />}
               >
-                🚀 Oyunu Başlat
+                Oyunu Başlat
               </Button>
             </>
           )}
@@ -398,9 +403,8 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               variant="danger"
               size="sm"
               onClick={() => dispatchAction({ action: 'PROGRESS_PHASE' })}
-              style={{ fontWeight: 800, boxShadow: '0 0 15px rgba(239, 68, 68, 0.4)' }}
             >
-              {lobbyState.phase === 'NIGHT_BUFFER' ? '🌅 Gecəni Bitir → Səhər' : '⚖️ Səsləri Hesabla (Məhkəmə)'}
+              {lobbyState.phase === 'NIGHT_BUFFER' ? '🌅 Gecəni Bitir → Səhər' : '⚖️ Səsləri Hesabla'}
             </Button>
           )}
         </div>
@@ -408,71 +412,45 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
       {/* Copy link confirmation toast */}
       {copiedLink && (
-        <div
-          style={{
-            backgroundColor: '#064e3b',
-            border: '1px solid #059669',
-            color: '#a7f3d0',
-            padding: '12px 18px',
-            borderRadius: '10px',
-            fontSize: '13px',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <span>🎉</span>
-          <span>Masa linki kopyalandı! Bu linki dostlarınıza göndərin (WhatsApp / Telegram) — onlar linki açan kimi masada canlı görünəcəklər!</span>
+        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fadeIn">
+          <Check className="w-4 h-4 shrink-0 text-emerald-600" />
+          <span>Masa linki kopyalandı! Bu linki dostlarınıza göndərin — onlar linkə daxil olan kimi masada görünəcəklər.</span>
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 1. LOBBY PHASE (SADƏ, SƏLİQƏLİ VƏ YÜNGÜL GÖZLƏMƏ OTAĞI)              */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
+      {/* ─── 1. LOBBY PHASE ─────────────────────────────────────────── */}
       {isLobbyPhase ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="flex flex-col gap-6">
           {/* Secret Role Notice */}
-          <div
-            style={{
-              backgroundColor: '#0f172a',
-              border: '1px solid #334155',
-              borderRadius: '12px',
-              padding: '16px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            <span style={{ fontSize: '24px' }}>🎭</span>
+          <div className="p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <Eye className="w-5 h-5" />
+            </div>
             <div>
-              <div style={{ fontWeight: 800, color: '#f8fafc', fontSize: '14px' }}>
+              <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                 Rollar oyun başlamamışdan əvvəl qətiyyən görünmür!
-              </div>
-              <div style={{ color: '#94a3b8', fontSize: '12px', marginTop: '2px' }}>
-                Hər kəs toplaşdıqdan sonra Masa Rəhbəri (Host) "Oyunu Başlat" düyməsinə basacaq və hər bir oyunçuya öz gizli rolu (Mafiya, Şərif, Həkim və s.) şəxsi olaraq təqdim ediləcək.
-              </div>
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                Hər kəs toplaşdıqdan sonra Masa Rəhbəri (Host) &quot;Oyunu Başlat&quot; düyməsinə basacaq və hər bir iştirakçıya öz gizli rolu (Mafiya, Şərif, Həkim və s.) şəxsi olaraq təqdim ediləcək.
+              </p>
             </div>
           </div>
 
-          {/* Connected Players Grid (Lightweight, No Roles) */}
+          {/* Connected Players Grid */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#f8fafc' }}>
-                Masadakı Oyunçular ({totalPlayersCount})
-              </h2>
-              <span style={{ fontSize: '12px', color: '#64748b' }}>
-                Dostlarınız linkə daxil olduqca avtomatik bura əlavə olunurlar
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-extrabold text-zinc-950 dark:text-white">
+                  Masadakı Oyunçular
+                </h2>
+                <Badge tone="neutral">{totalPlayersCount}</Badge>
+              </div>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                Dostlarınız linklə daxil olduqca avtomatik bura əlavə olunurlar
               </span>
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: '14px',
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {playersList.map((p) => (
                 <PlayerCard
                   key={p.userId}
@@ -486,80 +464,55 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           </div>
 
           {/* Lobby Footer Action Box */}
-          <div
-            style={{
-              backgroundColor: '#090d16',
-              border: '1px solid #1e293b',
-              borderRadius: '14px',
-              padding: '24px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px',
-            }}
-          >
+          <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
             <div>
-              <div style={{ fontWeight: 800, fontSize: '16px', color: '#f8fafc' }}>
+              <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
                 {isHost ? 'Siz bu masanın rəhbərisiniz (Host)' : 'Masa Rəhbərinin oyunu başlatması gözlənilir'}
-              </div>
-              <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                 {isHost
                   ? 'Bütün dostlarınız masaya toplaşdıqdan sonra oyunu başlada bilərsiniz.'
-                  : 'Hazır olduğunuzu bildirmək üçün "Mən Hazıram" düyməsinə klikləyin.'}
+                  : 'Hazır olduğunuzu bildirmək üçün "Hazır Ol" düyməsinə klikləyin.'}
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className="flex items-center gap-3">
               {isHost ? (
                 <Button
                   variant="primary"
-                  size="lg"
+                  size="md"
                   onClick={handleStartGame}
-                  style={{
-                    backgroundColor: '#16a34a',
-                    borderColor: '#15803d',
-                    fontWeight: 900,
-                    padding: '12px 28px',
-                    boxShadow: '0 0 25px rgba(34, 197, 94, 0.4)',
-                  }}
+                  icon={<Play className="w-4 h-4" />}
                 >
-                  🚀 Oyunu İndi Başlat
+                  Oyunu İndi Başlat
                 </Button>
               ) : (
                 <Button
                   variant={isReadyLocal ? 'secondary' : 'warning'}
-                  size="lg"
+                  size="md"
                   onClick={handleToggleReady}
-                  style={{ fontWeight: 800, padding: '12px 24px' }}
+                  icon={isReadyLocal ? <Check className="w-4 h-4 text-emerald-600" /> : <Clock className="w-4 h-4" />}
                 >
-                  {isReadyLocal ? '✅ Mən Hazıram' : '⏳ Hazır Ol'}
+                  {isReadyLocal ? 'Mən Hazıram' : 'Hazır Ol'}
                 </Button>
               )}
             </div>
           </div>
 
-          {/* Optional Collapsible Admin Tools for Host/Architect */}
+          {/* Collapsible Admin Drawer for Host */}
           {isHost && (
-            <div style={{ marginTop: '10px' }}>
+            <div className="pt-2">
               <button
                 type="button"
                 onClick={() => setShowAdminTools(!showAdminTools)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#64748b',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  padding: '4px 0',
-                  textDecoration: 'underline',
-                }}
+                className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 inline-flex items-center gap-1.5 cursor-pointer transition-colors"
               >
-                {showAdminTools ? '▲ İnzibati Alətləri Gizlət' : '▼ Qabaqcıl İnzibati Alətlər (Admin Paneli)'}
+                {showAdminTools ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                <span>{showAdminTools ? 'İnzibati Alətləri Gizlət' : 'Qabaqcıl İnzibati Alətlər (Admin Paneli)'}</span>
               </button>
 
               {showAdminTools && (
-                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="mt-4 flex flex-col gap-4 animate-fadeIn">
                   {lobbyState.mode === 'ALL_IN' && (
                     <AdminDualLockPanel
                       unlockState={lobbyState.adminMasterUnlock}
@@ -579,7 +532,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
                   <ArchitectConsole
                     lobbyState={lobbyState}
                     onOverridePhase={handleOverridePhase}
-                    onConfigureJitter={(val) => setLobbyState((prev) => ({ ...prev, nightJitterDelaySeconds: val }))}
+                    onConfigureJitter={(val) =>
+                      setLobbyState((prev) => ({ ...prev, nightJitterDelaySeconds: val }))
+                    }
                   />
 
                   <BailiffConsole
@@ -593,30 +548,19 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           )}
         </div>
       ) : (
-        /* ─────────────────────────────────────────────────────────────────── */
-        /* 2. ACTIVE GAME PHASE (OYUN BAŞLADIQDAN SONRAKİ MƏRHƏLƏ)             */
-        /* ─────────────────────────────────────────────────────────────────── */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Secret Role Card (Only shown to this player!) */}
-          <div
-            style={{
-              backgroundColor: '#1e1b4b',
-              border: '2px solid #6366f1',
-              borderRadius: '12px',
-              padding: '16px 20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              boxShadow: '0 0 25px rgba(99, 102, 241, 0.25)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '28px' }}>🎭</span>
+        /* ─── 2. ACTIVE GAME PHASE ───────────────────────────────────── */
+        <div className="flex flex-col gap-6">
+          {/* Secret Role Card */}
+          <div className="p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 flex items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">
+                🎭
+              </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#c7d2fe', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 800 }}>
+                <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider block">
                   Sizin Gizli Şəxsi Rolunuz
                 </span>
-                <div style={{ fontSize: '18px', fontWeight: 900, color: '#f8fafc' }}>
+                <div className="text-lg font-black text-zinc-950 dark:text-white">
                   {lobbyState.players[currentUserId]?.displayRole.formatted ?? `${currentUsername} (Vətəndaş)`}
                 </div>
               </div>
@@ -625,7 +569,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             <Badge tone="purple">MƏXFİ</Badge>
           </div>
 
-          {/* Full Interactive Game Board */}
+          {/* Interactive Game Board */}
           <GameBoard
             lobbyState={lobbyState}
             currentUserId={currentUserId}
@@ -636,7 +580,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             speakingIds={speakingIds}
           />
 
-          {/* ─── VOICE CHAT ──────────────────────────────────────────────────── */}
+          {/* Voice Chat */}
           <VoiceChat
             lobbyId={lobbyId}
             myUserId={currentUserId}

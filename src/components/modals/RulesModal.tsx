@@ -1,6 +1,20 @@
 'use client';
 
-import React, { useState, useMemo, CSSProperties } from 'react';
+import React, { useState, useMemo } from 'react';
+import {
+  BookOpen,
+  Shield,
+  Crosshair,
+  Sparkles,
+  Gavel,
+  Clock,
+  Search,
+  X,
+  Lightbulb,
+  CheckCircle,
+  HelpCircle,
+  Users,
+} from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 
@@ -18,7 +32,7 @@ interface RoleRule {
   readonly faction: 'TOWN' | 'MAFIA' | 'NEUTRAL';
   readonly factionLabel: string;
   readonly badgeTone: 'neutral' | 'amber' | 'purple';
-  readonly icon: string;
+  readonly iconName: string;
   readonly iconColor: string;
   readonly nightAbility: string;
   readonly dayAbility: string;
@@ -35,7 +49,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-magnifying-glass',
+    iconName: 'fa-magnifying-glass',
     iconColor: '#38bdf8',
     nightAbility: 'Hər gecə 1 oyunçunun kimliyini gizli yoxlayır. Nəticədə hədəfin "Məsum Şəhərli" və ya "Şübhəli Mafioz" olduğunu öyrənir.',
     dayAbility: 'Gündüz məclisində deduksiya nəticələrini şəhərlilərlə bölüşərək əsl cinayətkarları ifşa etmək üçün ittiham irəli sürür.',
@@ -49,7 +63,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-user-doctor',
+    iconName: 'fa-user-doctor',
     iconColor: '#34d399',
     nightAbility: 'Hər gecə 1 oyunçunu seçərək onu qoruyur. Əgər Mafiya və ya Manyak həmin şəxsə hücum edərsə, hücum zərərsizləşdirilir və qurban sağ qalır.',
     dayAbility: 'Açıq səsvermədə digər vətəndaşlarla birgə səs verir.',
@@ -63,7 +77,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-landmark',
+    iconName: 'fa-landmark',
     iconColor: '#fbbf24',
     nightAbility: 'Gecə xüsusi qabiliyyəti yoxdur (öz kabinetində təhlükəsizlikdədir).',
     dayAbility: 'İstənilən gündüz mərhələsində səlahiyyətini rəsmən elan edə bilər. Elan etdikdən sonra onun səsi 1 deyil, 3 səs (x3) gücündə sayılır!',
@@ -77,7 +91,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-microscope',
+    iconName: 'fa-microscope',
     iconColor: '#a78bfa',
     nightAbility: 'Ölən oyunçulardan birinin cəsədini araşdırır. Qətlin hansı silahla törədildiyini və qurbanın son gecə kimlərlə təmasda olduğunu aşkarlayır.',
     dayAbility: 'Ekspertiza rəyini məhkəməyə təqdim edərək yalançı bəyanatları darmadağın edir.',
@@ -91,7 +105,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-shield-halved',
+    iconName: 'fa-shield-halved',
     iconColor: '#60a5fa',
     nightAbility: 'Hər gecə bir oyunçunu qorumaq üçün təyin edir. Həmin şəxsə ölümcül hücum edilərsə, Fədai zərbəni öz üzərinə götürür və qurbanın yerinə şəhid olur.',
     dayAbility: 'Vətəndaş hüququ ilə səsvermədə iştirak edir.',
@@ -105,7 +119,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-fingerprint',
+    iconName: 'fa-fingerprint',
     iconColor: '#38bdf8',
     nightAbility: 'Hər gecə iki oyunçunu izləyir və onların eyni fraksiyaya aid olub-olmadığını öyrənir.',
     dayAbility: 'Əlaqələri ifşa edir.',
@@ -119,7 +133,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-users',
+    iconName: 'fa-users',
     iconColor: '#94a3b8',
     nightAbility: 'Gecə evində yatır, xüsusi gecə hərəkəti yoxdur.',
     dayAbility: 'Məhkəmədə və məclisdə tam səs hüququ ilə yalançıları tutmaq, arqumentləri dinləmək və kollektiv qərar vermək.',
@@ -133,7 +147,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-user-shield',
+    iconName: 'fa-user-shield',
     iconColor: '#38bdf8',
     nightAbility: 'Hər gecə bir oyunçunu qoruyur. Həmin şəxsə ölümcül hücum edilərsə, Mühafizəçi qatillə duelə girir: həm hücum edən cinayətkarı zərərsizləşdirir, həm də qorunan şəxsi xilas edərək özü qəhrəmancasına həlak olur.',
     dayAbility: 'Məhkəmədə səsvermədə iştirak edir.',
@@ -147,7 +161,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-binoculars',
+    iconName: 'fa-binoculars',
     iconColor: '#0ea5e9',
     nightAbility: 'Hər gecə bir oyunçunun evini gizlicə pusur. Həmin şəxsin gecə kimin evinə getdiyini (kimi ziyarət etdiyini) dəqiq qeydə alır.',
     dayAbility: 'Gecə ziyarət izlərini məhkəməyə təqdim edərək qətlin baş verdiyi evə kimin girdiyini ifşa edir.',
@@ -161,7 +175,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'TOWN',
     factionLabel: 'Şəhər İttifaqı',
     badgeTone: 'neutral',
-    icon: 'fa-medal',
+    iconName: 'fa-medal',
     iconColor: '#f59e0b',
     nightAbility: 'Oyunda cəmi 3 dəfə gecə "Döyüş Həyəcanı" elan edə bilər. Həyəcan gecəsi onun qapısını döyən HƏR KƏS (qatil, şərif, həkim fərqi qoyulmadan) güllələnir və dərhal öldürülür!',
     dayAbility: 'Gündüz məclisində şəhərliləri ayıq-sayıq olmağa çağırır.',
@@ -169,7 +183,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     proTip: 'Gündüz məclisində özünüzü şübhəli və ya vacib hədəf kimi göstərib həmin gecə Həyəcan elan edin ki, Mafiya sizə hücum edərkən öz güllənizə tuş gəlsin.',
   },
 
-  // === MAFİYA AilÉ™siI (MAFIA) ===
+  // === MAFİYA AİLƏSİ (MAFIA) ===
   {
     id: 'godfather',
     title: 'Don / Xaç Atası',
@@ -177,7 +191,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-crown',
+    iconName: 'fa-crown',
     iconColor: '#ef4444',
     nightAbility: 'Gecə Mafiyanın qətl hədəfini təyin edir. Şərif onu yoxladıqda radar sistemi aldanır və Don "Məsum Vətəndaş" kimi görünür!',
     dayAbility: 'Özünü ən nümunəvi vətəndaş kimi göstərərək günahsız insanları ittiham hədəfinə çevirir.',
@@ -191,7 +205,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-gun',
+    iconName: 'fa-gun',
     iconColor: '#f87171',
     nightAbility: 'Donun verdiyi qətl əmrini birbaşa həyata keçirir. Əgər Don öldürülərsə, Mafioz avtomatik olaraq ailənin yeni Donuna çevrilir!',
     dayAbility: 'Məhkəmə səsverməsində şəhərlilərə qarşı birləşir.',
@@ -205,7 +219,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-wand-magic-sparkles',
+    iconName: 'fa-wand-magic-sparkles',
     iconColor: '#fb923c',
     nightAbility: 'Hər gecə bir oyunçunu cazibəsi və ya tələsi ilə dondurur. Həmin oyunçunun gecə bacarığı bloklanır (Həkim qoruya bilmir, Şərif yoxlaya bilmir).',
     dayAbility: 'Şəhər müzakirələrində aktiv iştirak edir.',
@@ -219,7 +233,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-envelope-open-text',
+    iconName: 'fa-envelope-open-text',
     iconColor: '#f43f5e',
     nightAbility: 'Hər gecə bir oyunçunu şantaj edir. Şantaj olunan oyunçu növbəti gün məclisdə və məhkəmə çatında bir kəlmə belə yaza bilmir!',
     dayAbility: 'Susdurulmuş oyunçunu səsvermədə asanlıqla qurban verir.',
@@ -233,7 +247,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-mask',
+    iconName: 'fa-mask',
     iconColor: '#dc2626',
     nightAbility: 'Hədəf seçdiyi oyunçunun gecə hərəkətini başqa bir iştirakçıya yönləndirir (məs: Həkimin qorumasını düşmənə, qatilin gülləsini qonşusuna çevirir).',
     dayAbility: 'Xaos mühitindən istifadə edir.',
@@ -247,7 +261,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-file-signature',
+    iconName: 'fa-file-signature',
     iconColor: '#fb923c',
     nightAbility: 'Hər gecə günahsız bir vətəndaşın üzərinə saxta dəlillər və cinayət silahı qoyur. Həmin gecə Şərif həmin şəxsi yoxlayarsa, sistem onu "Mafioz" olaraq göstərir!',
     dayAbility: 'Şərifin çaşqınlığından istifadə edərək günahsız şəxsin asılmasına təkan verir.',
@@ -261,7 +275,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'MAFIA',
     factionLabel: 'Mafiya Ailəsi',
     badgeTone: 'amber',
-    icon: 'fa-pen-nib',
+    iconName: 'fa-pen-nib',
     iconColor: '#e11d48',
     nightAbility: 'Mafiyanın qətlə yetirəcəyi şəxsin son vəsiyyətnaməsini və gündəliyini saxtalaşdırır. Səhər qəzetində həmin şəxsin əsl qeydləri deyil, Saxtakarın yazdığı yalançı ittihamlar dərc olunur.',
     dayAbility: 'Saxta qeydlər üzərindən şəhər daxilində qarşıdurma yaradır.',
@@ -277,7 +291,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Neytral / Xaos',
     badgeTone: 'purple',
-    icon: 'fa-face-laugh-squint',
+    iconName: 'fa-face-laugh-squint',
     iconColor: '#c084fc',
     nightAbility: 'Gecə heç kimi öldürmür; öz xaos ssenarisini hazırlayır.',
     dayAbility: 'Özünü qəsdən şübhəli, yalançı və ya çaşqın göstərərək Şəhər Məhkəməsi tərəfindən EDAM EDİLMƏYƏ çalışır!',
@@ -291,7 +305,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Neytral Qatil',
     badgeTone: 'purple',
-    icon: 'fa-skull',
+    iconName: 'fa-skull',
     iconColor: '#e11d48',
     nightAbility: 'Hər gecə amansızcasına 1 oyunçunu qətlə yetirir. Gecə bıçaqlanmağa qarşı xüsusi polad zirehi var (Mafiyanın adi gülləsi onu öldürmür!).',
     dayAbility: 'Məhkəmədə günahsız şəhərli maskası taxır.',
@@ -305,7 +319,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Zərərsiz Neytral',
     badgeTone: 'purple',
-    icon: 'fa-question',
+    iconName: 'fa-question',
     iconColor: '#93c5fd',
     nightAbility: 'Gecə məzarlığa daxil olaraq daha öncə öldürülmüş istənilən oyunçunun rolunu və fraksiyasını (Şərif, Həkim, Don və s.) mənimsəyir.',
     dayAbility: 'Rolunu seçdikdən sonra bütün şəhərə "Yeni bir şəxs həmin rolu xatırladı" bildirişi gedir.',
@@ -319,7 +333,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Şərq Klanı',
     badgeTone: 'purple',
-    icon: 'fa-dragon',
+    iconName: 'fa-dragon',
     iconColor: '#eab308',
     nightAbility: 'Qərb Mafiyasından asılı olmayan gizli gecə zərbələri endirir və öz klanını genişləndirir.',
     dayAbility: 'İki cəbhə arasında nifaq salır.',
@@ -333,7 +347,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Mistik Təriqət',
     badgeTone: 'purple',
-    icon: 'fa-eye',
+    iconName: 'fa-eye',
     iconColor: '#a855f7',
     nightAbility: 'Hər gecə bir oyunçunu ayin üçün işarələyir. 3 oyunçu işarələndikdə qaranlıq portal açılır.',
     dayAbility: 'Təriqət ayinlərini gizlədir.',
@@ -347,7 +361,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Neytral Xaos',
     badgeTone: 'purple',
-    icon: 'fa-fire-flame-curved',
+    iconName: 'fa-fire-flame-curved',
     iconColor: '#f97316',
     nightAbility: 'Hər gecə bir oyunçunun evinə gizlicə benzin tökür (hədəf bundan xəbər tutmur). İstədiyi gecə isə kükürd yandıraraq daha əvvəl benzin tökdüyü BÜTÜN evləri eyni anda alova bürüyür və hamısını məhv edir!',
     dayAbility: 'Məhkəmədə tamamilə bitərəf mövqe sərgiləyir.',
@@ -361,7 +375,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
     faction: 'NEUTRAL',
     factionLabel: 'Neytral / Xaos',
     badgeTone: 'purple',
-    icon: 'fa-wand-sparkles',
+    iconName: 'fa-wand-sparkles',
     iconColor: '#ec4899',
     nightAbility: 'Hər gecə bir oyunçunu hipnoz edərək onun iradəsini ələ keçirir və həmin şəxsi istədiyi ikinci bir oyunçunun üzərinə yönəldir (məs: Qatili məcbur edir ki, öz mafioz dostunu öldürsün).',
     dayAbility: 'İttihamları manipulyasiya edir.',
@@ -393,270 +407,228 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.88)',
-    backdropFilter: 'blur(12px)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10000,
-    padding: '16px',
-  };
-
-  const modalStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid rgba(239, 68, 68, 0.35)',
-    borderRadius: '20px',
-    padding: '24px 28px',
-    maxWidth: '820px',
-    width: '100%',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.3), 0 0 60px rgba(0, 0, 0, 0.9)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '18px',
-  };
-
-  const tabBtnStyle = (tab: TabType): CSSProperties => {
-    const isActive = activeTab === tab;
-    return {
-      padding: '8px 16px',
-      borderRadius: '12px',
-      fontSize: '13px',
-      fontWeight: 700,
-      cursor: 'pointer',
-      border: isActive ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.1)',
-      backgroundColor: isActive ? 'rgba(239, 68, 68, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-      color: isActive ? '#fca5a5' : '#94a3b8',
-      transition: 'all 0.2s ease',
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '6px',
-    };
-  };
-
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-4xl rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '24px' }}>📖</span>
-              <h2 style={{ margin: 0, color: '#f8fafc', fontSize: '22px', fontWeight: 900 }}>
-                TDV MAFIA - Oyun Qaydaları və 24 Rol Ensiklopediyası
-              </h2>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <BookOpen className="w-5 h-5" />
             </div>
-            <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
-              Məktəb icması üçün peşəkar sosial deduksiya, məhkəmə və gecə əməliyyatları protokolları
-            </p>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
+                TDV MAFIA — Qaydalar və 24 Rol Ensiklopediyası
+              </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Məktəb icması üçün peşəkar sosial deduksiya, məhkəmə və gecə əməliyyatları protokolları
+              </p>
+            </div>
           </div>
+
           <button
+            type="button"
             onClick={onClose}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '8px',
-              color: '#94a3b8',
-              fontSize: '16px',
-              cursor: 'pointer',
-              padding: '6px 12px',
-              lineHeight: 1,
-            }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Selector */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
-          <button type="button" onClick={() => setActiveTab('phases')} style={tabBtnStyle('phases')}>
-            <i className="fa-solid fa-clock-rotate-left" />
-            <span>📜 Oyun Fazaları</span>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <button
+            type="button"
+            onClick={() => setActiveTab('phases')}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeTab === 'phases'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Oyun Fazaları</span>
           </button>
-          <button type="button" onClick={() => setActiveTab('town')} style={tabBtnStyle('town')}>
-            <i className="fa-solid fa-shield-halved" />
-            <span>🛡️ Şəhər (10 Rol)</span>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('town')}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeTab === 'town'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>Şəhər (10 Rol)</span>
           </button>
-          <button type="button" onClick={() => setActiveTab('mafia')} style={tabBtnStyle('mafia')}>
-            <i className="fa-solid fa-gun" />
-            <span>🩸 Mafiya (7 Rol)</span>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('mafia')}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeTab === 'mafia'
+                ? 'bg-amber-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Crosshair className="w-3.5 h-3.5" />
+            <span>Mafiya (7 Rol)</span>
           </button>
-          <button type="button" onClick={() => setActiveTab('neutral')} style={tabBtnStyle('neutral')}>
-            <i className="fa-solid fa-dice-d20" />
-            <span>🎭 Neytral & Xaos (7 Rol)</span>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('neutral')}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeTab === 'neutral'
+                ? 'bg-purple-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Neytral & Xaos (7 Rol)</span>
           </button>
-          <button type="button" onClick={() => setActiveTab('court')} style={tabBtnStyle('court')}>
-            <i className="fa-solid fa-gavel" />
-            <span>⚖️ Məhkəmə & Edam</span>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('court')}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+              activeTab === 'court'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+          >
+            <Gavel className="w-3.5 h-3.5" />
+            <span>Məhkəmə & Edam</span>
           </button>
         </div>
 
         {/* Search for roles when browsing roles tabs */}
         {activeTab !== 'phases' && activeTab !== 'court' && (
-          <div style={{ position: 'relative' }}>
-            <i
-              className="fa-solid fa-magnifying-glass"
-              style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b', fontSize: '13px' }}
-            />
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
             <input
               type="text"
-              placeholder="Rolu adına və ya bacarığına görə axtarın (məs: Şərif, Həkim, Don, Dəli, Şantaj)..."
+              placeholder="Rolu adına və ya bacarığına görə axtarın (məs: Şərif, Həkim, Don, Dəli)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                backgroundColor: '#0f172a',
-                border: '1px solid #334155',
-                borderRadius: '10px',
-                padding: '10px 14px 10px 38px',
-                color: '#f8fafc',
-                fontSize: '13px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
             />
           </div>
         )}
 
-        {/* Tab 1: Phases Loop & 75s Protocol */}
+        {/* Tab 1: Phases Loop */}
         {activeTab === 'phases' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13px', lineHeight: 1.6, color: '#cbd5e1' }}>
-            <div style={{ backgroundColor: '#0f172a', padding: '16px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <h3 style={{ margin: '0 0 10px 0', color: '#f8fafc', fontSize: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#38bdf8' }}>1.</span> Mərhələlər Dövrü (Day & Night Phase Loop)
+          <div className="flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-300">
+            <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+              <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                <span className="text-blue-500">1.</span> Mərhələlər Dövrü (Day & Night Loop)
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(56, 189, 248, 0.08)', borderLeft: '3px solid #38bdf8' }}>
-                  <strong style={{ color: '#38bdf8' }}>☀️ Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən qətlləri müzakirə edir və şübhəliləri müəyyən edir.
+              <div className="flex flex-col gap-2.5">
+                <div className="p-3 rounded-lg border-l-4 border-blue-500 bg-blue-500/5">
+                  <strong className="text-zinc-900 dark:text-zinc-100">☀️ Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən hadisələri təhlil edir və şübhəliləri müəyyənləşdirir.
                 </div>
-                <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderLeft: '3px solid #f59e0b' }}>
-                  <strong style={{ color: '#f59e0b' }}>⚖️ Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa, şəxs edam olunur və kimliyi Səhər Qəzetində elan edilir.
+                <div className="p-3 rounded-lg border-l-4 border-amber-500 bg-amber-500/5">
+                  <strong className="text-zinc-900 dark:text-zinc-100">⚖️ Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa şəxs edam olunur.
                 </div>
-                <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderLeft: '3px solid #ef4444' }}>
-                  <strong style={{ color: '#ef4444' }}>🌙 Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya qətl hədəfini seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
+                <div className="p-3 rounded-lg border-l-4 border-red-500 bg-red-500/5">
+                  <strong className="text-zinc-900 dark:text-zinc-100">🌙 Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya hədəf seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
                 </div>
               </div>
             </div>
 
-            <div style={{ backgroundColor: '#0f172a', padding: '16px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '15px', fontWeight: 800 }}>
+            <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
                   2. 75 Saniyəlik Gemini AI Qoruma Protokolu
                 </h3>
                 <Badge tone="purple">AI Mühafizə</Badge>
               </div>
-              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1' }}>
-                Əgər hər hansı oyunçunun interneti kəsilərsə və ya pəncərəni bağlayarsa, dərhal <strong>75 saniyəlik taymer</strong> işə düşür. Bu müddətdə geri qayıtmazsa, masa POZULMUR! Gemini 3.8 Flash modeli həmin oyunçunun roluna və fraksiyasına uyğun şəkildə masanı tərk etmədən oyunu davam etdirir. Oyunçu geri qayıtdıqda idarəetmə dərhal insana qaytarılır.
+              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Əgər oyunçulardan birinin bağlantısı qırılarsa, masa dağılmır! 75 saniyəlik qoruyucu bufer işə düşür və Gemini 3.8 modeli həmin oyunçunun roluna uyğun optimal qərarlar qəbul edərək oyunu fasiləsiz davam etdirir.
               </p>
             </div>
           </div>
         )}
 
-        {/* Tab 5: Court & Execution Rules */}
+        {/* Tab 5: Court Rules */}
         {activeTab === 'court' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13px', lineHeight: 1.6, color: '#cbd5e1' }}>
-            <div style={{ backgroundColor: '#0f172a', padding: '16px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <h3 style={{ margin: '0 0 10px 0', color: '#f8fafc', fontSize: '16px', fontWeight: 800 }}>
-                ⚖️ Məhkəmə və Edam Qaydaları
-              </h3>
-              <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <li>
-                  <strong style={{ color: '#f8fafc' }}>Mütləq Səs Çoxluğu:</strong> Bir nəfərin edam olunması üçün canlı vətəndaşların ümumi sayının 50%-dən çoxu (&gt;N/2) həmin şəxsə səs verməlidir.
-                </li>
-                <li>
-                  <strong style={{ color: '#f8fafc' }}>30 Saniyəlik Son Söz (Müdafiə):</strong> Kürsüyə çıxarılan şübhəliyə səsvermədən dərhal əvvəl 30 saniyəlik son müdafiə hüququ verilir. Bu müddətdə başqaları danışa bilməz.
-                </li>
-                <li>
-                  <strong style={{ color: '#f8fafc' }}>Bərabərlik Halı:</strong> Əgər səsvermədə bərabərlik yaranarsa, həmin gün heç kim edam edilmir və şəhər qaranlıq gecəyə qədəm qoyur.
-                </li>
-                <li>
-                  <strong style={{ color: '#f8fafc' }}>Kokit Gölü (Dante 9) Gizli Səsverməsi:</strong> Xüsusi dəhşət rejimində kimin kimə səs verdiyi gizli saxlanılır; yalnız yekun hökm açıqlanır.
-                </li>
-              </ul>
-            </div>
+          <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+            <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <Gavel className="w-5 h-5 text-red-500" />
+              <span>Məhkəmə və Edam Qaydaları</span>
+            </h3>
+            <ul className="space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 list-disc list-inside leading-relaxed">
+              <li>
+                <strong className="text-zinc-900 dark:text-zinc-100">Mütləq Səs Çoxluğu:</strong> Bir nəfərin edam olunması üçün canlı vətəndaşların ümumi sayının 50%-dən çoxu (&gt;N/2) həmin şəxsə səs verməlidir.
+              </li>
+              <li>
+                <strong className="text-zinc-900 dark:text-zinc-100">30 Saniyəlik Son Söz (Müdafiə):</strong> Kürsüyə çıxarılan şübhəliyə səsvermədən dərhal əvvəl 30 saniyəlik son müdafiə hüququ verilir.
+              </li>
+              <li>
+                <strong className="text-zinc-900 dark:text-zinc-100">Bərabərlik Halı:</strong> Əgər səsvermədə bərabərlik yaranarsa, həmin gün heç kim edam edilmir və şəhər qaranlıq gecəyə qədəm qoyur.
+              </li>
+              <li>
+                <strong className="text-zinc-900 dark:text-zinc-100">Dante Kokit Gölü Gizli Səsverməsi:</strong> Xüsusi dəhşət rejimində kimin kimə səs verdiyi gizli saxlanılır; yalnız yekun hökm açıqlanır.
+              </li>
+            </ul>
           </div>
         )}
 
-        {/* Roles Tabs (Town, Mafia, Neutral) */}
+        {/* Roles Tabs */}
         {(activeTab === 'town' || activeTab === 'mafia' || activeTab === 'neutral') && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '14px' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredRoles.map((role) => (
               <div
                 key={role.id}
-                style={{
-                  backgroundColor: '#0f172a',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '14px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-                }}
+                className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950 flex flex-col justify-between gap-3 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
               >
-                {/* Role Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '10px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: role.iconColor,
-                        fontSize: '16px',
-                        border: `1px solid ${role.iconColor}40`,
-                      }}
-                    >
-                      <i className={`fa-solid ${role.icon}`} />
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center text-sm font-bold">
+                        <i className={`fa-solid ${role.iconName}`} style={{ color: role.iconColor }} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                          {role.title}
+                        </h4>
+                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                          {role.originalTitle}
+                        </span>
+                      </div>
+                    </div>
+                    <Badge tone={role.badgeTone}>{role.factionLabel}</Badge>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs pt-2 border-t border-zinc-200/60 dark:border-zinc-800/80">
+                    <div>
+                      <strong className="text-blue-600 dark:text-blue-400">🌙 Gecə: </strong>
+                      <span className="text-zinc-600 dark:text-zinc-300">{role.nightAbility}</span>
                     </div>
                     <div>
-                      <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#f8fafc' }}>{role.title}</h4>
-                      <span style={{ fontSize: '11px', color: '#64748b' }}>{role.originalTitle}</span>
+                      <strong className="text-amber-600 dark:text-amber-400">☀️ Gündüz: </strong>
+                      <span className="text-zinc-600 dark:text-zinc-300">{role.dayAbility}</span>
+                    </div>
+                    <div>
+                      <strong className="text-emerald-600 dark:text-emerald-400">🏆 Qələbə: </strong>
+                      <span className="text-zinc-600 dark:text-zinc-300">{role.winCondition}</span>
                     </div>
                   </div>
-                  <Badge tone={role.badgeTone}>{role.factionLabel}</Badge>
                 </div>
 
-                {/* Abilities */}
-                <div style={{ fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '10px' }}>
-                  <div>
-                    <strong style={{ color: '#38bdf8' }}>🌙 Gecə Bacarığı: </strong>
-                    <span style={{ color: '#cbd5e1' }}>{role.nightAbility}</span>
-                  </div>
-                  <div>
-                    <strong style={{ color: '#fbbf24' }}>☀️ Gündüz Rolu: </strong>
-                    <span style={{ color: '#cbd5e1' }}>{role.dayAbility}</span>
-                  </div>
-                  <div>
-                    <strong style={{ color: '#34d399' }}>🏆 Qələbə Şərti: </strong>
-                    <span style={{ color: '#cbd5e1' }}>{role.winCondition}</span>
-                  </div>
-                </div>
-
-                {/* Pro Tip */}
-                <div
-                  style={{
-                    backgroundColor: 'rgba(239, 68, 68, 0.06)',
-                    border: '1px dashed rgba(239, 68, 68, 0.25)',
-                    borderRadius: '8px',
-                    padding: '8px 10px',
-                    fontSize: '11px',
-                    color: '#fca5a5',
-                  }}
-                >
-                  <strong>💡 Peşəkar Taktika: </strong>
-                  {role.proTip}
+                <div className="p-2.5 rounded-lg border border-red-500/20 bg-red-500/5 text-xs text-red-700 dark:text-red-300 flex items-start gap-1.5">
+                  <Lightbulb className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
+                  <span>
+                    <strong>Taktika: </strong>
+                    {role.proTip}
+                  </span>
                 </div>
               </div>
             ))}
@@ -664,12 +636,12 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
         )}
 
         {/* Footer */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', borderTop: '1px solid #1e293b', paddingTop: '14px' }}>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
-            Cəmi 18 Əsas Rol • 14 Oyun Formatı • TDV Community Labs Standartı
+        <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            24 Əsas Rol • 15 Oyun Formatı • TDV Standartı
           </span>
-          <Button variant="primary" size="md" onClick={onClose} style={{ padding: '8px 24px' }}>
-            Başa Düşdüm, Masaya Qayıt
+          <Button variant="primary" size="sm" onClick={onClose}>
+            Başa Düşdüm
           </Button>
         </div>
       </div>

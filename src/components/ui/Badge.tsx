@@ -1,44 +1,40 @@
+'use client';
+
 import React, { CSSProperties, ReactNode } from 'react';
 
-export type BadgeTone = 'red' | 'blue' | 'amber' | 'emerald' | 'purple' | 'neutral';
+export type BadgeTone = 'red' | 'blue' | 'amber' | 'emerald' | 'purple' | 'neutral' | 'zinc';
 
 export interface BadgeProps {
   readonly children?: ReactNode;
   readonly tone?: BadgeTone;
   readonly style?: CSSProperties;
   readonly className?: string;
+  readonly icon?: ReactNode;
 }
 
-const TONE_STYLES: Record<BadgeTone, CSSProperties> = {
-  red: { background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.1) 100%)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.4)', boxShadow: '0 0 10px rgba(239, 68, 68, 0.15)' },
-  blue: { background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.1) 100%)', color: '#93c5fd', border: '1px solid rgba(59, 130, 246, 0.4)', boxShadow: '0 0 10px rgba(59, 130, 246, 0.15)' },
-  amber: { background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.1) 100%)', color: '#fde047', border: '1px solid rgba(245, 158, 11, 0.45)', boxShadow: '0 0 10px rgba(245, 158, 11, 0.15)' },
-  emerald: { background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(4, 120, 87, 0.1) 100%)', color: '#6ee7b7', border: '1px solid rgba(16, 185, 129, 0.4)', boxShadow: '0 0 10px rgba(16, 185, 129, 0.15)' },
-  purple: { background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.22) 0%, rgba(126, 34, 206, 0.1) 100%)', color: '#d8b4fe', border: '1px solid rgba(168, 85, 247, 0.45)', boxShadow: '0 0 10px rgba(168, 85, 247, 0.15)' },
-  neutral: { background: 'linear-gradient(135deg, rgba(71, 85, 105, 0.25) 0%, rgba(30, 41, 59, 0.15) 100%)', color: '#cbd5e1', border: '1px solid rgba(148, 163, 184, 0.25)' },
+const TONE_CLASSES: Record<BadgeTone, string> = {
+  red: 'bg-red-500/10 text-red-700 border-red-500/25 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/30',
+  blue: 'bg-blue-500/10 text-blue-700 border-blue-500/25 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30',
+  amber: 'bg-amber-500/10 text-amber-700 border-amber-500/25 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30',
+  emerald: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/25 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30',
+  purple: 'bg-purple-500/10 text-purple-700 border-purple-500/25 dark:bg-purple-500/15 dark:text-purple-400 dark:border-purple-500/30',
+  neutral: 'bg-zinc-500/10 text-zinc-700 border-zinc-500/25 dark:bg-zinc-500/15 dark:text-zinc-300 dark:border-zinc-700',
+  zinc: 'bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
 };
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
   tone = 'neutral',
-  style = {},
+  style,
   className = '',
+  icon,
 }) => {
-  const badgeStyle: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '2px 8px',
-    borderRadius: '9999px',
-    fontSize: '11px',
-    fontWeight: 700,
-    letterSpacing: '0.05em',
-    textTransform: 'uppercase',
-    ...TONE_STYLES[tone],
-    ...style,
-  };
-
   return (
-    <span className={className} style={badgeStyle}>
+    <span
+      style={style}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide border transition-colors duration-200 ${TONE_CLASSES[tone]} ${className}`}
+    >
+      {icon && <span className="inline-flex shrink-0">{icon}</span>}
       {children}
     </span>
   );

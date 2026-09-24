@@ -1,6 +1,17 @@
 'use client';
 
-import React, { useState, CSSProperties } from 'react';
+import React, { useState } from 'react';
+import {
+  Layers,
+  Sparkles,
+  Crown,
+  X,
+  Dices,
+  Shield,
+  Zap,
+  Building,
+  Users,
+} from 'lucide-react';
 import { PACKS_CONFIG } from '../../config/packs.config';
 import { GameMode } from '../../types/packs';
 import { Badge } from '../ui/Badge';
@@ -16,7 +27,7 @@ export interface GameModesCatalogModalProps {
 type ShowcaseTab = 'CLASSIC' | 'MINIGAMES' | 'ALL_IN';
 
 // Helper to style each individual role token into a distinct colored chip
-const getRoleChipStyle = (roleText: string) => {
+const getRoleChipClass = (roleText: string) => {
   const r = roleText.toLowerCase();
 
   // Mafia / Assassin / Dictator / Killer
@@ -37,12 +48,7 @@ const getRoleChipStyle = (roleText: string) => {
     r.includes('kölgə') ||
     r.includes('şəbəkə')
   ) {
-    return {
-      bg: 'rgba(239, 68, 68, 0.18)',
-      border: 'rgba(239, 68, 68, 0.42)',
-      text: '#fca5a5',
-      icon: 'fa-skull-crossbones',
-    };
+    return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/25 dark:border-red-500/30';
   }
 
   // Doctor / Medic / Healer / Surgeon
@@ -56,15 +62,10 @@ const getRoleChipStyle = (roleText: string) => {
     r.includes('vatson') ||
     r.includes('ekzorsist')
   ) {
-    return {
-      bg: 'rgba(16, 185, 129, 0.18)',
-      border: 'rgba(16, 185, 129, 0.42)',
-      text: '#6ee7b7',
-      icon: 'fa-heart-pulse',
-    };
+    return 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25 dark:border-emerald-500/30';
   }
 
-  // Law & Investigation: Sheriff, Prosecutor, Lawyer, Investigator, Warden, Police, Inquisitor
+  // Law & Investigation
   if (
     r.includes('şərif') ||
     r.includes('vergili') ||
@@ -84,12 +85,7 @@ const getRoleChipStyle = (roleText: string) => {
     r.includes('naviqator') ||
     r.includes('medium')
   ) {
-    return {
-      bg: 'rgba(56, 189, 248, 0.18)',
-      border: 'rgba(56, 189, 248, 0.42)',
-      text: '#7dd3fc',
-      icon: 'fa-shield-halved',
-    };
+    return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/25 dark:border-blue-500/30';
   }
 
   // Jester / Lucifer / Cult / Shadow
@@ -103,15 +99,10 @@ const getRoleChipStyle = (roleText: string) => {
     r.includes('poltergeyst') ||
     r.includes('ruh')
   ) {
-    return {
-      bg: 'rgba(168, 85, 247, 0.22)',
-      border: 'rgba(168, 85, 247, 0.48)',
-      text: '#d8b4fe',
-      icon: 'fa-masks-theater',
-    };
+    return 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/25 dark:border-purple-500/30';
   }
 
-  // Tactical Specialists: Disrupter, Time Traveler, Blackmailer, Puppeteer, Coroner, Martyr, Klaatu, Alien, Armor, Spy
+  // Tactical Specialists
   if (
     r.includes('gözbağlayıcı') ||
     r.includes('şantajçı') ||
@@ -134,24 +125,13 @@ const getRoleChipStyle = (roleText: string) => {
     r.includes('adler') ||
     r.includes('tədqiqatçı')
   ) {
-    return {
-      bg: 'rgba(245, 158, 11, 0.18)',
-      border: 'rgba(245, 158, 11, 0.42)',
-      text: '#fde68a',
-      icon: 'fa-wand-magic-sparkles',
-    };
+    return 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25 dark:border-amber-500/30';
   }
 
-  // Town / Citizens / Prisoners / Sinners
-  return {
-    bg: 'rgba(148, 163, 184, 0.14)',
-    border: 'rgba(148, 163, 184, 0.28)',
-    text: '#cbd5e1',
-    icon: 'fa-user',
-  };
+  // Town / Citizens
+  return 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20 dark:border-zinc-700';
 };
 
-// Unique special abilities and mechanical signatures for each game mode
 const PACK_SPECIAL_FEATURES: Record<string, { label: string; icon: string }[]> = {
   SE7EN_DEADLY_SINS: [
     { label: 'Gözbağlama (Əngəl)', icon: 'fa-wand-magic-sparkles' },
@@ -209,16 +189,15 @@ const PACK_SPECIAL_FEATURES: Record<string, { label: string; icon: string }[]> =
     { label: 'Diktator & Qəsdçilər Savaşı', icon: 'fa-crown' },
   ],
   THE_DAY_THE_EARTH_STOOD_STILL: [
-    { label: 'Klaatu: Dünyanı Dondur (Qətllər Durur)', icon: 'fa-snowflake' },
+    { label: 'Klaatu: Dünyanı Dondur', icon: 'fa-snowflake' },
     { label: 'Qort Lazer Buxarlandırması', icon: 'fa-bolt-lightning' },
     { label: 'Qiyamət Saatı 12:00', icon: 'fa-hourglass-end' },
   ],
   DANTES_INFERNO: [
     { label: 'Malebranche İblisləri', icon: 'fa-skull-crossbones' },
     { label: 'Vergili Bələdçiliyi', icon: 'fa-compass' },
-    { label: '9 Dairə Əzabları (Limbo, Qəzəb, Xəsislik...)', icon: 'fa-dungeon' },
+    { label: '9 Dairə Əzabları', icon: 'fa-dungeon' },
     { label: 'Kokit Gizli Səsverməsi', icon: 'fa-user-secret' },
-    { label: 'Flageleton Qan Çayı', icon: 'fa-droplet' },
   ],
   CHERNOBYL_EXCLUSION_ZONE: [
     { label: 'Radiasiya Sızması (Zonaya Eniş)', icon: 'fa-radiation' },
@@ -271,253 +250,140 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
     }
   };
 
-  const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(3, 7, 18, 0.88)',
-    backdropFilter: 'blur(14px)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10000,
-    padding: '20px',
-  };
-
-  const modalContainerStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid rgba(239, 68, 68, 0.35)',
-    borderRadius: '20px',
-    maxWidth: '1100px',
-    width: '100%',
-    maxHeight: '90vh',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.9), 0 0 50px rgba(220, 38, 38, 0.2)',
-    overflow: 'hidden',
-  };
-
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalContainerStyle} onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-5xl rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl flex flex-col max-h-[90vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
-        <div
-          style={{
-            padding: '22px 28px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: 'linear-gradient(145deg, rgba(28, 14, 22, 0.85) 0%, rgba(11, 15, 26, 0.95) 100%)',
-            flexShrink: 0,
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  color: '#f87171',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '15px',
-                }}
-              >
-                <i className="fa-solid fa-layer-group" />
-              </div>
-              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, color: '#f8fafc' }}>
+        <div className="p-5 sm:p-6 border-b border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <Layers className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
                 Oyun Formatları & Rollar Kataloqu
               </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                15 klub rejimi, xüsusi qabiliyyətlər, 16 ictimai vəzifə və 12 gizli istedad.
+              </p>
             </div>
-            <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
-              14 klub paket, xüsusi qabiliyyətlər, 16 ictimai vəzifə və 12 gizli istedad.
-            </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {/* Tab Buttons in Header */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '4px',
-                background: 'rgba(15, 23, 42, 0.8)',
-                padding: '4px',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
+          <div className="flex items-center gap-3">
+            {/* Segmented Switcher */}
+            <div className="flex items-center p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
               <button
                 type="button"
                 onClick={() => setActiveTab('CLASSIC')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: activeTab === 'CLASSIC' ? 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)' : 'transparent',
-                  color: activeTab === 'CLASSIC' ? '#ffffff' : '#94a3b8',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === 'CLASSIC'
+                    ? 'bg-red-600 text-white shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                }`}
               >
-                🏛️ Klassik (8)
+                🏛️ Klassik ({classicPacks.length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('MINIGAMES')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: activeTab === 'MINIGAMES' ? 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)' : 'transparent',
-                  color: activeTab === 'MINIGAMES' ? '#ffffff' : '#94a3b8',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === 'MINIGAMES'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                }`}
               >
-                🎭 Xüsusi Rejimlər (10)
+                🎭 Xüsusi ({minigamePacks.length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('ALL_IN')}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: activeTab === 'ALL_IN' ? 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)' : 'transparent',
-                  color: activeTab === 'ALL_IN' ? '#ffffff' : '#94a3b8',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === 'ALL_IN'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                }`}
               >
-                👑 All-In (1)
+                👑 All-In
               </button>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              style={{
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: '#cbd5e1',
-                width: '34px',
-                height: '34px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: '15px',
-                transition: 'all 0.15s ease',
-              }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Scrollable Content */}
-        <div style={{ padding: '24px 28px', overflowY: 'auto', flexGrow: 1 }}>
-          {/* Tab 1: Classic Packs */}
-          {activeTab === 'CLASSIC' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '16px' }}>
-              {classicPacks.map((pack) => {
-                const rolesList = pack.roleBreakdown.split(',').map((s) => s.trim()).filter(Boolean);
+        <div className="p-6 overflow-y-auto flex-1">
+          {/* Classic & Minigames Grid */}
+          {(activeTab === 'CLASSIC' || activeTab === 'MINIGAMES') && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(activeTab === 'CLASSIC' ? classicPacks : minigamePacks).map((pack) => {
+                const rolesList = pack.roleBreakdown
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean);
                 const features = PACK_SPECIAL_FEATURES[pack.id] || [];
 
                 return (
                   <div
                     key={pack.id}
-                    className="card-hover-lift"
-                    style={{
-                      background: 'linear-gradient(145deg, rgba(26, 16, 24, 0.85) 0%, rgba(11, 15, 26, 0.95) 100%)',
-                      border: '1px solid rgba(239, 68, 68, 0.25)',
-                      borderRadius: '16px',
-                      padding: '20px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      gap: '14px',
-                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
-                    }}
+                    className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950 flex flex-col justify-between gap-4 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 hover:-translate-y-0.5"
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3 style={{ margin: 0, fontSize: '16px', color: '#f8fafc', fontWeight: 900 }}>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 leading-tight">
                           {pack.name}
                         </h3>
-                        <Badge tone="blue">{pack.minPlayers}–{pack.maxPlayers} nəfər</Badge>
+                        <Badge tone={pack.isMinigame ? 'amber' : 'blue'} className="shrink-0">
+                          {pack.minPlayers}–{pack.maxPlayers} nəfər
+                        </Badge>
                       </div>
 
                       {/* Roles */}
                       <div>
-                        <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase' }}>
+                        <div className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
                           Rol Tərkibi:
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                          {rolesList.map((role, idx) => {
-                            const style = getRoleChipStyle(role);
-                            return (
-                              <span
-                                key={idx}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  padding: '3px 7px',
-                                  borderRadius: '5px',
-                                  fontSize: '11px',
-                                  fontWeight: 700,
-                                  background: style.bg,
-                                  border: `1px solid ${style.border}`,
-                                  color: style.text,
-                                }}
-                              >
-                                <i className={`fa-solid ${style.icon}`} style={{ fontSize: '9px' }} />
-                                {role}
-                              </span>
-                            );
-                          })}
+                        <div className="flex flex-wrap gap-1.5">
+                          {rolesList.map((role, idx) => (
+                            <span
+                              key={idx}
+                              className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border ${getRoleChipClass(
+                                role
+                              )}`}
+                            >
+                              {role}
+                            </span>
+                          ))}
                         </div>
                       </div>
 
-                      {/* Features */}
+                      {/* Special Features */}
                       {features.length > 0 && (
-                        <div style={{ background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', padding: '7px 9px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                          <div style={{ fontSize: '10px', color: '#cbd5e1', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase' }}>
-                            ⚡ Xüsusi Mexanika:
+                        <div className="p-2.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60">
+                          <div className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+                            Xüsusi Mexanika:
                           </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          <div className="flex flex-wrap gap-1">
                             {features.map((feat, fIdx) => (
                               <span
                                 key={fIdx}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  fontSize: '10px',
-                                  color: '#e2e8f0',
-                                  background: 'rgba(255, 255, 255, 0.06)',
-                                  padding: '2px 5px',
-                                  borderRadius: '4px',
-                                  fontWeight: 600,
-                                }}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-[10px] font-medium text-zinc-700 dark:text-zinc-300"
                               >
-                                <i className={`fa-solid ${feat.icon}`} style={{ color: '#f87171', fontSize: '9px' }} />
+                                <Zap className="w-2.5 h-2.5 text-red-500 shrink-0" />
                                 {feat.label}
                               </span>
                             ))}
@@ -526,29 +392,14 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                       )}
                     </div>
 
-                    {/* Crimson Masa Yarat Button */}
-                    <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '10px' }}>
+                    <div className="pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
                       <Button
                         variant="primary"
                         size="sm"
                         fullWidth
                         onClick={() => handleLaunchMode(pack.id as GameMode)}
-                        style={{
-                          background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-                          boxShadow: '0 0 16px rgba(239, 68, 68, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-                          border: '1px solid #fca5a5',
-                          fontWeight: 800,
-                          fontSize: '12px',
-                          color: '#ffffff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          padding: '8px 14px',
-                          borderRadius: '8px',
-                        }}
+                        icon={<Dices className="w-4 h-4" />}
                       >
-                        <i className="fa-solid fa-dice" />
                         Bu Rejimdə Masa Yarat
                       </Button>
                     </div>
@@ -558,201 +409,48 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
             </div>
           )}
 
-          {/* Tab 2: Minigames */}
-          {activeTab === 'MINIGAMES' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: '16px' }}>
-              {minigamePacks.map((pack) => {
-                const rolesList = pack.roleBreakdown.split(',').map((s) => s.trim()).filter(Boolean);
-                const features = PACK_SPECIAL_FEATURES[pack.id] || [];
-
-                return (
-                  <div
-                    key={pack.id}
-                    className="card-hover-lift"
-                    style={{
-                      background: 'linear-gradient(145deg, rgba(34, 22, 12, 0.85) 0%, rgba(11, 15, 26, 0.95) 100%)',
-                      border: '1px solid rgba(245, 158, 11, 0.35)',
-                      borderRadius: '16px',
-                      padding: '20px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      gap: '14px',
-                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3 style={{ margin: 0, fontSize: '16px', color: '#fde68a', fontWeight: 900 }}>
-                          {pack.name}
-                        </h3>
-                        <Badge tone="amber">{pack.minPlayers}–{pack.maxPlayers} nəfər</Badge>
-                      </div>
-
-                      {/* Roles */}
-                      <div>
-                        <div style={{ fontSize: '10px', color: '#fef08a', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase' }}>
-                          Rejim Rolları:
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                          {rolesList.map((role, idx) => {
-                            const style = getRoleChipStyle(role);
-                            return (
-                              <span
-                                key={idx}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  padding: '3px 7px',
-                                  borderRadius: '5px',
-                                  fontSize: '11px',
-                                  fontWeight: 700,
-                                  background: style.bg,
-                                  border: `1px solid ${style.border}`,
-                                  color: style.text,
-                                }}
-                              >
-                                <i className={`fa-solid ${style.icon}`} style={{ fontSize: '9px' }} />
-                                {role}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Features */}
-                      {features.length > 0 && (
-                        <div style={{ background: 'rgba(245, 158, 11, 0.07)', borderRadius: '8px', padding: '7px 9px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-                          <div style={{ fontSize: '10px', color: '#fef08a', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase' }}>
-                            🔥 Xüsusi Mexanikalar:
-                          </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                            {features.map((feat, fIdx) => (
-                              <span
-                                key={fIdx}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  fontSize: '10px',
-                                  color: '#fde68a',
-                                  background: 'rgba(245, 158, 11, 0.15)',
-                                  padding: '2px 5px',
-                                  borderRadius: '4px',
-                                  fontWeight: 600,
-                                }}
-                              >
-                                <i className={`fa-solid ${feat.icon}`} style={{ color: '#fbbf24', fontSize: '9px' }} />
-                                {feat.label}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Crimson Masa Yarat Button */}
-                    <div style={{ borderTop: '1px solid rgba(245, 158, 11, 0.15)', paddingTop: '10px' }}>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        fullWidth
-                        onClick={() => handleLaunchMode(pack.id as GameMode)}
-                        style={{
-                          background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-                          boxShadow: '0 0 16px rgba(239, 68, 68, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-                          border: '1px solid #fca5a5',
-                          fontWeight: 800,
-                          fontSize: '12px',
-                          color: '#ffffff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          padding: '8px 14px',
-                          borderRadius: '8px',
-                        }}
-                      >
-                        <i className="fa-solid fa-dice" />
-                        Bu Rejimdə Masa Yarat
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Tab 3: All-In */}
+          {/* All-In Tab */}
           {activeTab === 'ALL_IN' && allInPack && (
-            <div
-              style={{
-                background: 'linear-gradient(135deg, rgba(38, 16, 56, 0.9) 0%, rgba(12, 10, 26, 0.98) 100%)',
-                border: '1px solid rgba(168, 85, 247, 0.45)',
-                borderRadius: '18px',
-                padding: '24px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '20px',
-                boxShadow: '0 12px 35px rgba(124, 58, 237, 0.25)',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, color: '#f8fafc' }}>
-                    {allInPack.name} (40–50 Nəfərlik Şəhər KÃ¼tlÉ™vi DÃ¶yÃ¼ÅŸÃ¼)
-                  </h3>
-                  <Badge tone="purple">{allInPack.minPlayers}–{allInPack.maxPlayers} nəfər</Badge>
+            <div className="p-6 rounded-2xl border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10 flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-xl font-black text-zinc-950 dark:text-white">
+                      {allInPack.name} (40–50 Nəfərlik Şəhər Kütləvi Döyüşü)
+                    </h3>
+                    <Badge tone="purple">{allInPack.minPlayers}–{allInPack.maxPlayers} nəfər</Badge>
+                  </div>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                    Bütün sinif və klub üzvlərinin eyni arenada toqquşduğu ən möhtəşəm turnir formatı.
+                  </p>
                 </div>
 
                 <Button
                   variant="primary"
-                  size="sm"
+                  size="md"
                   onClick={() => handleLaunchMode('ALL_IN')}
-                  style={{
-                    background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
-                    boxShadow: '0 0 16px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
-                    border: '1px solid #fca5a5',
-                    fontWeight: 800,
-                    fontSize: '13px',
-                    color: '#ffffff',
-                    padding: '8px 20px',
-                    borderRadius: '8px',
-                  }}
+                  icon={<Crown className="w-4 h-4" />}
                 >
-                  <i className="fa-solid fa-dice" />
                   All-In Masası Yarat
                 </Button>
               </div>
 
               {/* Roster */}
               <div>
-                <div style={{ fontSize: '11px', color: '#d8b4fe', fontWeight: 800, marginBottom: '6px', textTransform: 'uppercase' }}>
+                <div className="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider mb-2">
                   Şəhər Bölgüsü (3 Laylı Kimlik):
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                <div className="flex flex-wrap gap-1.5">
                   {allInPack.roleBreakdown.split(',').map((role, idx) => {
                     const trimmed = role.trim();
                     if (!trimmed) return null;
-                    const style = getRoleChipStyle(trimmed);
                     return (
                       <span
                         key={idx}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          padding: '4px 8px',
-                          borderRadius: '5px',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          background: style.bg,
-                          border: `1px solid ${style.border}`,
-                          color: style.text,
-                        }}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${getRoleChipClass(
+                          trimmed
+                        )}`}
                       >
-                        <i className={`fa-solid ${style.icon}`} style={{ fontSize: '9px' }} />
                         {trimmed}
                       </span>
                     );
@@ -760,64 +458,36 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                 </div>
               </div>
 
-              {/* 16 Civic Offices */}
-              <div style={{ background: 'rgba(56, 189, 248, 0.05)', borderRadius: '10px', padding: '14px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <i className="fa-solid fa-landmark text-sky-400" />
-                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#7dd3fc' }}>
-                    16 İctimai Vəzifə (Kvartal Səlahiyyətləri & Bonus Səslər):
-                  </span>
+              {/* Civic Offices */}
+              <div className="p-4 rounded-xl border border-blue-500/25 bg-blue-500/5 dark:bg-blue-500/10">
+                <div className="flex items-center gap-2 mb-2 text-xs font-bold text-blue-700 dark:text-blue-300">
+                  <Building className="w-4 h-4 text-blue-500" />
+                  <span>16 İctimai Vəzifə (Kvartal Səlahiyyətləri & Bonus Səslər):</span>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                <div className="flex flex-wrap gap-1.5">
                   {civicOfficesList.map((office, idx) => (
                     <span
                       key={idx}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '3px 8px',
-                        borderRadius: '5px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        background: 'rgba(56, 189, 248, 0.12)',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                        color: '#bae6fd',
-                      }}
+                      className="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 border border-blue-500/20 text-xs font-medium text-blue-900 dark:text-blue-200"
                     >
-                      <i className="fa-solid fa-building-columns" style={{ fontSize: '9px', opacity: 0.8 }} />
                       {office}
                     </span>
                   ))}
                 </div>
               </div>
 
-              {/* 12 Traits */}
-              <div style={{ background: 'rgba(168, 85, 247, 0.06)', borderRadius: '10px', padding: '14px', border: '1px solid rgba(168, 85, 247, 0.25)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <i className="fa-solid fa-bolt text-purple-400" />
-                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#d8b4fe' }}>
-                    12 Gizli İstedad (Gecə Passiv & Aktiv Qabiliyyətləri):
-                  </span>
+              {/* Traits */}
+              <div className="p-4 rounded-xl border border-purple-500/25 bg-purple-500/5 dark:bg-purple-500/10">
+                <div className="flex items-center gap-2 mb-2 text-xs font-bold text-purple-700 dark:text-purple-300">
+                  <Zap className="w-4 h-4 text-purple-500" />
+                  <span>12 Gizli İstedad (Gecə Passiv & Aktiv Qabiliyyətləri):</span>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                <div className="flex flex-wrap gap-1.5">
                   {innateTraitsList.map((trait, idx) => (
                     <span
                       key={idx}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '3px 8px',
-                        borderRadius: '5px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        background: 'rgba(168, 85, 247, 0.14)',
-                        border: '1px solid rgba(168, 85, 247, 0.35)',
-                        color: '#f3e8ff',
-                      }}
+                      className="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 border border-purple-500/20 text-xs font-medium text-purple-900 dark:text-purple-200"
                     >
-                      <i className="fa-solid fa-dna" style={{ fontSize: '9px', opacity: 0.8 }} />
                       {trait}
                     </span>
                   ))}

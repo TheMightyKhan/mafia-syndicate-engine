@@ -12,6 +12,7 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Mic, MicOff, Wifi, AlertTriangle, Radio } from 'lucide-react';
 import { GamePhase } from '../../types/game';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -433,118 +434,67 @@ export function VoiceChat({
   const nightMuted = micEnabled && !micAllowed;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        backgroundColor: 'rgba(10, 14, 24, 0.85)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(99, 102, 241, 0.25)',
-        borderRadius: '12px',
-        padding: '14px 20px',
-        flexWrap: 'wrap',
-      }}
-    >
+    <div className="flex items-center gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex-wrap transition-colors duration-200">
       {/* Mic Toggle Button */}
       <button
         type="button"
         onClick={handleMicToggle}
         title={isActuallyMuted ? 'Mikrofonu aç' : 'Mikrofonu söndür'}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '10px 18px',
-          borderRadius: '10px',
-          border: 'none',
-          cursor: 'pointer',
-          fontWeight: 800,
-          fontSize: '14px',
-          transition: 'all 0.2s',
-          backgroundColor: isActuallyMuted
-            ? 'rgba(239, 68, 68, 0.15)'
-            : 'rgba(34, 197, 94, 0.18)',
-          color: isActuallyMuted ? '#fca5a5' : '#86efac',
-          boxShadow: isActuallyMuted
-            ? '0 0 12px rgba(239, 68, 68, 0.25)'
-            : '0 0 12px rgba(34, 197, 94, 0.35)',
-        }}
+        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs cursor-pointer transition-all duration-200 select-none shadow-sm ${
+          isActuallyMuted
+            ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/25 hover:bg-rose-500/15'
+            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20'
+        }`}
       >
-        <span style={{ fontSize: '18px' }}>{isActuallyMuted ? '🔇' : '🎙️'}</span>
+        {isActuallyMuted ? (
+          <MicOff className="w-4 h-4 text-rose-500" />
+        ) : (
+          <Mic className="w-4 h-4 text-emerald-500" />
+        )}
         <span>
           {!voiceActive
             ? 'Səs Çata Qoşul'
             : isActuallyMuted
-            ? 'Mikrofonun Bağlıdır'
+            ? 'Mikrofon Bağlıdır'
             : 'Danışırsınız'}
         </span>
       </button>
 
       {/* Connected peer count */}
       {voiceActive && (
-        <span style={{ fontSize: '13px', color: '#64748b' }}>
+        <span className="text-xs text-zinc-500 dark:text-zinc-400 inline-flex items-center gap-1.5 font-medium">
+          <Radio className="w-3.5 h-3.5 text-blue-500" />
           {connectedPeerIds.size > 0 ? (
-            <span style={{ color: '#38bdf8' }}>🔗 {connectedPeerIds.size} oyunçu qoşulub</span>
+            <span className="text-blue-600 dark:text-blue-400 font-semibold">{connectedPeerIds.size} oyunçu qoşulub</span>
           ) : (
-            <span>📡 Digər oyunçuların qoşulması gözlənilir...</span>
+            <span>Digər oyunçuların qoşulması gözlənilir...</span>
           )}
         </span>
       )}
 
       {/* Night phase warning */}
       {nightMuted && (
-        <span
-          style={{
-            fontSize: '12px',
-            color: '#fbbf24',
-            backgroundColor: 'rgba(251, 191, 36, 0.1)',
-            padding: '4px 10px',
-            borderRadius: '6px',
-            border: '1px solid rgba(251, 191, 36, 0.25)',
-          }}
-        >
-          🌙 Gecə fazasında yalnız mafiya fraksiyası danışa bilər
+        <span className="text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg font-medium inline-flex items-center gap-1.5">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+          <span>Gecə fazasında yalnız mafiya fraksiyası danışa bilər</span>
         </span>
       )}
 
       {/* Microphone permission denied */}
       {hasPermission === false && (
-        <span style={{ fontSize: '12px', color: '#f87171' }}>
-          ⚠️ Mikrofon icazəsi verilmədi. Brauzer ayarlarından icazə verin.
+        <span className="text-xs text-rose-700 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-lg font-medium inline-flex items-center gap-1.5">
+          <AlertTriangle className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+          <span>Mikrofon icazəsi verilmədi. Brauzer ayarlarından icazə verin.</span>
         </span>
       )}
 
       {/* Speaking indicators for self */}
       {voiceActive && !isActuallyMuted && speakingIds.has(myUserId) && (
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '12px',
-            color: '#4ade80',
-          }}
-        >
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#22c55e',
-              animation: 'voicePulse 0.6s ease-in-out infinite alternate',
-            }}
-          />
+        <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           Danışırsınız
         </span>
       )}
-
-      <style>{`
-        @keyframes voicePulse {
-          from { transform: scale(1); opacity: 0.7; }
-          to   { transform: scale(1.5); opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,8 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  BookOpen,
+  Trophy,
+  Layers,
+  Plus,
+  User as UserIcon,
+  Gamepad2,
+  GraduationCap,
+  Home,
+  ShieldCheck,
+  Activity,
+  LogOut,
+} from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { ThemeToggle } from '../theme/ThemeToggle';
 import { AuthModal, UserSessionState } from '../modals/AuthModal';
 import { RulesModal } from '../modals/RulesModal';
 import { LeaderboardModal } from '../modals/LeaderboardModal';
@@ -22,7 +36,6 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     try {
-      // 1. Check URL SSO ticket (?sso_ticket=...)
       if (typeof window !== 'undefined') {
         const urlParams = new URLSearchParams(window.location.search);
         const ssoTicket = urlParams.get('sso_ticket');
@@ -33,19 +46,27 @@ export const Navbar: React.FC = () => {
             setCurrentUser({
               username: decoded.fullName || decoded.username,
               tier: 'TIER_1',
-              roleTitle: decoded.role === 'teacher' ? 'Müəllim' : (decoded.schoolClass ? `${decoded.schoolClass} Oyunçusu` : 'Klub Oyunçusu'),
+              roleTitle:
+                decoded.role === 'teacher'
+                  ? 'Müəllim'
+                  : decoded.schoolClass
+                  ? `${decoded.schoolClass} Oyunçusu`
+                  : 'Klub Oyunçusu',
               gamesPlayed: 14,
-              winRate: 75
+              winRate: 75,
             });
             urlParams.delete('sso_ticket');
             const newSearch = urlParams.toString();
-            window.history.replaceState({}, document.title, window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash);
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash
+            );
             return;
           }
         }
       }
 
-      // 2. Check local ecosystem session
       const ecoRaw = localStorage.getItem('tdv_ecosystem_session_v1');
       if (ecoRaw) {
         const ecoSess = JSON.parse(ecoRaw);
@@ -53,39 +74,17 @@ export const Navbar: React.FC = () => {
           setCurrentUser({
             username: ecoSess.fullName || ecoSess.username,
             tier: 'TIER_1',
-            roleTitle: ecoSess.role === 'teacher' ? 'Müəllim' : (ecoSess.schoolClass ? `${ecoSess.schoolClass} Oyunçusu` : 'Klub Oyunçusu'),
+            roleTitle:
+              ecoSess.role === 'teacher'
+                ? 'Müəllim'
+                : ecoSess.schoolClass
+                ? `${ecoSess.schoolClass} Oyunçusu`
+                : 'Klub Oyunçusu',
             gamesPlayed: 14,
-            winRate: 75
+            winRate: 75,
           });
           return;
         }
-      }
-
-      // 3. Fallback to broker query on Hub
-      if (typeof document !== 'undefined') {
-        const ifr = document.createElement('iframe');
-        ifr.src = 'https://tdv-community-hubs.vercel.app/sso-broker.html';
-        ifr.style.display = 'none';
-        document.body.appendChild(ifr);
-        window.addEventListener('message', (e) => {
-          if (!e.origin.includes('vercel.app') && !e.origin.includes('localhost')) return;
-          if (e.data && e.data.type === 'TDV_SSO_DATA' && e.data.session) {
-            const s = e.data.session;
-            localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify(s));
-            setCurrentUser({
-              username: s.fullName || s.username,
-              tier: 'TIER_1',
-              roleTitle: s.role === 'teacher' ? 'Müəllim' : (s.schoolClass ? `${s.schoolClass} Oyunçusu` : 'Klub Oyunçusu'),
-              gamesPlayed: 14,
-              winRate: 75
-            });
-          }
-        });
-        ifr.onload = () => {
-          setTimeout(() => {
-            if (ifr.contentWindow) ifr.contentWindow.postMessage({ type: 'TDV_SSO_GET' }, '*');
-          }, 200);
-        };
       }
     } catch {
       // Storage unavailable
@@ -96,17 +95,20 @@ export const Navbar: React.FC = () => {
     setCurrentUser(user);
     try {
       localStorage.setItem('tdv_mafia_user', JSON.stringify(user));
-      localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify({
-        userId: 'tdv-usr-' + Date.now().toString(36),
-        username: user.username,
-        fullName: user.username,
-        role: 'player',
-        grade: 10,
-        avatar: '🕵️',
-        token: 'sec_' + Math.random().toString(36).substring(2),
-        createdAt: Date.now(),
-        expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000
-      }));
+      localStorage.setItem(
+        'tdv_ecosystem_session_v1',
+        JSON.stringify({
+          userId: 'tdv-usr-' + Date.now().toString(36),
+          username: user.username,
+          fullName: user.username,
+          role: 'player',
+          grade: 10,
+          avatar: '🕵️',
+          token: 'sec_' + Math.random().toString(36).substring(2),
+          createdAt: Date.now(),
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        })
+      );
     } catch {
       // Storage unavailable
     }
@@ -123,181 +125,83 @@ export const Navbar: React.FC = () => {
     setIsAuthOpen(false);
   };
 
-  const topRibbonStyle: CSSProperties = {
-    backgroundColor: '#05070c',
-    borderBottom: '1px solid rgba(239, 68, 68, 0.2)',
-    padding: '6px 24px',
-    fontSize: '11px',
-    color: '#94a3b8',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '12px',
-    zIndex: 1001,
-  };
-
-  const navStyle: CSSProperties = {
-    position: 'sticky',
-    top: 0,
-    zIndex: 1000,
-    backgroundColor: 'rgba(7, 9, 14, 0.92)',
-    backdropFilter: 'blur(16px)',
-    borderBottom: '1px solid rgba(239, 68, 68, 0.25)',
-    padding: '10px 24px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.7), inset 0 -1px 0 rgba(239, 68, 68, 0.15)',
-    gap: '14px',
-    flexWrap: 'wrap',
-  };
-
   return (
-    <>
-      {/* ================= TOP ECOSYSTEM STATUS RIBBON ================= */}
-      <aside aria-label="TDV Organization Bar" style={topRibbonStyle}>
-        {/* Left: Organization Identity & News */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+    <header className="sticky top-0 z-50 w-full">
+      {/* ─── TOP STATUS RIBBON ────────────────────────────────────────── */}
+      <aside
+        aria-label="TDV Organization Status"
+        className="w-full bg-zinc-100 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800/80 px-4 sm:px-6 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between gap-4 transition-colors duration-200"
+      >
+        <div className="flex items-center gap-2.5 overflow-hidden whitespace-nowrap">
           <a
             href="https://tdv-community-hubs.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: '#f8fafc',
-              textDecoration: 'none',
-              fontWeight: 800,
-            }}
+            className="inline-flex items-center gap-1.5 font-bold text-zinc-900 dark:text-zinc-100 hover:text-red-600 dark:hover:text-red-400 transition-colors"
           >
-            <span
-              style={{
-                width: '7px',
-                height: '7px',
-                borderRadius: '50%',
-                backgroundColor: '#ef4444',
-                boxShadow: '0 0 8px #ef4444',
-              }}
-            />
+            <span className="w-2 h-2 rounded-full bg-red-500 ring-2 ring-red-500/20 animate-pulse" />
             <span>TDV Community Labs</span>
           </a>
-          <span style={{ color: '#334155' }}>|</span>
-          <span style={{ color: '#fef08a', fontSize: '11px', fontWeight: 700 }}>TDV Community Labs • Mafiya Klubu</span>
-          <span style={{ color: '#334155' }}>•</span>
-          <span style={{ color: '#fca5a5', fontWeight: 600, fontSize: '11px' }}>
-            📰 24 Rol Ensiklopediyası və 15 Oyun Formatı aktivdir!
+          <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">|</span>
+          <span className="font-semibold text-zinc-700 dark:text-zinc-300 hidden sm:inline">
+            Mafiya Klubu
+          </span>
+          <span className="text-zinc-300 dark:text-zinc-700 hidden md:inline">•</span>
+          <span className="text-zinc-500 dark:text-zinc-400 hidden md:inline text-[11px]">
+            📰 24 Rol Ensiklopediyası və 15 Oyun Rejimi
           </span>
         </div>
 
-        {/* Right: Live Server Nodes & Status */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#86efac', fontSize: '11px', fontWeight: 700 }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
-            <span>Bakı Node-01 (16ms)</span>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium text-[11px]">
+            <Activity className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Bakı Node-01</span>
+            <span className="text-[10px] opacity-75">(16ms)</span>
           </div>
 
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              backgroundColor: 'rgba(16, 185, 129, 0.12)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
-              padding: '2px 8px',
-              borderRadius: '6px',
-              color: '#6ee7b7',
-              fontSize: '10px',
-              fontWeight: 700,
-            }}
-          >
-            <i className="fa-solid fa-robot" style={{ fontSize: '10px' }} />
+          <div className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 text-[10px] font-semibold">
+            <ShieldCheck className="w-3 h-3 text-emerald-500" />
             <span>Anti-AFK Gemini 3.8</span>
           </div>
         </div>
       </aside>
 
-      {/* ================= MAIN NAVIGATION HEADER ================= */}
-      <nav style={navStyle}>
-        {/* Left: Brand Logo + Status */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <a
-            href="/"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              textDecoration: 'none',
-            }}
-          >
-            <img
-              src="/assets/tdv-logo.jpg"
-              alt="TDV BTL Logo"
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                objectFit: 'contain',
-                border: '2px solid rgba(212, 175, 55, 0.75)',
-                boxShadow: '0 0 16px rgba(122, 28, 60, 0.5)',
-              }}
-            />
+      {/* ─── MAIN NAVIGATION BAR ─────────────────────────────────────── */}
+      <nav className="w-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4 transition-colors duration-200 shadow-sm dark:shadow-none">
+        {/* Left: Brand Identity */}
+        <div className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-2.5 group">
+            <div className="relative">
+              <img
+                src="/assets/tdv-logo.jpg"
+                alt="TDV Logo"
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-200 dark:ring-zinc-700 group-hover:ring-red-500 transition-all duration-200"
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-600 rounded-full border-2 border-white dark:border-zinc-900" />
+            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span
-                style={{
-                  fontWeight: 900,
-                  fontSize: '18px',
-                  letterSpacing: '0.04em',
-                  color: '#f8fafc',
-                  lineHeight: 1.1,
-                }}
-              >
-                TDV BTL <span style={{ color: '#ef4444' }}>MAFIA KLUB</span>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-base tracking-tight text-zinc-950 dark:text-white leading-tight">
+                TDV BTL <span className="text-red-600 dark:text-red-500">MAFIA</span>
               </span>
-              <span style={{ fontSize: '10px', color: '#fbbf24', letterSpacing: '0.08em', fontWeight: 700 }}>
-                BAKI TÜRK LİSEYİ • DEDUKSİYA
+              <span className="text-[10px] font-bold tracking-wider text-amber-600 dark:text-amber-400 uppercase">
+                Bakı Türk Liseyi
               </span>
             </div>
           </a>
         </div>
 
-        {/* Center: Ecosystem Switcher Pill & In-Game Navigation */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Unified Ecosystem Switcher Pill */}
-          <nav
-            aria-label="TDV Ecosystem Switcher"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '3px',
-              backgroundColor: 'rgba(15, 23, 42, 0.85)',
-              border: '1px solid rgba(51, 65, 85, 0.6)',
-              padding: '4px 6px',
-              borderRadius: '16px',
-              fontSize: '12px',
-              fontWeight: 600,
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
-            }}
-          >
+        {/* Center: Ecosystem Switcher & Navigation Links */}
+        <div className="hidden xl:flex items-center gap-2">
+          {/* Ecosystem Switcher Pill */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60 text-xs">
             <a
               href="https://tdv-community-hubs.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              title="TDV Hub Mərkəzi Portalı"
-              className="btn-pressable"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 11px',
-                borderRadius: '11px',
-                color: '#cbd5e1',
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
             >
-              <i className="fa-solid fa-house" style={{ fontSize: '11px', color: '#60a5fa' }} />
+              <Home className="w-3.5 h-3.5 text-blue-500" />
               <span>Mərkəz</span>
             </a>
 
@@ -305,20 +209,9 @@ export const Navbar: React.FC = () => {
               href="https://tdv-e-school.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              title="TDV E-School Təhsil Portalı"
-              className="btn-pressable"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 11px',
-                borderRadius: '11px',
-                color: '#cbd5e1',
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
             >
-              <i className="fa-solid fa-graduation-cap" style={{ fontSize: '11px', color: '#34d399' }} />
+              <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
               <span>E-School</span>
             </a>
 
@@ -326,220 +219,111 @@ export const Navbar: React.FC = () => {
               href="https://school-minifootball-tournament.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              title="TDV Sports Minifutbol Turniri"
-              className="btn-pressable"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 11px',
-                borderRadius: '11px',
-                color: '#cbd5e1',
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
             >
-              <i className="fa-solid fa-trophy" style={{ fontSize: '11px', color: '#60a5fa' }} />
+              <Trophy className="w-3.5 h-3.5 text-amber-500" />
               <span>Sports</span>
             </a>
 
             <a
               href="https://tdv-community-hubs.vercel.app/games"
-              title="TDV Games & Mafia (Aktiv)"
-              className="btn-pressable"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 11px',
-                borderRadius: '11px',
-                background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.9) 0%, rgba(153, 27, 27, 0.95) 100%)',
-                color: '#ffffff',
-                fontWeight: 700,
-                textDecoration: 'none',
-                boxShadow: '0 0 12px rgba(220, 38, 38, 0.45)',
-                border: '1px solid rgba(248, 113, 113, 0.5)',
-              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-600 text-white font-bold shadow-sm shadow-red-500/20"
             >
-              <i className="fa-solid fa-gamepad" style={{ fontSize: '11px', color: '#fca5a5' }} />
+              <Gamepad2 className="w-3.5 h-3.5" />
               <span>Games</span>
-              <span
-                style={{
-                  fontSize: '9px',
-                  padding: '1px 5px',
-                  borderRadius: '4px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.35)',
-                  color: '#fee2e2',
-                  fontWeight: 800,
-                  border: '1px solid rgba(254, 202, 202, 0.4)',
-                }}
-              >
+              <span className="text-[10px] bg-red-800/80 px-1.5 py-0.2 rounded font-black">
                 Mafia
               </span>
             </a>
-          </nav>
+          </div>
 
-          {/* In-Game Action Buttons */}
-          <button
-            type="button"
-            className="btn-pressable"
+          <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-1" />
+
+          {/* Quick Modals Triggers */}
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setIsRulesOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 13px',
-              borderRadius: '10px',
-              fontSize: '12px',
-              fontWeight: 700,
-              background: 'rgba(15, 23, 42, 0.7)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: '#f8fafc',
-            }}
+            icon={<BookOpen className="w-4 h-4 text-red-500" />}
           >
-            <i className="fa-solid fa-book-open text-red-400" style={{ color: '#f87171' }} />
             <span>Qaydalar</span>
-            <span
-              style={{
-                fontSize: '9px',
-                backgroundColor: 'rgba(239, 68, 68, 0.25)',
-                color: '#fca5a5',
-                padding: '1px 5px',
-                borderRadius: '4px',
-                fontWeight: 800,
-              }}
-            >
+            <Badge tone="red" className="ml-1 text-[10px] px-1.5 py-0">
               24 Rol
-            </span>
-          </button>
+            </Badge>
+          </Button>
 
-          <button
-            type="button"
-            className="btn-pressable"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setIsLeaderboardOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 13px',
-              borderRadius: '10px',
-              fontSize: '12px',
-              fontWeight: 600,
-              background: 'rgba(15, 23, 42, 0.7)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              color: '#f8fafc',
-            }}
+            icon={<Trophy className="w-4 h-4 text-amber-500" />}
           >
-            <i className="fa-solid fa-trophy" style={{ color: '#fbbf24' }} />
-            <span>Reytinq</span>
-          </button>
+            Reytinq
+          </Button>
 
-          <button
-            type="button"
-            className="btn-pressable"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setIsCatalogOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 13px',
-              borderRadius: '10px',
-              fontSize: '12px',
-              fontWeight: 600,
-              background: 'rgba(15, 23, 42, 0.7)',
-              border: '1px solid rgba(245, 158, 11, 0.35)',
-              color: '#f8fafc',
-            }}
+            icon={<Layers className="w-4 h-4 text-indigo-500" />}
           >
-            <i className="fa-solid fa-layer-group" style={{ color: '#fbbf24' }} />
-            <span>Formatlar</span>
-          </button>
+            Formatlar
+          </Button>
         </div>
 
-        {/* Right: Quick Action & User Session */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Quick Create Room Button */}
-          <button
-            type="button"
-            className="btn-pressable"
+        {/* Right: Actions, Theme Toggle & User Auth */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setIsCreateRoomOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '7px 15px',
-              borderRadius: '10px',
-              fontSize: '12px',
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-              color: '#ffffff',
-              border: '1px solid rgba(52, 211, 153, 0.4)',
-              boxShadow: '0 0 14px rgba(16, 185, 129, 0.3)',
-              cursor: 'pointer',
-            }}
+            icon={<Plus className="w-4 h-4" />}
           >
-            <i className="fa-solid fa-plus" />
-            <span>Masa Yarat</span>
-          </button>
+            Masa Yarat
+          </Button>
 
-          {/* User Profile Bar */}
+          {/* Dual Theme Toggle */}
+          <ThemeToggle />
+
           {currentUser ? (
             <div
               onClick={() => setIsAuthOpen(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                padding: '4px 12px',
-                backgroundColor: '#0f172a',
-                border: '1px solid #334155',
-                borderRadius: '9999px',
-                transition: 'border-color 150ms ease',
-              }}
+              className="flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900 cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
             >
-              <div
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  backgroundColor: '#ef4444',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                }}
-              >
+              <div className="w-6 h-6 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
                 {currentUser.username.charAt(0).toUpperCase()}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: '#f8fafc' }}>
+              <div className="hidden sm:flex flex-col text-left">
+                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-none">
                   {currentUser.username}
                 </span>
-                <span style={{ fontSize: '9px', color: '#38bdf8' }}>{currentUser.roleTitle}</span>
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                  {currentUser.roleTitle}
+                </span>
               </div>
 
-              <Badge tone={currentUser.tier === 'TIER_3' ? 'purple' : currentUser.tier === 'TIER_2' ? 'amber' : 'neutral'}>
+              <Badge
+                tone={
+                  currentUser.tier === 'TIER_3'
+                    ? 'purple'
+                    : currentUser.tier === 'TIER_2'
+                    ? 'amber'
+                    : 'neutral'
+                }
+                className="text-[10px] px-1.5 py-0"
+              >
                 {currentUser.tier}
               </Badge>
             </div>
           ) : (
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => setIsAuthOpen(true)}
-              style={{
-                borderColor: 'rgba(239, 68, 68, 0.4)',
-                color: '#f8fafc',
-                fontSize: '12px',
-                fontWeight: 700,
-                padding: '6px 14px',
-              }}
+              icon={<UserIcon className="w-4 h-4" />}
             >
-              👤 Giriş
+              Giriş
             </Button>
           )}
         </div>
@@ -572,6 +356,6 @@ export const Navbar: React.FC = () => {
         defaultMode={catalogSelectedMode}
         onClose={() => setIsCreateRoomOpen(false)}
       />
-    </>
+    </header>
   );
 };

@@ -1,6 +1,16 @@
 'use client';
 
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
+import {
+  Clock,
+  Newspaper,
+  Shield,
+  Zap,
+  Flame,
+  AlertTriangle,
+  Building,
+  Target,
+} from 'lucide-react';
 import { LobbyState, NightActionType, PlayerSession } from '../../types/game';
 import { ScrubbedPlayerView } from '../../types/engine';
 import { AllInDistrict } from '../../types/roles';
@@ -62,20 +72,23 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     }
   };
 
-  // Filter players by active district tab if in All-In
   const allPlayers = Object.values(lobbyState.players);
   const displayedPlayers = allPlayers.filter((p) => {
     if (!isAllIn || activeDistrictTab === 'ALL') return true;
     return p.currentDistrict === activeDistrictTab;
   });
 
-  // Action Bar capability derivation based on civic office / faction
   const office = currentUser?.allInIdentity?.layer2Office;
   const faction = currentUser?.allInIdentity?.layer1Faction ?? 'TOWN';
 
   let primaryActionLabel: string = AZ_UI.investigate;
   let primaryActionType: NightActionType = 'INVESTIGATE';
-  if (faction === 'MAFIA' || faction === 'YAKUZA' || faction === 'VOID_CULT' || faction === 'NEUTRAL_KILLER') {
+  if (
+    faction === 'MAFIA' ||
+    faction === 'YAKUZA' ||
+    faction === 'VOID_CULT' ||
+    faction === 'NEUTRAL_KILLER'
+  ) {
     primaryActionLabel = AZ_UI.strike;
     primaryActionType = 'KILL';
   } else if (office === 'CITY_SURGEON') {
@@ -89,34 +102,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     primaryActionType = 'MISDIRECT';
   }
 
-  // Container styling
-  const containerStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  };
-
-  // Top HUD styling
-  const hudStyle: CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '18px 24px',
-    backgroundColor: '#090d16',
-    borderRadius: '12px',
-    border: '1px solid #1e293b',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
-    flexWrap: 'wrap',
-    gap: '12px',
-  };
-
   return (
-    <div style={containerStyle}>
-      {/* ─── TOP PHASE HUD ─────────────────────────────────────────────────── */}
-      <div style={hudStyle}>
+    <div className="flex flex-col gap-6">
+      {/* ─── TOP PHASE HUD ─────────────────────────────────────────── */}
+      <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-200">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
               {AZ_UI.currentPhase}
             </span>
             <Badge tone="purple">{lobbyState.mode}</Badge>
@@ -124,12 +116,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               {AZ_UI.round} {lobbyState.roundNumber}
             </Badge>
           </div>
-          <h1 style={{ margin: '4px 0 0 0', color: '#f8fafc', fontSize: '22px', fontWeight: 900 }}>
+          <h2 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white tracking-tight">
             {AZ_PHASES[lobbyState.phase] ?? lobbyState.phase}
-          </h1>
+          </h2>
         </div>
 
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="flex items-center gap-3 flex-wrap">
           {isAllIn && (
             <Badge tone="purple">
               {AZ_UI.maxKillsPerNight}: {lobbyState.globalNightKillCap}
@@ -143,47 +135,48 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           )}
 
           {onOpenNewspaper && (
-            <Button variant="outline" size="sm" onClick={onOpenNewspaper} style={{ borderColor: '#475569' }}>
-              📰 {AZ_UI.morningNewspaper}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onOpenNewspaper}
+              icon={<Newspaper className="w-4 h-4 text-blue-500" />}
+            >
+              {AZ_UI.morningNewspaper}
             </Button>
           )}
 
-          <div
-            style={{
-              textAlign: 'right',
-              backgroundColor: '#030712',
-              padding: '6px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e293b',
-            }}
-          >
-            <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block' }}>{AZ_UI.timeRemaining}</span>
-            <div style={{ fontSize: '20px', fontWeight: 900, color: lobbyState.phaseTimeRemaining <= 10 ? '#ef4444' : '#38bdf8' }}>
-              {lobbyState.phaseTimeRemaining}s
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
+            <Clock className="w-4 h-4 text-zinc-400" />
+            <div className="text-right">
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block leading-none">
+                {AZ_UI.timeRemaining}
+              </span>
+              <span
+                className={`text-base font-black leading-tight ${
+                  lobbyState.phaseTimeRemaining <= 10
+                    ? 'text-red-600 animate-pulse'
+                    : 'text-zinc-900 dark:text-zinc-100'
+                }`}
+              >
+                {lobbyState.phaseTimeRemaining}s
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ─── DYNAMIC MINIGAME BANNERS ───────────────────────────────────────── */}
+      {/* ─── DYNAMIC MINIGAME BANNERS ───────────────────────────────── */}
       {/* 1. Dante's Inferno */}
       {dante && (
-        <div
-          style={{
-            padding: '14px 18px',
-            backgroundColor: '#270808',
-            border: '1px solid #991b1b',
-            borderRadius: '10px',
-            boxShadow: '0 0 20px rgba(153, 27, 27, 0.25)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontWeight: 800, color: '#fca5a5', fontSize: '14px' }}>
-              🌋 {AZ_UI.danteCircle}: {AZ_DANTE_CIRCLES[dante.currentCircle]?.name ?? dante.currentCircle}
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-950 dark:text-red-200 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="font-extrabold text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
+              <Flame className="w-4 h-4 text-red-500" />
+              <span>{AZ_UI.danteCircle}: {AZ_DANTE_CIRCLES[dante.currentCircle]?.name ?? dante.currentCircle}</span>
             </span>
             <Badge tone="red">{dante.completedCircles.length + 1} / 9 Dairə</Badge>
           </div>
-          <p style={{ margin: 0, fontSize: '13px', color: '#fee2e2' }}>
+          <p className="text-xs text-red-800 dark:text-red-300 leading-relaxed">
             {AZ_DANTE_CIRCLES[dante.currentCircle]?.rule}
           </p>
         </div>
@@ -191,30 +184,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* 2. The Day The Earth Stood Still */}
       {earth && (
-        <div
-          style={{
-            padding: '14px 18px',
-            backgroundColor: '#0c1b33',
-            border: '1px solid #1d4ed8',
-            borderRadius: '10px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
+        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontWeight: 800, color: '#93c5fd', fontSize: '15px' }}>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-sm text-blue-700 dark:text-blue-300">
                 ⌛ {AZ_UI.doomsdayClock}: {earth.doomsdayClockHours} / 12 Saat
               </span>
               <Badge tone={earth.doomsdayClockHours >= 10 ? 'red' : 'blue'}>
                 {earth.doomsdayClockHours >= 12 ? 'PLANETAR MƏHV' : 'QORT AKTİV'}
               </Badge>
             </div>
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#bfdbfe' }}>
-              Hər günahsız vətəndaş edamı saatı 1 pillə irəli aparır. 12-də Qortun lazeri bütün şəhəri buxarlandıracaq!
+            <p className="text-xs text-blue-800 dark:text-blue-300 mt-1">
+              Hər günahsız vətəndaş edamı saatı 1 pillə irəli aparır.
             </p>
           </div>
 
@@ -228,23 +209,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* 3. Operation Valkyrie */}
       {valkyrie && valkyrie.briefcaseLocationPlayerId && (
-        <div
-          style={{
-            padding: '12px 18px',
-            backgroundColor: '#3b1803',
-            border: '1px solid #d97706',
-            borderRadius: '10px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
+        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-between gap-3">
           <div>
-            <span style={{ fontWeight: 800, color: '#fde68a', fontSize: '14px' }}>
+            <span className="font-bold text-sm text-amber-800 dark:text-amber-300">
               💼 {AZ_UI.briefcaseLocation}: {valkyrie.briefcaseLocationPlayerId}
             </span>
-            <div style={{ fontSize: '12px', color: '#fef3c7', marginTop: '2px' }}>
-              {AZ_UI.fuseCountdown}: {valkyrie.fuseTimerDaysRemaining} gün qalır. Çanta partlayanda hədəf məhv ediləcək!
+            <div className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+              {AZ_UI.fuseCountdown}: {valkyrie.fuseTimerDaysRemaining} gün qalır.
             </div>
           </div>
           <Badge tone="amber">{valkyrie.fuseTimerDaysRemaining} GÜN</Badge>
@@ -253,30 +224,21 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* 4. Stanford Prison */}
       {prison && (
-        <div
-          style={{
-            padding: '12px 18px',
-            backgroundColor: '#171717',
-            border: '1px solid #525252',
-            borderRadius: '10px',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontWeight: 800, color: '#e5e5e5', fontSize: '14px' }}>
+        <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/60 flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs font-bold">
+            <span className="text-zinc-800 dark:text-zinc-200">
               ⛓️ {AZ_UI.revoltMeter}: {prison.revoltMeter}%
             </span>
             <Badge tone={prison.revoltMeter >= 80 ? 'red' : 'neutral'}>
               {prison.riotTriggered ? 'QİYAM BAŞLADI' : 'NƏZARƏT ALTINDA'}
             </Badge>
           </div>
-          <div style={{ width: '100%', height: '8px', backgroundColor: '#262626', borderRadius: '4px', overflow: 'hidden' }}>
+          <div className="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
             <div
-              style={{
-                width: `${prison.revoltMeter}%`,
-                height: '100%',
-                backgroundColor: prison.revoltMeter >= 75 ? '#dc2626' : '#f59e0b',
-                transition: 'width 300ms ease',
-              }}
+              className={`h-full transition-all duration-300 ${
+                prison.revoltMeter >= 75 ? 'bg-red-600' : 'bg-amber-500'
+              }`}
+              style={{ width: `${prison.revoltMeter}%` }}
             />
           </div>
         </div>
@@ -284,19 +246,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* 5. Catenaccio */}
       {catenaccio && (
-        <div
-          style={{
-            padding: '12px 18px',
-            backgroundColor: '#0f172a',
-            border: '1px solid #334155',
-            borderRadius: '10px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ fontWeight: 800, color: '#94a3b8', fontSize: '14px' }}>
-            🛡️ {AZ_UI.defensiveWall} ({catenaccio.defensiveWallPlayerIds.length} Qalxan)
+        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-between">
+          <span className="font-bold text-sm text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-emerald-500" />
+            <span>{AZ_UI.defensiveWall} ({catenaccio.defensiveWallPlayerIds.length} Qalxan)</span>
           </span>
           <Badge tone={catenaccio.wallBreached ? 'red' : 'emerald'}>
             {catenaccio.wallBreached ? AZ_UI.wallBreachedAlert : 'SƏDD BÖLÜNMƏZ'}
@@ -304,7 +257,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       )}
 
-      {/* ─── VOTING COURT PANEL (WHEN IN DAY_VOTING) ───────────────────────── */}
+      {/* ─── VOTING COURT PANEL (WHEN IN DAY_VOTING) ────────────────── */}
       {phase === 'DAY_VOTING' && onCastVote && onRetractVote && (
         <VotingCourtPanel
           lobbyState={lobbyState}
@@ -316,9 +269,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         />
       )}
 
-      {/* ─── ALL-IN DISTRICT TABS (CENTER STAGE) ───────────────────────────── */}
+      {/* ─── ALL-IN DISTRICT TABS ───────────────────────────────────── */}
       {isAllIn && (
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #1e293b', paddingBottom: '10px' }}>
+        <div className="flex items-center gap-2 pb-2 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">
           <Button
             variant={activeDistrictTab === 'ALL' ? 'primary' : 'outline'}
             size="sm"
@@ -342,24 +295,21 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       )}
 
-      {/* ─── ACTIVE PLAYERS GRID ───────────────────────────────────────────── */}
+      {/* ─── ACTIVE PLAYERS GRID ────────────────────────────────────── */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <h2 style={{ margin: 0, color: '#f1f5f9', fontSize: '17px', fontWeight: 800 }}>
-            {AZ_UI.activeParticipants} ({displayedPlayers.length})
-          </h2>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h3 className="font-bold text-base text-zinc-950 dark:text-white">
+              {AZ_UI.activeParticipants}
+            </h3>
+            <Badge tone="neutral">{displayedPlayers.length}</Badge>
+          </div>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
             Hədəf seçmək üçün oyunçu kartına klikləyin
           </span>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-            gap: '14px',
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {displayedPlayers.map((player) => (
             <PlayerCard
               key={player.userId}
@@ -367,7 +317,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               isSelected={selectedPlayerId === player.userId}
               isCurrentTurn={lobbyState.speakerQueue[0] === player.userId}
               hasVoteOnTarget={lobbyState.liveVotes[currentUserId] === player.userId}
-              voteCount={Object.values(lobbyState.liveVotes).filter((id) => id === player.userId).length}
+              voteCount={
+                Object.values(lobbyState.liveVotes).filter((id) => id === player.userId).length
+              }
               isSpeaking={speakingIds?.has(player.userId) ?? false}
               onSelect={handleCardClick}
             />
@@ -375,50 +327,40 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       </div>
 
-      {/* ─── BOTTOM ACTION BAR ─────────────────────────────────────────────── */}
-      <div
-        style={{
-          position: 'sticky',
-          bottom: '16px',
-          backgroundColor: 'rgba(9, 13, 22, 0.95)',
-          backdropFilter: 'blur(10px)',
-          padding: '14px 20px',
-          borderRadius: '12px',
-          border: '1px solid #334155',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.8)',
-          zIndex: 50,
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
-        <div>
-          <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            {AZ_UI.nightOrder} & Əməliyyat Paneli
-          </span>
-          <div style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>
-            {selectedPlayerId
-              ? `Seçilmiş Hədəf: ${lobbyState.players[selectedPlayerId]?.displayRole.formatted ?? selectedPlayerId}`
-              : 'Əmr icra etmək üçün yuxarıdakı kartlardan hədəf seçin'}
+      {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
+      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+            <Target className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
+              {AZ_UI.nightOrder} & Əməliyyat Paneli
+            </span>
+            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+              {selectedPlayerId
+                ? `Seçilmiş Hədəf: ${
+                    lobbyState.players[selectedPlayerId]?.displayRole.formatted ?? selectedPlayerId
+                  }`
+                : 'Əmr icra etmək üçün yuxarıdakı kartlardan hədəf seçin'}
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button
-            variant="primary"
-            size="md"
-            disabled={!isAlive || !selectedPlayerId || selectedPlayerId === currentUserId}
-            onClick={() => {
-              if (selectedPlayerId && onTriggerAction) {
-                onTriggerAction(primaryActionType, selectedPlayerId);
-              }
-            }}
-          >
-            ⚡ {primaryActionLabel}
-          </Button>
-        </div>
+        <Button
+          variant="primary"
+          size="md"
+          disabled={!isAlive || !selectedPlayerId || selectedPlayerId === currentUserId}
+          onClick={() => {
+            if (selectedPlayerId && onTriggerAction) {
+              onTriggerAction(primaryActionType, selectedPlayerId);
+            }
+          }}
+          icon={<Zap className="w-4 h-4" />}
+          className="shrink-0"
+        >
+          {primaryActionLabel}
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  Dices,
+  Lock,
+  Unlock,
+  X,
+  ArrowRight,
+  Users,
+  Shield,
+  Layers,
+} from 'lucide-react';
 import { PACKS_CONFIG } from '../../config/packs.config';
 import { GameMode } from '../../types/packs';
 import { Button } from '../ui/Button';
@@ -35,11 +45,12 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   const currentPack = PACKS_CONFIG[selectedMode];
 
   const handleLaunch = async () => {
-    const slug = roomName
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') || 'tdv-masa';
+    const slug =
+      roomName
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') || 'tdv-masa';
 
     const lobbyId = `${selectedMode.toLowerCase()}-${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
     const targetUrl = `/lobby/${lobbyId}`;
@@ -79,71 +90,45 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
     }
   };
 
-  const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-    backdropFilter: 'blur(8px)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10000,
-    padding: '20px',
-  };
-
-  const modalStyle: CSSProperties = {
-    background: 'linear-gradient(145deg, rgba(20, 24, 38, 0.95) 0%, rgba(10, 14, 24, 0.98) 100%)',
-    backdropFilter: 'blur(20px)',
-    border: '1px solid rgba(239, 68, 68, 0.4)',
-    borderRadius: '16px',
-    padding: '30px',
-    maxWidth: '540px',
-    width: '100%',
-    boxShadow: '0 25px 60px -12px rgba(220, 38, 38, 0.35), 0 0 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  };
-
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '20px' }}>🎲</span>
-              <h2 style={{ margin: 0, color: '#f8fafc', fontSize: '20px', fontWeight: 900, letterSpacing: '0.02em' }}>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <Dices className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
                 Yeni Mafiya Masası Yarat
               </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Rejimi və parametrləri tənzimləyərək dərhal yeni canlı oyun otağı açın.
+              </p>
             </div>
-            <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>
-              Rejimi və parametrləri tənzimləyərək dərhal yeni canlı oyun otağı açın
-            </p>
           </div>
+
           <button
+            type="button"
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#94a3b8',
-              fontSize: '20px',
-              cursor: 'pointer',
-              padding: '4px',
-            }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Fields */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="flex flex-col gap-4">
           {/* Room Name */}
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '6px' }}>
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
               Masa Adı *
             </label>
             <input
@@ -151,39 +136,19 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
               placeholder="Məs: Bakı Gecələri #1"
-              style={{
-                width: '100%',
-                backgroundColor: '#0f172a',
-                color: '#f8fafc',
-                border: '1px solid #334155',
-                borderRadius: '8px',
-                padding: '10px 14px',
-                fontSize: '14px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
             />
           </div>
 
           {/* Game Mode Selection */}
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '6px' }}>
-              Oyun Rejimi (14 Klub Rejim)
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+              Oyun Rejimi
             </label>
             <select
               value={selectedMode}
               onChange={(e) => setSelectedMode(e.target.value as GameMode)}
-              style={{
-                width: '100%',
-                backgroundColor: '#0f172a',
-                color: '#f8fafc',
-                border: '1px solid #334155',
-                borderRadius: '8px',
-                padding: '10px 14px',
-                fontSize: '14px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
             >
               <optgroup label="Klassik Paketlər">
                 <option value="SE7EN_DEADLY_SINS">Se7en Deadly Sins (5–7 Oyunçu)</option>
@@ -200,14 +165,14 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 <option value="STANFORD_PRISON">Stanford Prison (12–16 Oyunçu)</option>
                 <option value="OPERATION_VALKYRIE">Operation Valkyrie (10–14 Oyunçu)</option>
                 <option value="THE_DAY_THE_EARTH_STOOD_STILL">The Day the Earth Stood Still (12–16 Oyunçu)</option>
-                <option value="DANTES_INFERNO">Dante's Inferno (11–13 Oyunçu)</option>
+                <option value="DANTES_INFERNO">Dante&apos;s Inferno (11–13 Oyunçu)</option>
                 <option value="CHERNOBYL_EXCLUSION_ZONE">Çernobıl: Təcrid Zonası (10–14 Oyunçu)</option>
                 <option value="CYBERPUNK_NEO_BAKU">Cyberpunk 2077: Neo-Bakı (12–16 Oyunçu)</option>
                 <option value="BERMUDA_TRIANGLE">Bermud Üçbucağı: Ruhlar Donanması (10–14 Oyunçu)</option>
                 <option value="MIDNIGHT_SEANCE">Gecəyarısı Seansı: Qanlı Meri (11–15 Oyunçu)</option>
                 <option value="SHERLOCK_BAKER_STREET">Baker Street: Holms vs Moriarti (8–12 Oyunçu)</option>
               </optgroup>
-              <optgroup label="BÃ¶yÃ¼k ÅÉ™hÉ™r ArenasÄ±">
+              <optgroup label="Böyük Şəhər Arenası">
                 <option value="ALL_IN">All-In (40–50 Oyunçu)</option>
               </optgroup>
             </select>
@@ -215,43 +180,34 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
           {/* Selected Pack Info Snapshot */}
           {currentPack && (
-            <div
-              style={{
-                backgroundColor: '#0f172a',
-                padding: '12px 14px',
-                borderRadius: '8px',
-                border: '1px solid #1e293b',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 800, color: '#f8fafc', fontSize: '14px' }}>
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                   {currentPack.name}
                 </span>
                 <Badge tone={currentPack.isAllIn ? 'purple' : currentPack.isMinigame ? 'amber' : 'blue'}>
                   {currentPack.minPlayers}–{currentPack.maxPlayers} Oyunçu
                 </Badge>
               </div>
-              <div style={{ fontSize: '12px', color: '#fca5a5', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>🎭</span>
+              <div className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 shrink-0" />
                 <span><strong>Rollar:</strong> {currentPack.roleBreakdown}</span>
               </div>
             </div>
           )}
 
           {/* Privacy Switch */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
               id="privateToggle"
               checked={isPrivate}
               onChange={(e) => setIsPrivate(e.target.checked)}
-              style={{ width: '16px', height: '16px', accentColor: '#dc2626' }}
+              className="w-4 h-4 rounded text-red-600 focus:ring-red-500 accent-red-600 cursor-pointer"
             />
-            <label htmlFor="privateToggle" style={{ fontSize: '13px', color: '#cbd5e1', cursor: 'pointer' }}>
-              Qapalı / Şifrəli Masa (Yalnız dostlar üçün)
+            <label htmlFor="privateToggle" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer flex items-center gap-1.5">
+              {isPrivate ? <Lock className="w-3.5 h-3.5 text-amber-500" /> : <Unlock className="w-3.5 h-3.5 text-zinc-400" />}
+              <span>Qapalı / Şifrəli Masa (Yalnız dəvət ilə)</span>
             </label>
           </div>
 
@@ -262,29 +218,24 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 placeholder="Masa şifrəsi təyin edin..."
                 value={roomPassword}
                 onChange={(e) => setRoomPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#0f172a',
-                  color: '#f8fafc',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  padding: '10px 14px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                }}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
               />
             </div>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-          <Button variant="outline" size="md" fullWidth onClick={onClose} style={{ borderColor: '#334155' }}>
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <Button variant="secondary" size="md" onClick={onClose}>
             İmtina Et
           </Button>
-          <Button variant="primary" size="md" fullWidth onClick={handleLaunch}>
-            🚀 Masaya Daxil Ol
+          <Button
+            variant="primary"
+            size="md"
+            onClick={handleLaunch}
+            iconRight={<ArrowRight className="w-4 h-4" />}
+          >
+            Masaya Daxil Ol
           </Button>
         </div>
       </div>

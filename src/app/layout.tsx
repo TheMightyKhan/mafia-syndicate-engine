@@ -1,26 +1,11 @@
-import React, { CSSProperties, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import './globals.css';
 import { Navbar } from '../components/layout/Navbar';
+import { ThemeProvider } from '../context/ThemeContext';
 
 export const metadata = {
   title: 'TDV MAFIA | Elit Onlayn Mafiya Platforması',
   description: 'Azərbaycanın ən möhtəşəm onlayn sosial deduksiya və mafiya mühərriki. 40–50 nəfərlik All-In rejimi, asimmetrik mini-oyunlar və 75s Gemini AI mühafizəsi.',
-};
-
-const rootStyle: CSSProperties = {
-  margin: 0,
-  padding: 0,
-  minHeight: '100vh',
-  backgroundColor: '#07090e',
-  backgroundImage: `
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(220, 38, 38, 0.16), transparent 70%),
-    radial-gradient(circle 700px at 10% 100%, rgba(220, 38, 38, 0.07), transparent 65%),
-    radial-gradient(circle 600px at 90% 70%, rgba(217, 119, 6, 0.06), transparent 65%)
-  `,
-  backgroundAttachment: 'fixed',
-  color: '#f1f5f9',
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
 };
 
 export default function RootLayout({
@@ -29,7 +14,7 @@ export default function RootLayout({
   readonly children: ReactNode;
 }) {
   return (
-    <html lang="az">
+    <html lang="az" className="dark" suppressHydrationWarning>
       <head>
         <link rel="icon" type="image/jpeg" href="/assets/tdv-logo.jpg" />
         <link rel="apple-touch-icon" href="/assets/tdv-logo.jpg" />
@@ -44,11 +29,15 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
       </head>
-      <body style={rootStyle}>
-        <Navbar />
-        <main style={{ minHeight: 'calc(100vh - 70px)' }}>
-          {children}
-        </main>
+      <body className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans selection:bg-red-500/20 selection:text-red-500">
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

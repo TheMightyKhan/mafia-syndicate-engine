@@ -1,6 +1,18 @@
 'use client';
 
-import React, { useState, CSSProperties } from 'react';
+import React, { useState } from 'react';
+import {
+  User,
+  Shield,
+  Key,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Trophy,
+  Gamepad2,
+  Sparkles,
+  LogOut,
+} from 'lucide-react';
 import { PlayerTier } from '../../types/access';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -52,36 +64,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [successMsg, setSuccessMsg] = useState<string>('');
 
   if (!isOpen) return null;
-
-  const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-    backdropFilter: 'blur(8px)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10000,
-    padding: '20px',
-  };
-
-  const modalStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid #dc2626',
-    borderRadius: '16px',
-    padding: '28px',
-    maxWidth: '480px',
-    width: '100%',
-    boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.25), 0 0 40px rgba(0, 0, 0, 0.8)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '18px',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-  };
 
   const handleLoginSubmit = () => {
     if (!usernameInput.trim()) return;
@@ -149,94 +131,96 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '20px' }}>🎭</span>
-              <h2 style={{ margin: 0, color: '#f8fafc', fontSize: '20px', fontWeight: 900, letterSpacing: '0.02em' }}>
-                {currentUser ? 'Oyunçu Profili' : 'TDV Community Labs Vahid Profili'}
-              </h2>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+              <User className="w-5 h-5" />
             </div>
-            <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>
-              {currentUser
-                ? 'Profilinizin cari statusu və dərəcəniz'
-                : 'Tək 1 profil bütün ekosistemə (E-School, Futbol, Games, Mafia) bəs edir.'}
-            </p>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
+                {currentUser ? 'Oyunçu Profili' : 'TDV Vahid Giriş Portalı'}
+              </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                {currentUser
+                  ? 'Profilinizin cari statusu və dərəcəniz'
+                  : 'Tək vahid profil bütün platforma üçün bəs edir.'}
+              </p>
+            </div>
           </div>
+
           <button
+            type="button"
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#94a3b8',
-              fontSize: '20px',
-              cursor: 'pointer',
-              padding: '4px',
-            }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Logged in view */}
         {currentUser ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div
-              style={{
-                backgroundColor: '#0f172a',
-                padding: '16px',
-                borderRadius: '10px',
-                border: '1px solid #1e293b',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '18px', fontWeight: 800, color: '#f8fafc' }}>
-                  {currentUser.username}
-                </span>
+          <div className="flex flex-col gap-5">
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center">
+                    {currentUser.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-zinc-950 dark:text-white">
+                      {currentUser.username}
+                    </h3>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
+                      Titul: {currentUser.roleTitle}
+                    </p>
+                  </div>
+                </div>
                 <Badge tone="purple">{currentUser.tier}</Badge>
               </div>
 
-              <div style={{ fontSize: '13px', color: '#38bdf8' }}>
-                Titul: <strong>{currentUser.roleTitle}</strong>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '10px',
-                  marginTop: '6px',
-                  borderTop: '1px solid #1e293b',
-                  paddingTop: '10px',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '11px', color: '#64748b' }}>Oynanılmış Oyunlar</div>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#f1f5f9' }}>
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                <div className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mb-1">
+                    <Gamepad2 className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Oyunlar</span>
+                  </div>
+                  <div className="text-lg font-black text-zinc-900 dark:text-zinc-100">
                     {currentUser.gamesPlayed} Masa
                   </div>
                 </div>
-                <div>
-                  <div style={{ fontSize: '11px', color: '#64748b' }}>Qələbə Əmsalı</div>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#34d399' }}>
+
+                <div className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mb-1">
+                    <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Qələbə</span>
+                  </div>
+                  <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
                     {currentUser.winRate}%
                   </div>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <Button variant="outline" size="md" fullWidth onClick={onClose} style={{ borderColor: '#334155' }}>
+            <div className="flex items-center justify-end gap-3">
+              <Button variant="secondary" size="md" onClick={onClose}>
                 Bağla
               </Button>
               {onLogout && (
-                <Button variant="danger" size="md" fullWidth onClick={onLogout}>
+                <Button
+                  variant="danger"
+                  size="md"
+                  onClick={onLogout}
+                  icon={<LogOut className="w-4 h-4" />}
+                >
                   Hesabdan Çıx
                 </Button>
               )}
@@ -244,92 +228,60 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         ) : (
           /* Not logged in: Tabbed Interface */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div className="flex flex-col gap-4">
             {/* Segmented Switcher */}
-            <div
-              style={{
-                display: 'flex',
-                padding: '4px',
-                backgroundColor: '#0f172a',
-                borderRadius: '10px',
-                border: '1px solid #1e293b',
-              }}
-            >
+            <div className="grid grid-cols-2 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
               <button
                 type="button"
-                onClick={() => { setTab('login'); setErrorMsg(''); setSuccessMsg(''); }}
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: tab === 'login' ? '#dc2626' : 'transparent',
-                  color: tab === 'login' ? '#ffffff' : '#94a3b8',
+                onClick={() => {
+                  setTab('login');
+                  setErrorMsg('');
+                  setSuccessMsg('');
                 }}
+                className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                  tab === 'login'
+                    ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                }`}
               >
                 Daxil Ol
               </button>
               <button
                 type="button"
-                onClick={() => { setTab('register'); setErrorMsg(''); setSuccessMsg(''); }}
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: tab === 'register' ? '#0891b2' : 'transparent',
-                  color: tab === 'register' ? '#ffffff' : '#94a3b8',
+                onClick={() => {
+                  setTab('register');
+                  setErrorMsg('');
+                  setSuccessMsg('');
                 }}
+                className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                  tab === 'register'
+                    ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                }`}
               >
                 Qeydiyyatdan Keç
               </button>
             </div>
 
-            {/* Notifications */}
+            {/* Error / Success Notifications */}
             {errorMsg && (
-              <div
-                style={{
-                  padding: '10px 14px',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
-                  color: '#fca5a5',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                }}
-              >
-                ⚠️ {errorMsg}
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMsg}</span>
               </div>
             )}
             {successMsg && (
-              <div
-                style={{
-                  padding: '10px 14px',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
-                  color: '#6ee7b7',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                }}
-              >
-                ✓ {successMsg}
+              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                <span>{successMsg}</span>
               </div>
             )}
 
             {/* TAB 1: LOGIN */}
             {tab === 'login' ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="flex flex-col gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '6px' }}>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     Oyunçu Ləqəbi (Ad) *
                   </label>
                   <input
@@ -338,49 +290,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                     autoFocus
-                    style={{
-                      width: '100%',
-                      backgroundColor: '#0f172a',
-                      color: '#f8fafc',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      padding: '10px 14px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '6px' }}>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     Dərəcə (Tier) Seçimi
                   </label>
                   <select
                     value={selectedTier}
                     onChange={(e) => setSelectedTier(e.target.value as PlayerTier)}
-                    style={{
-                      width: '100%',
-                      backgroundColor: '#0f172a',
-                      color: '#f8fafc',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      padding: '10px 14px',
-                      fontSize: '14px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
                   >
                     <option value="TIER_1">{TIER_TITLES.TIER_1}</option>
                     <option value="TIER_2">{TIER_TITLES.TIER_2}</option>
                     <option value="TIER_3">{TIER_TITLES.TIER_3}</option>
                   </select>
-                  <span style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', display: 'block' }}>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 block">
                     Dərəcəniz hansı paket və masalara daxil ola biləcəyinizi müəyyən edir.
                   </span>
                 </div>
 
-                <div style={{ marginTop: '4px' }}>
+                <div className="pt-2">
                   <Button
                     variant="primary"
                     size="md"
@@ -394,9 +326,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             ) : (
               /* TAB 2: REGISTER */
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="flex flex-col gap-3">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     Ad və Soyad *
                   </label>
                   <input
@@ -404,22 +336,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Məs: Elmir Qasımov"
                     value={regFullName}
                     onChange={(e) => setRegFullName(e.target.value)}
-                    style={{
-                      width: '100%',
-                      backgroundColor: '#0f172a',
-                      color: '#f8fafc',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontSize: '13px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     Oyunçu Ləqəbi (Username) *
                   </label>
                   <input
@@ -427,39 +349,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Məs: Don_Elmir"
                     value={regUsername}
                     onChange={(e) => setRegUsername(e.target.value)}
-                    style={{
-                      width: '100%',
-                      backgroundColor: '#0f172a',
-                      color: '#f8fafc',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      fontSize: '13px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                       Sinif / Status
                     </label>
                     <select
                       value={regGrade}
                       onChange={(e) => setRegGrade(Number(e.target.value))}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#0f172a',
-                        color: '#f8fafc',
-                        border: '1px solid #334155',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontSize: '13px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                      }}
+                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     >
                       <option value={10}>10-cu Sinif</option>
                       <option value={11}>11-ci Sinif</option>
@@ -472,23 +374,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                       Başlanğıc Dərəcə
                     </label>
                     <select
                       value={regTier}
                       onChange={(e) => setRegTier(e.target.value as PlayerTier)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#0f172a',
-                        color: '#f8fafc',
-                        border: '1px solid #334155',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontSize: '13px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                      }}
+                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     >
                       <option value="TIER_1">Əsgər (Tier 1)</option>
                       <option value="TIER_2">Kapo (Tier 2)</option>
@@ -497,9 +389,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                       Şifrə / PİN
                     </label>
                     <input
@@ -507,21 +399,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       placeholder="••••••••"
                       value={regPin}
                       onChange={(e) => setRegPin(e.target.value)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#0f172a',
-                        color: '#f8fafc',
-                        border: '1px solid #334155',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontSize: '13px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                      }}
+                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                       Təkrarı
                     </label>
                     <input
@@ -529,31 +411,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       placeholder="••••••••"
                       value={regConfirmPin}
                       onChange={(e) => setRegConfirmPin(e.target.value)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#0f172a',
-                        color: '#f8fafc',
-                        border: '1px solid #334155',
-                        borderRadius: '8px',
-                        padding: '8px 12px',
-                        fontSize: '13px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                      }}
+                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     />
                   </div>
                 </div>
 
-                <div style={{ marginTop: '4px' }}>
+                <div className="pt-2">
                   <Button
                     variant="primary"
                     size="md"
                     fullWidth
                     onClick={handleRegisterSubmit}
-                    style={{
-                      background: 'linear-gradient(to right, #0891b2, #0d9488)',
-                      borderColor: '#06b6d4',
-                    }}
                   >
                     Vahid Profil Yarat & Masaya Başla
                   </Button>

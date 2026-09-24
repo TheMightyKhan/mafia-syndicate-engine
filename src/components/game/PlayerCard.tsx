@@ -1,6 +1,7 @@
 'use client';
 
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import { Crown, Bot, Check, Clock, Mic, User, Shield, Skull } from 'lucide-react';
 import { PlayerSession } from '../../types/game';
 import { ScrubbedPlayerView } from '../../types/engine';
 import { AllInDistrict, CivicOfficeType } from '../../types/roles';
@@ -16,7 +17,6 @@ export interface PlayerCardProps {
   readonly isSelected?: boolean;
   readonly voteCount?: number;
   readonly isReady?: boolean;
-  /** True when this player is actively speaking (voice chat) */
   readonly isSpeaking?: boolean;
   readonly onSelect?: (player: PlayerSession | ScrubbedPlayerView) => void;
 }
@@ -45,28 +45,25 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 }) => {
   const isAlive = player.isAlive;
   const isHost = player.isHost;
-
   const isBot = isFullSession(player) && player.isAiBotControlled;
 
-  // In LOBBY phase: NO ROLES ARE SHOWN. Everyone is just a player waiting for the game to start!
   let roleTitle = player.username;
   let roleSubtitle = isLobbyPhase
     ? isHost
-      ? '👑 Masa Rəhbəri (Host)'
+      ? 'Masa Rəhbəri (Host)'
       : isBot
-      ? '🤖 Gemini AI Bot (Hazırdır)'
+      ? 'Gemini AI Bot'
       : isReady
-      ? '✅ Oyuna Hazırdır'
-      : '⏳ Başlamağı Gözləyir'
+      ? 'Oyuna Hazırdır'
+      : 'Gözləyir'
     : isSelf
     ? isFullSession(player)
       ? `Siz: ${player.displayRole.formatted}`
       : `Siz: ${player.ownRoleDisplay ?? 'Gizli Rol'}`
     : isBot
-    ? '🤖 AI Bot (Gizli Rol)'
-    : '🎭 Vətəndaş (Gizli Rol)';
+    ? 'AI Bot (Gizli)'
+    : 'Vətəndaş (Gizli)';
 
-  // All-In Public District & Office (only visible after game starts)
   const district = !isLobbyPhase ? player.currentDistrict : null;
   const officeRaw = !isLobbyPhase
     ? isFullSession(player)
@@ -74,137 +71,103 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       : (player.ownOffice as CivicOfficeType | null)
     : null;
 
-  const cardStyle: CSSProperties = {
-    position: 'relative',
-    padding: '16px',
-    backgroundColor: isSelected ? '#172554' : isAlive ? '#090d16' : '#030712',
-    border: isSelected
-      ? '2px solid #3b82f6'
-      : isSpeaking
-      ? '2px solid #22c55e'
-      : isCurrentTurn
-      ? '2px solid #dc2626'
-      : hasVoteOnTarget
-      ? '2px solid #f59e0b'
-      : '1px solid #1e293b',
-    borderRadius: '12px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    cursor: onSelect ? 'pointer' : 'default',
-    opacity: isAlive ? 1 : 0.6,
-    transition: 'all 180ms ease',
-    boxShadow: isSelected
-      ? '0 0 16px rgba(59, 130, 246, 0.35)'
-      : isSpeaking
-      ? '0 0 18px rgba(34, 197, 94, 0.45)'
-      : '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
-    overflow: 'hidden',
-  };
-
   return (
-    <div style={cardStyle} onClick={() => onSelect?.(player)}>
-      {/* Eliminated Stamp (Only during active game) */}
+    <div
+      onClick={() => onSelect?.(player)}
+      className={`relative p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between gap-3 overflow-hidden select-none ${
+        onSelect ? 'cursor-pointer hover:-translate-y-0.5' : 'cursor-default'
+      } ${
+        isSelected
+          ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/20 shadow-md'
+          : isSpeaking
+          ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-500 ring-2 ring-emerald-500/25 shadow-md'
+          : isCurrentTurn
+          ? 'bg-red-50/80 dark:bg-red-950/30 border-red-500 ring-2 ring-red-500/25 shadow-md'
+          : hasVoteOnTarget
+          ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20'
+          : isAlive
+          ? 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm dark:shadow-none'
+          : 'bg-zinc-100/60 dark:bg-zinc-950/60 border-zinc-200 dark:border-zinc-800/60 opacity-60'
+      }`}
+    >
+      {/* Eliminated Stamp */}
       {!isLobbyPhase && !isAlive && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '-10px',
-            transform: 'rotate(18deg)',
-            backgroundColor: 'rgba(185, 28, 28, 0.92)',
-            color: '#fef2f2',
-            padding: '2px 18px',
-            fontSize: '11px',
-            fontWeight: 900,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            border: '2px dashed #fca5a5',
-            zIndex: 10,
-            pointerEvents: 'none',
-          }}
-        >
+        <div className="absolute top-3 right-[-8px] rotate-12 bg-rose-600 text-white px-4 py-0.5 text-[10px] font-black tracking-widest uppercase border border-rose-400 shadow-md z-10 pointer-events-none">
           {AZ_UI.eliminated}
         </div>
       )}
 
-      {/* Header: Avatar, Name & Ready Badge */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      {/* Header: Avatar, Name & Status */}
+      <div className="flex items-center justify-between gap-2.5">
+        <div className="flex items-center gap-2.5 min-w-0">
           {/* Avatar Circle */}
           <div
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '50%',
-              backgroundColor: isHost ? '#d97706' : isSelf ? '#dc2626' : isBot ? '#4f46e5' : '#1e293b',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: '15px',
-              border: isSelf ? '2px solid #f87171' : isBot ? '2px solid #818cf8' : '1px solid #334155',
-            }}
+            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border ${
+              isHost
+                ? 'bg-amber-500 text-white border-amber-400'
+                : isSelf
+                ? 'bg-red-600 text-white border-red-400'
+                : isBot
+                ? 'bg-indigo-600 text-white border-indigo-400'
+                : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700'
+            }`}
           >
-            {isBot ? '🤖' : player.username.charAt(0).toUpperCase()}
+            {isBot ? <Bot className="w-4 h-4" /> : player.username.charAt(0).toUpperCase()}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontWeight: 800, color: '#f8fafc', fontSize: '15px' }}>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-1.5 truncate">
+              <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate">
                 {roleTitle}
               </span>
               {isSelf && (
-                <span style={{ fontSize: '10px', backgroundColor: '#3b82f6', color: '#ffffff', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
+                <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-bold shrink-0">
                   Siz
                 </span>
               )}
               {isBot && (
-                <span style={{ fontSize: '10px', backgroundColor: '#4338ca', color: '#e0e7ff', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>
+                <span className="text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded font-bold shrink-0">
                   Bot
                 </span>
               )}
               {isSpeaking && (
-                <span
-                  style={{
-                    fontSize: '10px',
-                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                    color: '#4ade80',
-                    padding: '1px 6px',
-                    borderRadius: '4px',
-                    fontWeight: 700,
-                    border: '1px solid rgba(34, 197, 94, 0.4)',
-                    animation: 'speakPulse 0.8s ease-in-out infinite alternate',
-                  }}
-                >
-                  🎙️ Danışır
+                <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.2 rounded-full font-bold border border-emerald-500/30 animate-pulse shrink-0">
+                  <Mic className="w-2.5 h-2.5" />
+                  Danışır
                 </span>
               )}
             </div>
 
-            <span style={{ fontSize: '12px', color: isLobbyPhase ? (isReady || isBot ? '#34d399' : '#94a3b8') : isSelf ? '#38bdf8' : '#64748b' }}>
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
               {roleSubtitle}
             </span>
           </div>
         </div>
 
-        {/* Right Badges */}
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+        {/* Right Status Badges */}
+        <div className="flex items-center gap-1 shrink-0">
           {isLobbyPhase ? (
             isHost ? (
-              <Badge tone="amber">👑 HOST</Badge>
+              <Badge tone="amber" icon={<Crown className="w-3 h-3" />}>
+                HOST
+              </Badge>
             ) : isBot ? (
-              <Badge tone="purple">🤖 AI BOT</Badge>
+              <Badge tone="purple" icon={<Bot className="w-3 h-3" />}>
+                BOT
+              </Badge>
             ) : isReady ? (
-              <Badge tone="emerald">✅ HAZIRDIR</Badge>
+              <Badge tone="emerald" icon={<Check className="w-3 h-3" />}>
+                HAZIR
+              </Badge>
             ) : (
-              <Badge tone="neutral">⏳ GÖZLƏYİR</Badge>
+              <Badge tone="neutral" icon={<Clock className="w-3 h-3" />}>
+                GÖZLƏYİR
+              </Badge>
             )
           ) : (
             <>
               {voteCount > 0 && (
-                <Badge tone="red" style={{ fontSize: '12px', padding: '2px 7px' }}>
+                <Badge tone="red" className="text-xs font-bold">
                   {voteCount} səs
                 </Badge>
               )}
@@ -218,7 +181,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
       {/* Badges Bar (District or Host) */}
       {!isLobbyPhase && (
-        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginTop: '2px' }}>
+        <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
           {district && (
             <Badge tone={DISTRICT_TONES[district] ?? 'blue'}>
               {AZ_DISTRICTS[district]}
@@ -230,29 +193,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
       {/* Office (Visible only during active game if applicable) */}
       {!isLobbyPhase && officeRaw && (
-        <div
-          style={{
-            fontSize: '11px',
-            color: '#94a3b8',
-            borderTop: '1px solid #1e293b',
-            paddingTop: '6px',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="text-[11px] text-zinc-500 dark:text-zinc-400 pt-1 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
           <span>Vəzifə:</span>
-          <strong style={{ color: '#38bdf8' }}>{AZ_CIVIC_OFFICES[officeRaw] ?? officeRaw}</strong>
+          <strong className="text-blue-600 dark:text-blue-400">
+            {AZ_CIVIC_OFFICES[officeRaw] ?? officeRaw}
+          </strong>
         </div>
-      )}
-
-      {/* Speaking pulse animation */}
-      {isSpeaking && (
-        <style>{`
-          @keyframes speakPulse {
-            from { opacity: 0.65; transform: scale(0.97); }
-            to   { opacity: 1;    transform: scale(1.03); }
-          }
-        `}</style>
       )}
     </div>
   );

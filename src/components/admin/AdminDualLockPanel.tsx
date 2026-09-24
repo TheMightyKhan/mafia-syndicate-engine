@@ -1,6 +1,7 @@
 'use client';
 
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
+import { Lock, Unlock, Key, Shield, UserCheck, AlertCircle } from 'lucide-react';
 import { AdminRole } from '../../types/access';
 import { AdminMasterUnlockState, PlayerSession } from '../../types/game';
 import { Badge } from '../ui/Badge';
@@ -42,41 +43,15 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
   const canArchitectUnlock = isArchitect && !unlockState.architectUnlocked;
   const canBailiffUnlock = isBailiff && !unlockState.bailiffUnlocked;
 
-  const containerStyle: CSSProperties = {
-    padding: '18px',
-    backgroundColor: '#090d16',
-    border: '1px solid #1e293b',
-    borderRadius: '12px',
-    marginBottom: '16px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
-  };
-
-  const gridStyle: CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: '14px',
-    marginTop: '14px',
-  };
-
-  const cardStyle: CSSProperties = {
-    padding: '14px',
-    backgroundColor: '#0f172a',
-    borderRadius: '8px',
-    border: '1px solid #334155',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: '10px',
-  };
-
   return (
-    <div style={containerStyle}>
+    <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-5 transition-colors duration-200">
       {/* Header & Lock State */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '16px', fontWeight: 800 }}>
-              🔐 Cüt Açarlı Platforma Admin İcazəsi (All-In 40–50)
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+              Cüt Açarlı Platforma Admin İcazəsi (All-In 40–50)
             </h3>
             {isHost && (
               <Badge tone={hostReady ? 'emerald' : 'amber'}>
@@ -84,12 +59,12 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
               </Badge>
             )}
           </div>
-          <p style={{ margin: '4px 0 0 0', color: '#94a3b8', fontSize: '13px' }}>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             All-In metropolitan rejimini başlatmaq üçün həm Memar, həm də Məhkəmə İcraçısının müstəqil açarları tələb olunur.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="flex items-center gap-2">
           {isHost && onHostReadyToggle && (
             <Button
               size="sm"
@@ -107,20 +82,21 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
       </div>
 
       {/* Dual Key Panels */}
-      <div style={gridStyle}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Key 1: The Architect */}
-        <div style={cardStyle}>
+        <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 dark:bg-amber-950/20 flex flex-col justify-between gap-3">
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '14px' }}>
-                🔑 Açar 1: {AZ_UI.architect}
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-sm text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                <Key className="w-4 h-4 text-amber-500" />
+                <span>Açar 1: {AZ_UI.architect}</span>
               </span>
               <Badge tone={unlockState.architectUnlocked ? 'emerald' : 'amber'}>
                 {unlockState.architectUnlocked ? AZ_UI.turned : AZ_UI.awaitingTurn}
               </Badge>
             </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Təyin edilib: <strong>{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
+            <div className="text-xs text-zinc-600 dark:text-zinc-400">
+              Təyin edilib: <strong className="text-zinc-900 dark:text-zinc-100">{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 
@@ -136,18 +112,19 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
         </div>
 
         {/* Key 2: The Bailiff */}
-        <div style={cardStyle}>
+        <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-500/5 dark:bg-rose-950/20 flex flex-col justify-between gap-3">
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '14px' }}>
-                🔑 Açar 2: {AZ_UI.bailiff}
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-sm text-rose-900 dark:text-rose-200 flex items-center gap-1.5">
+                <Key className="w-4 h-4 text-rose-500" />
+                <span>Açar 2: {AZ_UI.bailiff}</span>
               </span>
               <Badge tone={unlockState.bailiffUnlocked ? 'emerald' : 'amber'}>
                 {unlockState.bailiffUnlocked ? AZ_UI.turned : AZ_UI.awaitingTurn}
               </Badge>
             </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Təyin edilib: <strong>{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
+            <div className="text-xs text-zinc-600 dark:text-zinc-400">
+              Təyin edilib: <strong className="text-zinc-900 dark:text-zinc-100">{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 
@@ -162,75 +139,6 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
           </Button>
         </div>
       </div>
-
-      {/* Host Waiver Manager for 20-39 Lobbies */}
-      {onGrantWaiver && eligibleWaiverPlayers.length > 0 && (
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px 14px',
-            backgroundColor: '#030712',
-            borderRadius: '8px',
-            border: '1px solid #1e293b',
-          }}
-        >
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#93c5fd', marginBottom: '8px' }}>
-            🎟️ Host / Admin Güzəşt Meneceri (20–39 Nəfərlik Otaqlar)
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <select
-              value={selectedWaiverTarget}
-              onChange={(e) => setSelectedWaiverTarget(e.target.value)}
-              style={{
-                backgroundColor: '#0f172a',
-                color: '#f8fafc',
-                padding: '6px 10px',
-                borderRadius: '6px',
-                border: '1px solid #334155',
-                fontSize: '13px',
-              }}
-            >
-              <option value="">Oyunçu Seçin...</option>
-              {eligibleWaiverPlayers.map((p) => (
-                <option key={p.userId} value={p.userId}>
-                  {p.username} ({p.tier})
-                </option>
-              ))}
-            </select>
-
-            <input
-              type="text"
-              value={waiverReason}
-              onChange={(e) => setWaiverReason(e.target.value)}
-              placeholder="Güzəşt səbəbi..."
-              style={{
-                backgroundColor: '#0f172a',
-                color: '#f8fafc',
-                padding: '6px 10px',
-                borderRadius: '6px',
-                border: '1px solid #334155',
-                fontSize: '13px',
-                flex: 1,
-                minWidth: '180px',
-              }}
-            />
-
-            <Button
-              size="sm"
-              variant="primary"
-              disabled={!selectedWaiverTarget}
-              onClick={() => {
-                if (selectedWaiverTarget) {
-                  onGrantWaiver(selectedWaiverTarget, waiverReason);
-                  setSelectedWaiverTarget('');
-                }
-              }}
-            >
-              Güzəşt Təsdiq Et
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

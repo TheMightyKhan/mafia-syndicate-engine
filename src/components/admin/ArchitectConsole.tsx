@@ -1,6 +1,7 @@
 'use client';
 
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
+import { Settings, Play, Pause, Search, Sliders, Shield, Terminal } from 'lucide-react';
 import { GamePhase, LobbyState } from '../../types/game';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -34,45 +35,32 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
   const [jitterSec, setJitterSec] = useState<number>(lobbyState.nightJitterDelaySeconds);
   const [showSnapshot, setShowSnapshot] = useState<boolean>(false);
 
-  const consoleStyle: CSSProperties = {
-    backgroundColor: '#090d16',
-    border: '1px solid #d97706',
-    borderRadius: '12px',
-    padding: '18px',
-    boxShadow: '0 0 25px rgba(217, 119, 6, 0.15)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    marginTop: '16px',
-  };
-
-  const sectionStyle: CSSProperties = {
-    backgroundColor: '#0f172a',
-    padding: '14px',
-    borderRadius: '8px',
-    border: '1px solid #1e293b',
-  };
-
   return (
-    <div style={consoleStyle}>
+    <div className="p-5 sm:p-6 rounded-2xl border border-amber-500/30 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
       {/* Console Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h3 style={{ margin: 0, color: '#fbbf24', fontSize: '17px', fontWeight: 900 }}>
-              🏛️ Memar Konsolu (The Architect Console)
+          <div className="flex items-center gap-2 mb-1">
+            <Settings className="w-5 h-5 text-amber-500" />
+            <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+              Memar Konsolu (The Architect Console)
             </h3>
             <Badge tone="amber">Platform Admin</Badge>
           </div>
-          <p style={{ margin: '3px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>
-            Mərhələlərin səlahiyyətli dəyişdirilməsi, taymer idarəsi, jitter tənzimləməsi və sistem anlıq görüntüsü.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Mərhələlərin səlahiyyətli dəyişdirilməsi, taymer idarəsi və sistem snapshot tənzimləmələri.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           {onToggleTimerPause && (
-            <Button variant={isTimerPaused ? 'primary' : 'warning'} size="sm" onClick={onToggleTimerPause}>
-              {isTimerPaused ? '▶️ Taymeri Davam Etdir' : '⏸️ Taymeri Pauzaya Qoy'}
+            <Button
+              variant={isTimerPaused ? 'primary' : 'warning'}
+              size="sm"
+              onClick={onToggleTimerPause}
+              icon={isTimerPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+            >
+              {isTimerPaused ? 'Davam Etdir' : 'Pauza'}
             </Button>
           )}
 
@@ -80,30 +68,23 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
             variant="outline"
             size="sm"
             onClick={() => setShowSnapshot(!showSnapshot)}
-            style={{ borderColor: '#d97706' }}
+            icon={<Terminal className="w-3.5 h-3.5" />}
           >
-            {showSnapshot ? 'Görüntünü Gizlət' : '🔍 Dövlət Snapshot'}
+            {showSnapshot ? 'Gizlət' : 'Snapshot'}
           </Button>
         </div>
       </div>
 
       {/* Phase Override Controls */}
-      <div style={sectionStyle}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc', marginBottom: '8px' }}>
+      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+        <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
           Mərhələni Müstəqil Dəyişdir (Phase Override)
         </div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="flex items-center gap-3 flex-wrap">
           <select
             value={selectedPhase}
             onChange={(e) => setSelectedPhase(e.target.value as GamePhase)}
-            style={{
-              backgroundColor: '#1e293b',
-              color: '#f8fafc',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              border: '1px solid #475569',
-              fontSize: '13px',
-            }}
+            className="px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-amber-500 cursor-pointer"
           >
             {PHASES_LIST.map((p) => (
               <option key={p} value={p}>
@@ -112,22 +93,15 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
             ))}
           </select>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Müddət (san):</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">Müddət:</span>
             <input
               type="number"
               value={durationSec}
               onChange={(e) => setDurationSec(Number(e.target.value))}
-              style={{
-                backgroundColor: '#1e293b',
-                color: '#f8fafc',
-                padding: '8px 10px',
-                borderRadius: '6px',
-                border: '1px solid #475569',
-                width: '90px',
-                fontSize: '13px',
-              }}
+              className="w-20 px-2.5 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-amber-500"
             />
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">san</span>
           </div>
 
           <Button
@@ -135,18 +109,18 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
             size="sm"
             onClick={() => onOverridePhase(selectedPhase, durationSec)}
           >
-            Mərhələni Dərhal Tətbiq Et
+            Dərhal Tətbiq Et
           </Button>
         </div>
       </div>
 
       {/* Jitter Delay Configuration */}
       {onConfigureJitter && (
-        <div style={sectionStyle}>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc', marginBottom: '8px' }}>
+        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+          <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
             Gecə Anti-Deduksiya Jitter Tənzimləməsi (3–7 saniyə)
           </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-3 flex-wrap">
             <input
               type="range"
               min={3}
@@ -158,13 +132,13 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
                 setJitterSec(val);
                 onConfigureJitter(val);
               }}
-              style={{ width: '180px' }}
+              className="w-44 accent-amber-500 cursor-pointer"
             />
-            <span style={{ color: '#fbbf24', fontWeight: 700, fontSize: '14px' }}>
+            <span className="text-sm font-bold text-amber-600 dark:text-amber-400">
               {jitterSec} saniyə
             </span>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              (Süni intellekt botları ilə insan oyunçuların reaksiya vaxtını maskalayır)
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              (AI botları ilə insan oyunçuların reaksiya vaxtını maskalayır)
             </span>
           </div>
         </div>
@@ -172,20 +146,11 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
 
       {/* State Snapshot Inspector */}
       {showSnapshot && (
-        <div
-          style={{
-            backgroundColor: '#030712',
-            padding: '12px',
-            borderRadius: '6px',
-            border: '1px solid #334155',
-            maxHeight: '260px',
-            overflowY: 'auto',
-          }}
-        >
-          <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>
+        <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-950 font-mono text-xs max-h-60 overflow-y-auto">
+          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2 font-bold">
             Canlı Otaq Vəziyyəti JSON
           </div>
-          <pre style={{ margin: 0, fontSize: '11px', color: '#38bdf8', fontFamily: 'monospace' }}>
+          <pre className="text-blue-600 dark:text-blue-400 text-xs">
             {JSON.stringify(
               {
                 lobbyId: lobbyState.lobbyId,
