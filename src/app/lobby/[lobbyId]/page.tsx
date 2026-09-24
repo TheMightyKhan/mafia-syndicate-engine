@@ -14,6 +14,9 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
+  Sliders,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
@@ -29,6 +32,7 @@ import { AZ_PHASES, AZ_UI } from '../../../config/i18n/az';
 import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
 import { PACKS_CONFIG } from '../../../config/packs.config';
+import { playCard, playDay, playNight, isSoundMuted, toggleSound, subscribeSound } from '../../../utils/sfx';
 
 interface LobbyPageProps {
   readonly params: {
@@ -46,6 +50,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [showAdminTools, setShowAdminTools] = useState<boolean>(false);
   const [isReadyLocal, setIsReadyLocal] = useState<boolean>(false);
+  const [soundMuted, setSoundMuted] = useState<boolean>(false);
   const [speakingIds, setSpeakingIds] = useState<Set<string>>(new Set());
 
   // Initialize lobby state in clean waiting room phase
@@ -96,6 +101,13 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       globalNightKillCap: isAllIn ? 3 : 99,
     };
   });
+
+  // Track sound
+  useEffect(() => {
+    setSoundMuted(isSoundMuted());
+    const unsub = subscribeSound((muted) => setSoundMuted(muted));
+    return () => unsub();
+  }, []);
 
   // Load user session & join lobby via server API
   useEffect(() => {
@@ -221,9 +233,10 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     [lobbyId, currentUserId, currentUsername]
   );
 
-  // Copy Room Link to Clipboard
+  // Copy Room Link to Clipboard with vibrant green toast feedback
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
+      playCard();
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 3000);
@@ -241,14 +254,27 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     const nextPhase: GamePhase =
       lobbyState.mode === 'ALL_IN' ? 'DAY_REGIONAL_CAUCUS' : 'NIGHT_BUFFER';
     const duration = lobbyState.mode === 'ALL_IN' ? 180 : 90;
+    playNight();
     dispatchAction({ action: 'START_GAME', nextPhase, durationSeconds: duration });
   };
 
   // Toggle Ready status
   const handleToggleReady = () => {
+    playCard();
     const nextVal = !isReadyLocal;
     setIsReadyLocal(nextVal);
     dispatchAction({ action: 'READY', ready: nextVal });
+  };
+
+  // Add bots handlers
+  const handleAddBot = () => {
+    playCard();
+    dispatchAction({ action: 'ADD_BOT' });
+  };
+
+  const handleFillBots = () => {
+    playCard();
+    dispatchAction({ action: 'FILL_BOTS', targetCount: 5 });
   };
 
   // Governance & Admin Handlers
@@ -269,6 +295,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   };
 
   const handleTriggerAction = (actionType: NightActionType, targetPlayerId: string) => {
+    playCard();
     dispatchAction({ action: 'NIGHT_ACTION', actionType, targetPlayerId });
     alert(`Əmr serverə göndərildi: ${actionType} -> ${targetPlayerId}`);
   };
@@ -336,15 +363,6 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               {isHost && <span className="text-amber-600 dark:text-amber-400 font-bold">(Host)</span>}
             </span>
           </div>
-
-          {currentPack?.roleBreakdown && (
-            <div className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1.5 font-medium">
-              <Sparkles className="w-3.5 h-3.5 shrink-0" />
-              <span>
-                <strong>Masa Rolları:</strong> {currentPack.roleBreakdown}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Top Header Actions */}
@@ -355,8 +373,26 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             onClick={handleCopyLink}
             icon={copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <LinkIcon className="w-4 h-4" />}
           >
-            {copiedLink ? 'Link Kopyalandı' : 'Linki Kopyala'}
+            {copiedLink ? 'Link Kopyalandı' : 'Dəvət Linkini Kopyala'}
           </Button>
+
+          {/* Sound Toggle in Lobby */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = toggleSound();
+              setSoundMuted(next);
+              if (!next) playCard();
+            }}
+            title={soundMuted ? 'Səsi Aç' : 'Səsi Bağla'}
+            className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
+              soundMuted
+                ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+            }`}
+          >
+            {soundMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
 
           {isLobbyPhase && (
             <Button
@@ -374,7 +410,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => dispatchAction({ action: 'ADD_BOT' })}
+                onClick={handleAddBot}
                 icon={<Bot className="w-4 h-4" />}
               >
                 +1 AI Bot
@@ -382,7 +418,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => dispatchAction({ action: 'FILL_BOTS', targetCount: 5 })}
+                onClick={handleFillBots}
                 icon={<Zap className="w-4 h-4 text-amber-500" />}
               >
                 5 Botla Doldur
@@ -402,7 +438,10 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             <Button
               variant="danger"
               size="sm"
-              onClick={() => dispatchAction({ action: 'PROGRESS_PHASE' })}
+              onClick={() => {
+                playDay();
+                dispatchAction({ action: 'PROGRESS_PHASE' });
+              }}
             >
               {lobbyState.phase === 'NIGHT_BUFFER' ? '🌅 Gecəni Bitir → Səhər' : '⚖️ Səsləri Hesabla'}
             </Button>
@@ -410,30 +449,102 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         </div>
       </div>
 
-      {/* Copy link confirmation toast */}
+      {/* ─── GREEN TOAST FEEDBACK FOR COPIED LINK ───────────────────── */}
       {copiedLink && (
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fadeIn">
-          <Check className="w-4 h-4 shrink-0 text-emerald-600" />
-          <span>Masa linki kopyalandı! Bu linki dostlarınıza göndərin — onlar linkə daxil olan kimi masada görünəcəklər.</span>
+        <div className="p-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 text-sm font-bold flex items-center justify-between shadow-lg shadow-emerald-500/10 animate-fadeIn">
+          <div className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
+              <Check className="w-4 h-4 stroke-[3]" />
+            </span>
+            <span>
+              <strong>Dəvət Linki Panoya Kopyalandı!</strong> Dostlarınıza göndərin — daxil olduqda dərhal bu masada görünəcəklər.
+            </span>
+          </div>
+          <span className="text-xs bg-emerald-500/20 px-2 py-0.5 rounded-full font-mono">
+            URL Hazırdır
+          </span>
         </div>
       )}
 
       {/* ─── 1. LOBBY PHASE ─────────────────────────────────────────── */}
       {isLobbyPhase ? (
         <div className="flex flex-col gap-6">
-          {/* Secret Role Notice */}
-          <div className="p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
-              <Eye className="w-5 h-5" />
+          {/* Table Configuration & Rules Summary Card */}
+          <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-red-500" />
+                <h3 className="font-extrabold text-sm sm:text-base text-zinc-950 dark:text-white">
+                  Masa Konfiqurasiyası və Qaydalar Xülasəsi
+                </h3>
+              </div>
+              <Badge tone="purple">{currentPack?.minTier || 'TIER_1'}</Badge>
             </div>
-            <div>
-              <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                Rollar oyun başlamamışdan əvvəl qətiyyən görünmür!
-              </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
-                Hər kəs toplaşdıqdan sonra Masa Rəhbəri (Host) &quot;Oyunu Başlat&quot; düyməsinə basacaq və hər bir iştirakçıya öz gizli rolu (Mafiya, Şərif, Həkim və s.) şəxsi olaraq təqdim ediləcək.
-              </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+              <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
+                  Oyun Rejimi
+                </span>
+                <span className="font-extrabold text-zinc-900 dark:text-zinc-100 text-sm">
+                  {currentPack?.name || lobbyState.mode.replace(/_/g, ' ')}
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-0.5">
+                  {currentPack?.isMinigame ? 'Xüsusi Mini-oyun Formatı' : 'Klassik Sosial Deduksiya'}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
+                  Oyunçu Limiti
+                </span>
+                <span className="font-extrabold text-zinc-900 dark:text-zinc-100 text-sm">
+                  {currentPack?.minPlayers ?? 5} - {currentPack?.maxPlayers ?? 7} İştirakçı
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-0.5">
+                  Hazırda: <strong>{totalPlayersCount} oyunçu</strong> qoşulub
+                </span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
+                  Fazaların Müddəti
+                </span>
+                <span className="font-extrabold text-zinc-900 dark:text-zinc-100 text-sm">
+                  Gündüz: {currentPack?.defaultTimings.dayCentralAssemblySeconds ?? 180}s | Gecə: {currentPack?.defaultTimings.nightBufferSeconds ?? 45}s
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-0.5">
+                  Səsvermə: {currentPack?.defaultTimings.dayVotingSeconds ?? 60}s
+                </span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1">
+                  Mühafizə & Audio
+                </span>
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1">
+                  <Shield className="w-3.5 h-3.5" />
+                  Anti-AFK Gemini 3.8
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block mt-0.5">
+                  WebRTC P2P Canlı Səsli Rabitə
+                </span>
+              </div>
             </div>
+
+            {currentPack?.roleBreakdown && (
+              <div className="p-3.5 rounded-xl bg-red-500/10 dark:bg-red-950/30 border border-red-500/25 flex items-start gap-2.5 text-xs text-red-900 dark:text-red-200">
+                <Sparkles className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="font-black text-red-600 dark:text-red-400 uppercase tracking-wide">
+                    Bu Masanın Rol Bölgüsü:
+                  </strong>
+                  <p className="mt-0.5 font-medium leading-relaxed">
+                    {currentPack.roleBreakdown}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Connected Players Grid */}
@@ -550,23 +661,25 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       ) : (
         /* ─── 2. ACTIVE GAME PHASE ───────────────────────────────────── */
         <div className="flex flex-col gap-6">
-          {/* Secret Role Card */}
-          <div className="p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 flex items-center justify-between gap-4 shadow-sm">
+          {/* Secret Role Card with Radiant Glow */}
+          <div className="p-5 rounded-2xl border border-indigo-500/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-indigo-500/15 shadow-[0_0_25px_rgba(99,102,241,0.2)] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-indigo-500/30">
                 🎭
               </div>
               <div>
-                <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider block">
+                <span className="text-[11px] font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-widest block">
                   Sizin Gizli Şəxsi Rolunuz
                 </span>
-                <div className="text-lg font-black text-zinc-950 dark:text-white">
+                <div className="text-xl font-black text-zinc-950 dark:text-white tracking-tight">
                   {lobbyState.players[currentUserId]?.displayRole.formatted ?? `${currentUsername} (Vətəndaş)`}
                 </div>
               </div>
             </div>
 
-            <Badge tone="purple">MƏXFİ</Badge>
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+              MƏXFİ
+            </span>
           </div>
 
           {/* Interactive Game Board */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   BookOpen,
   Trophy,
@@ -12,7 +12,11 @@ import {
   Home,
   ShieldCheck,
   Activity,
-  LogOut,
+  Volume2,
+  VolumeX,
+  ChevronDown,
+  ExternalLink,
+  Coins,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -23,6 +27,7 @@ import { LeaderboardModal } from '../modals/LeaderboardModal';
 import { GameModesCatalogModal } from '../modals/GameModesCatalogModal';
 import { CreateRoomModal } from '../modals/CreateRoomModal';
 import { GameMode } from '../../types/packs';
+import { isSoundMuted, toggleSound, subscribeSound, playCard } from '../../utils/sfx';
 
 export const Navbar: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
@@ -32,8 +37,33 @@ export const Navbar: React.FC = () => {
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState<boolean>(false);
   const [catalogSelectedMode, setCatalogSelectedMode] = useState<GameMode>('SE7EN_DEADLY_SINS');
 
+  const [isEcoDropdownOpen, setIsEcoDropdownOpen] = useState<boolean>(false);
+  const [soundMuted, setSoundMuted] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserSessionState | null>(null);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Initialize sound mute state & subscribe to changes
+  useEffect(() => {
+    setSoundMuted(isSoundMuted());
+    const unsubscribe = subscribeSound((muted) => {
+      setSoundMuted(muted);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsEcoDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // User session sync
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -125,181 +155,297 @@ export const Navbar: React.FC = () => {
     setIsAuthOpen(false);
   };
 
+  const handleSoundToggle = () => {
+    const nextMuted = toggleSound();
+    setSoundMuted(nextMuted);
+    if (!nextMuted) {
+      playCard();
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full">
-      {/* ─── TOP STATUS RIBBON ────────────────────────────────────────── */}
-      <aside
-        aria-label="TDV Organization Status"
-        className="w-full bg-zinc-100 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800/80 px-4 sm:px-6 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between gap-4 transition-colors duration-200"
-      >
-        <div className="flex items-center gap-2.5 overflow-hidden whitespace-nowrap">
-          <a
-            href="https://tdv-community-hubs.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-bold text-zinc-900 dark:text-zinc-100 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-          >
-            <span className="w-2 h-2 rounded-full bg-red-500 ring-2 ring-red-500/20 animate-pulse" />
-            <span>TDV Community Labs</span>
-          </a>
-          <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">|</span>
-          <span className="font-semibold text-zinc-700 dark:text-zinc-300 hidden sm:inline">
-            Mafiya Klubu
-          </span>
-          <span className="text-zinc-300 dark:text-zinc-700 hidden md:inline">•</span>
-          <span className="text-zinc-500 dark:text-zinc-400 hidden md:inline text-[11px]">
-            📰 24 Rol Ensiklopediyası və 15 Oyun Rejimi
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium text-[11px]">
-            <Activity className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Bakı Node-01</span>
-            <span className="text-[10px] opacity-75">(16ms)</span>
-          </div>
-
-          <div className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 text-[10px] font-semibold">
-            <ShieldCheck className="w-3 h-3 text-emerald-500" />
-            <span>Anti-AFK Gemini 3.8</span>
-          </div>
-        </div>
-      </aside>
-
-      {/* ─── MAIN NAVIGATION BAR ─────────────────────────────────────── */}
-      <nav className="w-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4 transition-colors duration-200 shadow-sm dark:shadow-none">
-        {/* Left: Brand Identity */}
-        <div className="flex items-center gap-3">
-          <a href="/" className="flex items-center gap-2.5 group">
+    <header className="sticky top-0 z-50 w-full transition-colors duration-200">
+      {/* ─── MAIN AAA NAVBAR ─────────────────────────────────────────── */}
+      <nav className="w-full bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 shadow-sm dark:shadow-2xl dark:shadow-red-950/20">
+        
+        {/* ─── LEFT: BRAND & LIVE NODE INDICATORS ──────────────────── */}
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          <a href="/" className="flex items-center gap-2.5 group select-none">
             <div className="relative">
               <img
                 src="/assets/tdv-logo.jpg"
                 alt="TDV Logo"
-                className="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-200 dark:ring-zinc-700 group-hover:ring-red-500 transition-all duration-200"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-red-500/40 group-hover:ring-red-500 shadow-md shadow-red-500/20 transition-all duration-200 group-hover:scale-105"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-600 rounded-full border-2 border-white dark:border-zinc-900" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-red-600 rounded-full border-2 border-white dark:border-zinc-950 animate-pulse" />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-extrabold text-base tracking-tight text-zinc-950 dark:text-white leading-tight">
-                TDV BTL <span className="text-red-600 dark:text-red-500">MAFIA</span>
-              </span>
-              <span className="text-[10px] font-bold tracking-wider text-amber-600 dark:text-amber-400 uppercase">
+              <div className="flex items-center gap-1.5">
+                <span className="font-black text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
+                  TDV BTL <span className="text-red-600 dark:text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">MAFIA</span>
+                </span>
+                <span className="hidden xs:inline-flex text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-600/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30">
+                  PRO
+                </span>
+              </div>
+              <span className="text-[10px] font-extrabold tracking-widest text-amber-600 dark:text-amber-400 uppercase">
                 Bakı Türk Liseyi
               </span>
             </div>
           </a>
-        </div>
 
-        {/* Center: Ecosystem Switcher & Navigation Links */}
-        <div className="hidden xl:flex items-center gap-2">
-          {/* Ecosystem Switcher Pill */}
-          <div className="inline-flex items-center p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60 text-xs">
-            <a
-              href="https://tdv-community-hubs.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
+          {/* Live Node Indicators */}
+          <div className="hidden lg:flex items-center gap-2 pl-2 border-l border-zinc-200 dark:border-zinc-800 text-xs">
+            <div
+              title="Bakı Server Klasteri Gecikməsi"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 font-semibold text-[11px]"
             >
-              <Home className="w-3.5 h-3.5 text-blue-500" />
-              <span>Mərkəz</span>
-            </a>
-
-            <a
-              href="https://tdv-e-school.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-emerald-500" />
-              <span>E-School</span>
-            </a>
-
-            <a
-              href="https://school-minifootball-tournament.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-700 transition-all font-medium"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
-              <span>Sports</span>
-            </a>
-
-            <a
-              href="https://tdv-community-hubs.vercel.app/games"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-600 text-white font-bold shadow-sm shadow-red-500/20"
-            >
-              <Gamepad2 className="w-3.5 h-3.5" />
-              <span>Games</span>
-              <span className="text-[10px] bg-red-800/80 px-1.5 py-0.2 rounded font-black">
-                Mafia
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-            </a>
+              <Activity className="w-3 h-3 text-emerald-500" />
+              <span>Bakı Node-01</span>
+              <span className="text-[10px] opacity-75 font-mono">(16ms)</span>
+            </div>
+
+            <div
+              title="Anti-AFK və Ağıllı Bot Mühafizəsi"
+              className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 font-semibold text-[11px]"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Anti-AFK Gemini 3.8</span>
+            </div>
           </div>
-
-          <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-1" />
-
-          {/* Quick Modals Triggers */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsRulesOpen(true)}
-            icon={<BookOpen className="w-4 h-4 text-red-500" />}
-          >
-            <span>Qaydalar</span>
-            <Badge tone="red" className="ml-1 text-[10px] px-1.5 py-0">
-              24 Rol
-            </Badge>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsLeaderboardOpen(true)}
-            icon={<Trophy className="w-4 h-4 text-amber-500" />}
-          >
-            Reytinq
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsCatalogOpen(true)}
-            icon={<Layers className="w-4 h-4 text-indigo-500" />}
-          >
-            Formatlar
-          </Button>
         </div>
 
-        {/* Right: Actions, Theme Toggle & User Auth */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => setIsCreateRoomOpen(true)}
-            icon={<Plus className="w-4 h-4" />}
+        {/* ─── CENTER: MAFIA NAVIGATION & ECOSYSTEM DROPDOWN ─────────── */}
+        <div className="hidden md:flex items-center gap-1.5 lg:gap-2">
+          {/* Formats Button */}
+          <button
+            type="button"
+            onClick={() => {
+              playCard();
+              setIsCatalogOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all duration-150 cursor-pointer"
           >
-            Masa Yarat
-          </Button>
+            <Layers className="w-3.5 h-3.5 text-indigo-500" />
+            <span>Formatlar</span>
+            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+              15 Rejim
+            </span>
+          </button>
+
+          {/* Rules Button */}
+          <button
+            type="button"
+            onClick={() => {
+              playCard();
+              setIsRulesOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all duration-150 cursor-pointer"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-red-500" />
+            <span>Qaydalar</span>
+            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20">
+              24 Rol
+            </span>
+          </button>
+
+          {/* Leaderboard Button */}
+          <button
+            type="button"
+            onClick={() => {
+              playCard();
+              setIsLeaderboardOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all duration-150 cursor-pointer"
+          >
+            <Trophy className="w-3.5 h-3.5 text-amber-500" />
+            <span>Canlı Reytinq</span>
+          </button>
+
+          {/* TDV Ekosistemi Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsEcoDropdownOpen(!isEcoDropdownOpen)}
+              onMouseEnter={() => setIsEcoDropdownOpen(true)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all duration-150 cursor-pointer ${
+                isEcoDropdownOpen
+                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-white border-zinc-300 dark:border-zinc-700'
+                  : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-200/80 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
+              }`}
+            >
+              <span>TDV Ekosistemi</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  isEcoDropdownOpen ? 'rotate-180 text-red-500' : 'text-zinc-400'
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Menu Card */}
+            {isEcoDropdownOpen && (
+              <div
+                onMouseLeave={() => setIsEcoDropdownOpen(false)}
+                className="absolute top-full left-0 mt-2 w-72 p-2 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl z-50 animate-fadeIn flex flex-col gap-1"
+              >
+                <div className="px-3 py-1.5 border-b border-zinc-100 dark:border-zinc-800/80 text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">
+                  Bakı Türk Liseyi Portalları
+                </div>
+
+                {/* Hub */}
+                <a
+                  href="https://tdv-community-hubs.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20 group-hover:scale-105 transition-transform">
+                    <Home className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        TDV Mərkəz
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-zinc-400 group-hover:text-blue-500 opacity-60" />
+                    </div>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                      Bütün lisey tətbiqləri və SSO vahid profil
+                    </span>
+                  </div>
+                </a>
+
+                {/* E-School */}
+                <a
+                  href="https://tdv-e-school.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20 group-hover:scale-105 transition-transform">
+                    <GraduationCap className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        E-School
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-zinc-400 group-hover:text-emerald-500 opacity-60" />
+                    </div>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                      Şagird & Müəllim elektron təhsil portalı
+                    </span>
+                  </div>
+                </a>
+
+                {/* Sports */}
+                <a
+                  href="https://school-minifootball-tournament.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:scale-105 transition-transform">
+                    <Trophy className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                        Sports Arena
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-zinc-400 group-hover:text-amber-500 opacity-60" />
+                    </div>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                      Lisey çempionatları & futbol turnirləri
+                    </span>
+                  </div>
+                </a>
+
+                {/* Games */}
+                <a
+                  href="https://tdv-community-hubs.vercel.app/games"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 border border-red-500/20 group-hover:scale-105 transition-transform">
+                    <Gamepad2 className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                        TDV Games
+                      </span>
+                      <span className="text-[9px] font-black bg-red-600 text-white px-1 rounded">
+                        Mafia
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                      Lisey intellektual oyun mərkəzi
+                    </span>
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ─── RIGHT: CTA, SOUND, THEME & USER AUTH ─────────────────── */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          
+          {/* Red Glowing CTA "+ Masa Yarat" */}
+          <button
+            type="button"
+            onClick={() => {
+              playCard();
+              setIsCreateRoomOpen(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 shadow-md shadow-red-600/30 hover:shadow-red-600/50 hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-red-400/30"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span className="tracking-wide">Masa Yarat</span>
+          </button>
+
+          {/* Sound Toggle (Web Audio API) */}
+          <button
+            type="button"
+            onClick={handleSoundToggle}
+            title={soundMuted ? 'Səsi Aç (Web Audio SFX)' : 'Səsi Bağla'}
+            aria-label={soundMuted ? 'Səsi Aç' : 'Səsi Bağla'}
+            className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
+              soundMuted
+                ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 hover:text-red-500'
+                : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 shadow-sm'
+            }`}
+          >
+            {soundMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
 
           {/* Dual Theme Toggle */}
           <ThemeToggle />
 
+          {/* User Profile / Auth Button */}
           {currentUser ? (
             <div
               onClick={() => setIsAuthOpen(true)}
-              className="flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900 cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
+              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/90 hover:bg-zinc-200 dark:hover:bg-zinc-800/80 cursor-pointer transition-all duration-200 select-none shadow-sm"
             >
-              <div className="w-6 h-6 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
                 {currentUser.username.charAt(0).toUpperCase()}
               </div>
 
               <div className="hidden sm:flex flex-col text-left">
-                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-none">
+                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-none truncate max-w-[100px]">
                   {currentUser.username}
                 </span>
-                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
-                  {currentUser.roleTitle}
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight flex items-center gap-1 mt-0.5">
+                  <Coins className="w-2.5 h-2.5 text-amber-500" />
+                  1,250 🪙
                 </span>
               </div>
 
@@ -311,20 +457,20 @@ export const Navbar: React.FC = () => {
                     ? 'amber'
                     : 'neutral'
                 }
-                className="text-[10px] px-1.5 py-0"
+                className="hidden md:inline-flex text-[10px] px-1.5 py-0"
               >
                 {currentUser.tier}
               </Badge>
             </div>
           ) : (
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
               onClick={() => setIsAuthOpen(true)}
-              icon={<UserIcon className="w-4 h-4" />}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-150 cursor-pointer"
             >
-              Giriş
-            </Button>
+              <UserIcon className="w-4 h-4 text-zinc-500" />
+              <span>Daxil Ol</span>
+            </button>
           )}
         </div>
       </nav>

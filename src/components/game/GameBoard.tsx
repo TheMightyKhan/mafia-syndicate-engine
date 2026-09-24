@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Clock,
   Newspaper,
@@ -10,6 +10,9 @@ import {
   AlertTriangle,
   Building,
   Target,
+  Sparkles,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { LobbyState, NightActionType, PlayerSession } from '../../types/game';
 import { ScrubbedPlayerView } from '../../types/engine';
@@ -24,6 +27,16 @@ import {
   AZ_PHASES,
   AZ_UI,
 } from '../../config/i18n/az';
+import {
+  playNight,
+  playDay,
+  playGavel,
+  playCard,
+  playElimination,
+  isSoundMuted,
+  toggleSound,
+  subscribeSound,
+} from '../../utils/sfx';
 
 export interface GameBoardProps {
   readonly lobbyState: LobbyState;
@@ -53,11 +66,50 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 }) => {
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [activeDistrictTab, setActiveDistrictTab] = useState<AllInDistrict | 'ALL'>('ALL');
+  const [soundMuted, setSoundMuted] = useState<boolean>(false);
 
   const currentUser = lobbyState.players[currentUserId];
   const isAlive = currentUser?.isAlive ?? false;
   const isAllIn = lobbyState.mode === 'ALL_IN';
   const phase = lobbyState.phase;
+
+  // Track sound status
+  useEffect(() => {
+    setSoundMuted(isSoundMuted());
+    const unsub = subscribeSound((muted) => setSoundMuted(muted));
+    return () => unsub();
+  }, []);
+
+  // Audio Phase Engine: Detect phase transitions & trigger zero-latency audio
+  const prevPhaseRef = useRef<string>(lobbyState.phase);
+  const prevAliveCountRef = useRef<number>(
+    Object.values(lobbyState.players).filter((p) => p.isAlive).length
+  );
+
+  useEffect(() => {
+    const curPhase = lobbyState.phase;
+    const prevPhase = prevPhaseRef.current;
+
+    if (curPhase !== prevPhase) {
+      if (curPhase === 'NIGHT_BUFFER') {
+        playNight();
+      } else if (curPhase === 'DAY_VOTING') {
+        playGavel();
+      } else if (
+        curPhase === 'DAY_CENTRAL_ASSEMBLY' ||
+        curPhase === 'DAY_REGIONAL_CAUCUS'
+      ) {
+        playDay();
+      }
+      prevPhaseRef.current = curPhase;
+    }
+
+    const curAliveCount = Object.values(lobbyState.players).filter((p) => p.isAlive).length;
+    if (curAliveCount < prevAliveCountRef.current) {
+      playElimination();
+    }
+    prevAliveCountRef.current = curAliveCount;
+  }, [lobbyState.phase, lobbyState.players]);
 
   const dante = lobbyState.minigameSubStates.dantesInferno;
   const earth = lobbyState.minigameSubStates.earthStoodStill;
@@ -66,6 +118,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const catenaccio = lobbyState.minigameSubStates.catenaccio;
 
   const handleCardClick = (player: PlayerSession | ScrubbedPlayerView) => {
+    playCard();
     setSelectedPlayerId(player.userId);
     if ('socketId' in player) {
       onSelectPlayer?.(player);
@@ -102,8 +155,42 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     primaryActionType = 'MISDIRECT';
   }
 
+  // Calculate vote counts and leading candidate for court / voting phase
+  const voteCounts: Record<string, number> = {};
+  Object.values(lobbyState.liveVotes).forEach((candId) => {
+    voteCounts[candId] = (voteCounts[candId] || 0) + 1;
+  });
+  const leadingCandidateId = Object.entries(voteCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  const isNightPhase = phase === 'NIGHT_BUFFER';
+  const isVotingPhase = phase === 'DAY_VOTING';
+  const isDayDiscussion =
+    phase === 'DAY_CENTRAL_ASSEMBLY' ||
+    phase === 'DAY_REGIONAL_CAUCUS';
+
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      className={`flex flex-col gap-6 rounded-3xl transition-all duration-700 ease-in-out ${
+        isNightPhase
+          ? 'bg-zinc-950/90 shadow-[inset_0_0_120px_rgba(2,6,23,0.95)] p-2 sm:p-4 border border-indigo-950/50'
+          : isVotingPhase
+          ? 'ring-4 ring-red-500/30 shadow-[inset_0_0_100px_rgba(239,68,68,0.15)] p-2 sm:p-4 rounded-3xl'
+          : isDayDiscussion
+          ? 'bg-gradient-to-b from-amber-500/[0.04] via-transparent to-amber-500/[0.02] p-2 sm:p-4 rounded-3xl'
+          : ''
+      }`}
+    >
+      {/* ─── NIGHT PULSING WARNING BANNER ─────────────────────────── */}
+      {isNightPhase && (
+        <div className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-red-950/90 via-purple-950/90 to-red-950/90 border border-red-500/40 shadow-[0_0_35px_rgba(239,68,68,0.3)] flex items-center justify-center gap-3 animate-pulse select-none">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+          <span className="text-xs sm:text-sm font-black tracking-widest text-red-200 uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] text-center">
+            🌑 ŞƏHƏR YATIR, QATİLLƏR OYANIR 🌑
+          </span>
+          <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping" />
+        </div>
+      )}
+
       {/* ─── TOP PHASE HUD ─────────────────────────────────────────── */}
       <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-200">
         <div>
@@ -111,7 +198,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
               {AZ_UI.currentPhase}
             </span>
-            <Badge tone="purple">{lobbyState.mode}</Badge>
+            <Badge tone="purple">{lobbyState.mode.replace(/_/g, ' ')}</Badge>
             <Badge tone="neutral">
               {AZ_UI.round} {lobbyState.roundNumber}
             </Badge>
@@ -145,6 +232,25 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             </Button>
           )}
 
+          {/* Sound Toggle in GameBoard */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = toggleSound();
+              setSoundMuted(next);
+              if (!next) playCard();
+            }}
+            title={soundMuted ? 'Səsi Aç' : 'Səsi Bağla'}
+            className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
+              soundMuted
+                ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+            }`}
+          >
+            {soundMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+
+          {/* Timer Display */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
             <Clock className="w-4 h-4 text-zinc-400" />
             <div className="text-right">
@@ -314,12 +420,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             <PlayerCard
               key={player.userId}
               player={player}
+              isSelf={player.userId === currentUserId}
               isSelected={selectedPlayerId === player.userId}
+              isAccused={
+                isVotingPhase &&
+                Boolean(leadingCandidateId) &&
+                player.userId === leadingCandidateId &&
+                (voteCounts[player.userId] ?? 0) > 0
+              }
               isCurrentTurn={lobbyState.speakerQueue[0] === player.userId}
               hasVoteOnTarget={lobbyState.liveVotes[currentUserId] === player.userId}
-              voteCount={
-                Object.values(lobbyState.liveVotes).filter((id) => id === player.userId).length
-              }
+              voteCount={voteCounts[player.userId] ?? 0}
               isSpeaking={speakingIds?.has(player.userId) ?? false}
               onSelect={handleCardClick}
             />
