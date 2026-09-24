@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { playCard } from '../../utils/sfx';
 
 export interface RulesModalProps {
   readonly isOpen: boolean;
@@ -385,7 +386,7 @@ const ROLES_DATABASE: readonly RoleRule[] = [
 ];
 
 export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('phases');
+  const [activeTab, setActiveTab] = useState<TabType>('town');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredRoles = useMemo(() => {
@@ -407,237 +408,273 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  const handleTabChange = (tab: TabType) => {
+    playCard();
+    setActiveTab(tab);
+  };
+
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-4xl rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-5xl rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl flex flex-col h-[90vh] max-h-[850px] overflow-hidden transition-all duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-zinc-950 dark:text-white leading-tight">
-                TDV MAFIA — Qaydalar və 24 Rol Ensiklopediyası
-              </h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Məktəb icması üçün peşəkar sosial deduksiya, məhkəmə və gecə əməliyyatları protokolları
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Tab Selector */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <button
-            type="button"
-            onClick={() => setActiveTab('phases')}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeTab === 'phases'
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Oyun Fazaları</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('town')}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeTab === 'town'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span>Şəhər (10 Rol)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('mafia')}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeTab === 'mafia'
-                ? 'bg-amber-600 text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-            }`}
-          >
-            <Crosshair className="w-3.5 h-3.5" />
-            <span>Mafiya (7 Rol)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('neutral')}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeTab === 'neutral'
-                ? 'bg-purple-600 text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Neytral & Xaos (7 Rol)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('court')}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              activeTab === 'court'
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-            }`}
-          >
-            <Gavel className="w-3.5 h-3.5" />
-            <span>Məhkəmə & Edam</span>
-          </button>
-        </div>
-
-        {/* Search for roles when browsing roles tabs */}
-        {activeTab !== 'phases' && activeTab !== 'court' && (
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Rolu adına və ya bacarığına görə axtarın (məs: Şərif, Həkim, Don, Dəli)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
-            />
-          </div>
-        )}
-
-        {/* Tab 1: Phases Loop */}
-        {activeTab === 'phases' && (
-          <div className="flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-300">
-            <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
-              <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                <span className="text-blue-500">1.</span> Mərhələlər Dövrü (Day & Night Loop)
-              </h3>
-              <div className="flex flex-col gap-2.5">
-                <div className="p-3 rounded-lg border-l-4 border-blue-500 bg-blue-500/5">
-                  <strong className="text-zinc-900 dark:text-zinc-100">☀️ Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən hadisələri təhlil edir və şübhəliləri müəyyənləşdirir.
-                </div>
-                <div className="p-3 rounded-lg border-l-4 border-amber-500 bg-amber-500/5">
-                  <strong className="text-zinc-900 dark:text-zinc-100">⚖️ Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa şəxs edam olunur.
-                </div>
-                <div className="p-3 rounded-lg border-l-4 border-red-500 bg-red-500/5">
-                  <strong className="text-zinc-900 dark:text-zinc-100">🌙 Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya hədəf seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
-                </div>
+        {/* ─── FIXED TOP HEADER BAR (ZERO SCROLL, NEVER SQUEEZED) ───── */}
+        <div className="shrink-0 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+          
+          {/* Row 1: Brand Title & Modal Controls */}
+          <div className="p-4 sm:px-6 sm:py-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0 shadow-sm">
+                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-            </div>
 
-            <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
-                  2. 75 Saniyəlik Gemini AI Qoruma Protokolu
-                </h3>
-                <Badge tone="purple">AI Mühafizə</Badge>
-              </div>
-              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Əgər oyunçulardan birinin bağlantısı qırılarsa, masa dağılmır! 75 saniyəlik qoruyucu bufer işə düşür və Gemini 3.8 modeli həmin oyunçunun roluna uyğun optimal qərarlar qəbul edərək oyunu fasiləsiz davam etdirir.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 5: Court Rules */}
-        {activeTab === 'court' && (
-          <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
-            <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Gavel className="w-5 h-5 text-red-500" />
-              <span>Məhkəmə və Edam Qaydaları</span>
-            </h3>
-            <ul className="space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 list-disc list-inside leading-relaxed">
-              <li>
-                <strong className="text-zinc-900 dark:text-zinc-100">Mütləq Səs Çoxluğu:</strong> Bir nəfərin edam olunması üçün canlı vətəndaşların ümumi sayının 50%-dən çoxu (&gt;N/2) həmin şəxsə səs verməlidir.
-              </li>
-              <li>
-                <strong className="text-zinc-900 dark:text-zinc-100">30 Saniyəlik Son Söz (Müdafiə):</strong> Kürsüyə çıxarılan şübhəliyə səsvermədən dərhal əvvəl 30 saniyəlik son müdafiə hüququ verilir.
-              </li>
-              <li>
-                <strong className="text-zinc-900 dark:text-zinc-100">Bərabərlik Halı:</strong> Əgər səsvermədə bərabərlik yaranarsa, həmin gün heç kim edam edilmir və şəhər qaranlıq gecəyə qədəm qoyur.
-              </li>
-              <li>
-                <strong className="text-zinc-900 dark:text-zinc-100">Dante Kokit Gölü Gizli Səsverməsi:</strong> Xüsusi dəhşət rejimində kimin kimə səs verdiyi gizli saxlanılır; yalnız yekun hökm açıqlanır.
-              </li>
-            </ul>
-          </div>
-        )}
-
-        {/* Roles Tabs */}
-        {(activeTab === 'town' || activeTab === 'mafia' || activeTab === 'neutral') && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredRoles.map((role) => (
-              <div
-                key={role.id}
-                className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950 flex flex-col justify-between gap-3 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center text-sm font-bold">
-                        <i className={`fa-solid ${role.iconName}`} style={{ color: role.iconColor }} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                          {role.title}
-                        </h4>
-                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                          {role.originalTitle}
-                        </span>
-                      </div>
-                    </div>
-                    <Badge tone={role.badgeTone}>{role.factionLabel}</Badge>
-                  </div>
-
-                  <div className="space-y-1.5 text-xs pt-2 border-t border-zinc-200/60 dark:border-zinc-800/80">
-                    <div>
-                      <strong className="text-blue-600 dark:text-blue-400">🌙 Gecə: </strong>
-                      <span className="text-zinc-600 dark:text-zinc-300">{role.nightAbility}</span>
-                    </div>
-                    <div>
-                      <strong className="text-amber-600 dark:text-amber-400">☀️ Gündüz: </strong>
-                      <span className="text-zinc-600 dark:text-zinc-300">{role.dayAbility}</span>
-                    </div>
-                    <div>
-                      <strong className="text-emerald-600 dark:text-emerald-400">🏆 Qələbə: </strong>
-                      <span className="text-zinc-600 dark:text-zinc-300">{role.winCondition}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-2.5 rounded-lg border border-red-500/20 bg-red-500/5 text-xs text-red-700 dark:text-red-300 flex items-start gap-1.5">
-                  <Lightbulb className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
-                  <span>
-                    <strong>Taktika: </strong>
-                    {role.proTip}
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-base sm:text-lg font-black text-zinc-950 dark:text-white leading-tight truncate">
+                    TDV MAFIA — Qaydalar və 24 Rol Ensiklopediyası
+                  </h2>
+                  <span className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+                    24 Rol
+                  </span>
+                  <span className="hidden md:inline-flex text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                    15 Rejim
                   </span>
                 </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">
+                  Məktəb icması üçün peşəkar sosial deduksiya, məhkəmə və gecə əməliyyatları protokolları
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shrink-0 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Row 2: Navigation Tabs & Search Controls */}
+          <div className="px-4 sm:px-6 py-3 bg-zinc-50 dark:bg-zinc-950/80 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
+            
+            {/* Elegant Segmented Tab Pills */}
+            <div className="inline-flex items-center p-1 rounded-2xl bg-zinc-200/80 dark:bg-zinc-800/90 border border-zinc-300/60 dark:border-zinc-700/60 gap-1 overflow-x-auto max-w-full">
+              
+              <button
+                type="button"
+                onClick={() => handleTabChange('phases')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                  activeTab === 'phases'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>Oyun Fazaları</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange('town')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                  activeTab === 'town'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Şəhər (10 Rol)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange('mafia')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                  activeTab === 'mafia'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
+                }`}
+              >
+                <Crosshair className="w-3.5 h-3.5" />
+                <span>Mafiya (7 Rol)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange('neutral')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                  activeTab === 'neutral'
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Neytral & Xaos (7 Rol)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange('court')}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                  activeTab === 'court'
+                    ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
+                }`}
+              >
+                <Gavel className="w-3.5 h-3.5" />
+                <span>Məhkəmə & Edam</span>
+              </button>
+            </div>
+
+            {/* Quick Role Search Input */}
+            {activeTab !== 'phases' && activeTab !== 'court' && (
+              <div className="relative w-full md:w-72 shrink-0">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Rol axtar (Şərif, Həkim, Don...)..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-medium"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ─── SCROLLABLE CONTENT BODY ───────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          
+          {/* Tab 1: Phases Loop */}
+          {activeTab === 'phases' && (
+            <div className="flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-300">
+              <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+                <h3 className="font-extrabold text-base text-zinc-950 dark:text-white flex items-center gap-2">
+                  <span className="text-red-500">1.</span> Mərhələlər Dövrü (Day & Night Loop)
+                </h3>
+                <div className="flex flex-col gap-3 mt-1">
+                  <div className="p-3.5 rounded-xl border-l-4 border-blue-500 bg-blue-500/5 dark:bg-blue-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100">☀️ Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən hadisələri təhlil edir və şübhəliləri müəyyənləşdirir.
+                  </div>
+                  <div className="p-3.5 rounded-xl border-l-4 border-amber-500 bg-amber-500/5 dark:bg-amber-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100">⚖️ Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa şəxs edam olunur.
+                  </div>
+                  <div className="p-3.5 rounded-xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100">🌙 Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya hədəf seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+                    2. 75 Saniyəlik Gemini AI Qoruma Protokolu
+                  </h3>
+                  <Badge tone="purple">AI Mühafizə</Badge>
+                </div>
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mt-1">
+                  Əgər oyunçulardan birinin bağlantısı qırılarsa, masa dağılmır! 75 saniyəlik qoruyucu bufer işə düşür və Gemini 3.8 modeli həmin oyunçunun roluna uyğun optimal qərarlar qəbul edərək oyunu fasiləsiz davam etdirir.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 5: Court Rules */}
+          {activeTab === 'court' && (
+            <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
+              <h3 className="font-extrabold text-base text-zinc-950 dark:text-white flex items-center gap-2">
+                <Gavel className="w-5 h-5 text-red-500" />
+                <span>Məhkəmə və Edam Qaydaları</span>
+              </h3>
+              <ul className="space-y-3 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 list-disc list-inside leading-relaxed">
+                <li>
+                  <strong className="text-zinc-900 dark:text-zinc-100">Mütləq Səs Çoxluğu:</strong> Bir nəfərin edam olunması üçün canlı vətəndaşların ümumi sayının 50%-dən çoxu (&gt;N/2) həmin şəxsə səs verməlidir.
+                </li>
+                <li>
+                  <strong className="text-zinc-900 dark:text-zinc-100">30 Saniyəlik Son Söz (Müdafiə):</strong> Kürsüyə çıxarılan şübhəliyə səsvermədən dərhal əvvəl 30 saniyəlik son müdafiə hüququ verilir.
+                </li>
+                <li>
+                  <strong className="text-zinc-900 dark:text-zinc-100">Bərabərlik Halı:</strong> Əgər səsvermədə bərabərlik yaranarsa, həmin gün heç kim edam edilmir və şəhər qaranlıq gecəyə qədəm qoyur.
+                </li>
+                <li>
+                  <strong className="text-zinc-900 dark:text-zinc-100">Dante Kokit Gölü Gizli Səsverməsi:</strong> Xüsusi dəhşət rejimində kimin kimə səs verdiyi gizli saxlanılır; yalnız yekun hökm açıqlanır.
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {/* Roles Tabs (Town, Mafia, Neutral) */}
+          {(activeTab === 'town' || activeTab === 'mafia' || activeTab === 'neutral') && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredRoles.map((role) => (
+                <div
+                  key={role.id}
+                  className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col justify-between gap-3 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center text-sm font-bold border border-zinc-200 dark:border-zinc-700 shrink-0">
+                          <i className={`fa-solid ${role.iconName}`} style={{ color: role.iconColor }} />
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-sm text-zinc-950 dark:text-white leading-tight">
+                            {role.title}
+                          </h4>
+                          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                            {role.originalTitle}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge tone={role.badgeTone}>{role.factionLabel}</Badge>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs pt-2.5 border-t border-zinc-100 dark:border-zinc-800/80">
+                      <div>
+                        <strong className="text-blue-600 dark:text-blue-400">🌙 Gecə: </strong>
+                        <span className="text-zinc-600 dark:text-zinc-300">{role.nightAbility}</span>
+                      </div>
+                      <div>
+                        <strong className="text-amber-600 dark:text-amber-400">☀️ Gündüz: </strong>
+                        <span className="text-zinc-600 dark:text-zinc-300">{role.dayAbility}</span>
+                      </div>
+                      <div>
+                        <strong className="text-emerald-600 dark:text-emerald-400">🏆 Qələbə: </strong>
+                        <span className="text-zinc-600 dark:text-zinc-300">{role.winCondition}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-red-500/20 bg-red-500/5 text-xs text-red-800 dark:text-red-300 flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
+                    <span>
+                      <strong>Taktika: </strong>
+                      {role.proTip}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ─── FIXED FOOTER ──────────────────────────────────────────── */}
+        <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between shrink-0">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
             24 Əsas Rol • 15 Oyun Formatı • TDV Standartı
           </span>
           <Button variant="primary" size="sm" onClick={onClose}>
