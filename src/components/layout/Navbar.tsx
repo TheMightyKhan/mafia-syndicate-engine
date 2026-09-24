@@ -318,7 +318,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Hub */}
                 <a
-                  href="https://tdv-hub.vercel.app/"
+                  href="https://tdv-community-hubs.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
