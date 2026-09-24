@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'warning' | 'outline' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'warning' | 'purple' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -23,6 +23,8 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
     'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-sm shadow-rose-600/25 border border-rose-500/30 focus-visible:ring-rose-500',
   warning:
     'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white shadow-sm shadow-amber-500/20 border border-amber-500/30 focus-visible:ring-amber-500',
+  purple:
+    'bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white shadow-sm shadow-purple-600/25 border border-purple-500/30 hover:border-purple-600 focus-visible:ring-purple-500',
   outline:
     'bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700 focus-visible:ring-zinc-400',
   ghost:

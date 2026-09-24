@@ -77,16 +77,16 @@ export default function HomePage() {
       {/* ─── HERO BANNER ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-sm dark:shadow-card-dark p-6 sm:p-10 lg:p-12 transition-all duration-200">
         {/* Subtle Ambient Glows */}
-        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-red-500/10 dark:bg-red-600/15 blur-3xl pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-80 h-80 rounded-full bg-amber-500/10 dark:bg-amber-600/10 blur-3xl pointer-events-none" />
+        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-purple-600/10 dark:bg-purple-600/15 blur-3xl pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 w-80 h-80 rounded-full bg-red-600/10 dark:bg-red-600/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-3xl flex flex-col items-start gap-4">
           {/* Tagline Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-xs font-bold tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-900 dark:text-purple-200 text-xs font-bold tracking-wide">
             <img
-              src="/assets/tdv-logo.jpg"
+              src="/assets/tdv-logo.png"
               alt="TDV Logo"
-              className="w-4 h-4 rounded-full border border-amber-400"
+              className="w-4 h-4 rounded-full border border-purple-400 object-cover"
             />
             <span>TDV Community Labs • Mafia Klubu</span>
             <span className="opacity-40">•</span>
@@ -148,7 +148,7 @@ export default function HomePage() {
               variant="ghost"
               size="lg"
               onClick={() => setIsCatalogOpen(true)}
-              icon={<Layers className="w-4 h-4 text-indigo-500" />}
+              icon={<Layers className="w-4 h-4 text-purple-600 dark:text-purple-400" />}
             >
               15 Rejim Kataloqu
             </Button>

@@ -49,7 +49,7 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
               Cüt Açarlı Platforma Admin İcazəsi (All-In 40–50)
             </h3>

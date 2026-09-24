@@ -662,13 +662,13 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         /* ─── 2. ACTIVE GAME PHASE ───────────────────────────────────── */
         <div className="flex flex-col gap-6">
           {/* Secret Role Card with Radiant Glow */}
-          <div className="p-5 rounded-2xl border border-indigo-500/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-indigo-500/15 shadow-[0_0_25px_rgba(99,102,241,0.2)] flex items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl border border-purple-500/40 bg-gradient-to-r from-purple-500/15 via-purple-600/10 to-purple-500/15 shadow-[0_0_25px_rgba(147,51,234,0.25)] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-indigo-500/30">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-purple-500/30">
                 🎭
               </div>
               <div>
-                <span className="text-[11px] font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-widest block">
+                <span className="text-[11px] font-extrabold text-purple-700 dark:text-purple-300 uppercase tracking-widest block">
                   Sizin Gizli Şəxsi Rolunuz
                 </span>
                 <div className="text-xl font-black text-zinc-950 dark:text-white tracking-tight">
@@ -677,7 +677,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               </div>
             </div>
 
-            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-600 text-white shadow-md shadow-purple-600/30">
               MƏXFİ
             </span>
           </div>

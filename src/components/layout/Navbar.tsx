@@ -176,11 +176,11 @@ export const Navbar: React.FC = () => {
           <a href="/" className="flex items-center gap-2.5 group select-none">
             <div className="relative">
               <img
-                src="/assets/tdv-logo.jpg"
+                src="/assets/tdv-logo.png"
                 alt="TDV Logo"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-red-500/40 group-hover:ring-red-500 shadow-md shadow-red-500/20 transition-all duration-200 group-hover:scale-105"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-600/50 group-hover:ring-purple-500 shadow-md shadow-purple-600/25 transition-all duration-200 group-hover:scale-105"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-red-600 rounded-full border-2 border-white dark:border-zinc-950 animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-purple-600 rounded-full border-2 border-white dark:border-zinc-950 animate-pulse" />
             </div>
 
             <div className="flex flex-col">
@@ -234,9 +234,9 @@ export const Navbar: React.FC = () => {
             }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all duration-150 cursor-pointer"
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-500" />
+            <Layers className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
             <span>Formatlar</span>
-            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+            <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-purple-600/15 text-purple-700 dark:text-purple-300 border border-purple-500/25">
               15 Rejim
             </span>
           </button>
@@ -318,20 +318,20 @@ export const Navbar: React.FC = () => {
 
                 {/* Hub */}
                 <a
-                  href="https://tdv-community-hubs.vercel.app/"
+                  href="https://tdv-hub.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20 group-hover:scale-105 transition-transform">
+                  <div className="w-8 h-8 rounded-lg bg-purple-600/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 border border-purple-500/20 group-hover:scale-105 transition-transform">
                     <Home className="w-4 h-4" />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         TDV Mərkəz
                       </span>
-                      <ExternalLink className="w-3 h-3 text-zinc-400 group-hover:text-blue-500 opacity-60" />
+                      <ExternalLink className="w-3 h-3 text-zinc-400 group-hover:text-purple-500 opacity-60" />
                     </div>
                     <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
                       Bütün lisey tətbiqləri və SSO vahid profil
@@ -387,7 +387,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Games */}
                 <a
-                  href="https://tdv-community-hubs.vercel.app/games"
+                  href="https://tdv-games.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
@@ -400,8 +400,8 @@ export const Navbar: React.FC = () => {
                       <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                         TDV Games
                       </span>
-                      <span className="text-[9px] font-black bg-red-600 text-white px-1 rounded">
-                        Mafia
+                      <span className="text-[9px] font-black bg-purple-600 text-white px-1 rounded">
+                        Portal
                       </span>
                     </div>
                     <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">

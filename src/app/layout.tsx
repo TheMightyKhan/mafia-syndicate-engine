@@ -16,8 +16,8 @@ export default function RootLayout({
   return (
     <html lang="az" className="dark" suppressHydrationWarning>
       <head>
-        <link rel="icon" type="image/jpeg" href="/assets/tdv-logo.jpg" />
-        <link rel="apple-touch-icon" href="/assets/tdv-logo.jpg" />
+        <link rel="icon" type="image/png" href="/assets/tdv-logo.png" />
+        <link rel="apple-touch-icon" href="/assets/tdv-logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -28,8 +28,27 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('tdv_theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (saved === 'light' || (!saved && !prefersDark)) {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans selection:bg-red-500/20 selection:text-red-500">
+      <body className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans selection:bg-purple-600 selection:text-white">
         <ThemeProvider>
           <div className="flex flex-col min-h-screen">
             <Navbar />

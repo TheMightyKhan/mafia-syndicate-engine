@@ -96,7 +96,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     containerClasses = 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-500 ring-2 ring-rose-500/25';
   } else if (isSelf) {
     // Radiant holographic glow border for player's own card
-    containerClasses = 'bg-gradient-to-br from-indigo-50/90 via-white to-purple-50/80 dark:from-indigo-950/40 dark:via-zinc-900 dark:to-purple-950/30 border-indigo-400 dark:border-indigo-500 ring-2 ring-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.35)]';
+    containerClasses = 'bg-gradient-to-br from-purple-50/90 via-white to-purple-100/80 dark:from-purple-950/40 dark:via-zinc-900 dark:to-purple-950/30 border-purple-400 dark:border-purple-500 ring-2 ring-purple-500/50 shadow-[0_0_20px_rgba(147,51,234,0.35)]';
   }
 
   return (
@@ -108,7 +108,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     >
       {/* Radiant Glow ambient accent if self */}
       {isSelf && (
-        <div className="absolute -top-12 -right-12 w-24 h-24 bg-indigo-500/20 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute -top-12 -right-12 w-24 h-24 bg-purple-500/20 rounded-full blur-xl pointer-events-none" />
       )}
 
       {/* Eliminated Stamp */}
@@ -127,9 +127,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
               isHost
                 ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/50 shadow-amber-500/20'
                 : isSelf
-                ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white border-indigo-400/50 shadow-indigo-500/30'
+                ? 'bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white border-purple-400/50 shadow-purple-500/30'
                 : isBot
-                ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-indigo-400/50'
+                ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white border-purple-400/50'
                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'
             }`}
           >
@@ -144,7 +144,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
               {/* Bold "SƏN" Badge */}
               {isSelf && (
-                <span className="inline-flex items-center gap-1 text-[10px] bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black px-2 py-0.2 rounded-full tracking-wider uppercase shadow-sm shadow-indigo-500/30 shrink-0">
+                <span className="inline-flex items-center gap-1 text-[10px] bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-black px-2 py-0.2 rounded-full tracking-wider uppercase shadow-sm shadow-purple-500/30 shrink-0">
                   <Sparkles className="w-2.5 h-2.5" />
                   SƏN
                 </span>
@@ -152,7 +152,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
               {/* Refined 🤖 Gemini AI Badge */}
               {isBot && (
-                <span className="inline-flex items-center gap-1 text-[10px] bg-indigo-500/15 dark:bg-indigo-500/25 text-indigo-700 dark:text-indigo-300 font-extrabold px-1.5 py-0.2 rounded-md border border-indigo-500/30 shrink-0">
+                <span className="inline-flex items-center gap-1 text-[10px] bg-purple-500/15 dark:bg-purple-500/25 text-purple-700 dark:text-purple-300 font-extrabold px-1.5 py-0.2 rounded-md border border-purple-500/30 shrink-0">
                   🤖 Gemini AI
                 </span>
               )}

@@ -446,7 +446,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                           +{item.coinReward} 🪙
                         </span>
                         <span className="text-zinc-300 dark:text-zinc-700">•</span>
-                        <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                        <span className="font-bold text-purple-600 dark:text-purple-400">
                           +{item.xp} XP
                         </span>
                       </div>

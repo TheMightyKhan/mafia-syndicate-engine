@@ -172,7 +172,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     <div
       className={`flex flex-col gap-6 rounded-3xl transition-all duration-700 ease-in-out ${
         isNightPhase
-          ? 'bg-zinc-950/90 shadow-[inset_0_0_120px_rgba(2,6,23,0.95)] p-2 sm:p-4 border border-indigo-950/50'
+          ? 'bg-zinc-950/90 shadow-[inset_0_0_120px_rgba(2,6,23,0.95)] p-2 sm:p-4 border border-purple-950/50'
           : isVotingPhase
           ? 'ring-4 ring-red-500/30 shadow-[inset_0_0_100px_rgba(239,68,68,0.15)] p-2 sm:p-4 rounded-3xl'
           : isDayDiscussion
