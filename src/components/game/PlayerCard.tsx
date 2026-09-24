@@ -63,12 +63,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     ? isFullSession(player)
       ? `Siz: ${player.displayRole.formatted}`
       : `Siz: ${player.ownRoleDisplay ?? 'Gizli Rol'}`
-    : isBot
-    ? 'AI Bot (Gizli Rol)'
-    : 'Vətəndaş (Gizli Rol)';
+    : !isAlive
+    ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
+      ? `✝️ ${player.displayRole.localizedRoleName || player.displayRole.originalRoleName}`
+      : '✝️ Ələnmiş İştirakçı'
+    : isFullSession(player) && player.allInIdentity?.layer1Faction === 'MAFIA'
+    ? '🕶️ Mafiya Ortağı'
+    : 'Məlum deyil (Gizli Rol)';
 
   const district = !isLobbyPhase ? player.currentDistrict : null;
-  const officeRaw = !isLobbyPhase
+  const officeRaw = !isLobbyPhase && (isSelf || !isAlive)
     ? isFullSession(player)
       ? player.allInIdentity?.layer2Office
       : (player.ownOffice as CivicOfficeType | null)

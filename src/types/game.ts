@@ -59,6 +59,8 @@ export interface AdminMasterUnlockState {
   readonly unlockedAt: number | null; // Unix timestamp in ms or null
 }
 
+import type { MorningNewspaper, InvestigationResult, WinConditionResult } from './engine';
+
 export interface LobbyState {
   readonly lobbyId: string;
   readonly hostUserId: string;
@@ -71,6 +73,8 @@ export interface LobbyState {
   readonly assignedBailiffId: string | null;
   readonly phaseDurationSeconds: number;
   readonly phaseTimeRemaining: number;
+  /** Unix timestamp in ms when the current phase is scheduled to end */
+  readonly phaseEndsAt?: number | null;
   /** Random jitter delay between 3-7s applied at dawn to disguise bot vs human responses */
   readonly nightJitterDelaySeconds: number;
   /** Voter player ID -> Nominated / Target player ID */
@@ -83,4 +87,10 @@ export interface LobbyState {
   readonly lastLynchedUserId: string | null;
   /** Strict global kill cap per night (strictly enforced <= 3 in All-In) */
   readonly globalNightKillCap: number;
+  /** Latest morning newspaper generated after night resolution */
+  readonly latestNewspaper?: MorningNewspaper | null;
+  /** Private investigation intel keyed by investigator user ID */
+  readonly privateInvestigations?: Readonly<Record<string, readonly InvestigationResult[]>>;
+  /** Declared winner outcome when phase reaches ENDED */
+  readonly winnerResult?: WinConditionResult | null;
 }

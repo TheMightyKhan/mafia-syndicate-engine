@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { inMemoryLobbyStore } from '../../../../server/state/memory';
 import { buildScrubbedLobbyView } from '../../../../server/socket/dispatcher';
 import { formatRoleDisplay } from '../../../../types/roles';
-import { LobbyState, PlayerSession } from '../../../../types/game';
+import { GamePhase, LobbyState, NightActionPriority, NightActionType, PlayerSession } from '../../../../types/game';
 import { GameMode } from '../../../../types/packs';
 import { PACKS_CONFIG } from '../../../../config/packs.config';
 import { PlayerTier } from '../../../../types/access';
@@ -11,6 +11,7 @@ import { resolveNightActions } from '../../../../server/engine/night-action-reso
 import { runVotingEngine } from '../../../../server/engine/voting-engine';
 import { evaluateWinCondition } from '../../../../server/engine/phase-manager';
 import { botTakeoverController } from '../../../../server/ai/bot-takeover';
+import { InvestigationResult } from '../../../../types/engine';
 
 interface RouteContext {
   readonly params: {
@@ -123,6 +124,151 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
   };
 }
 
+/**
+ * Strips secret roles and identities of OTHER alive players from the payload.
+ *  • Player's own secret role is ALWAYS preserved.
+ *  • Fellow Mafia teammates see each other (standard Mafia mechanic).
+ *  • Eliminated/Dead players have their true identity revealed.
+ *  • When game is ENDED, all roles are revealed.
+ *  • Alive non-teammates are safely masked as "Gizli Rol" with undefined offices.
+ */
+function sanitizeLobbyForViewer(lobby: LobbyState, viewerUserId: string): LobbyState {
+  const viewerSession = lobby.players[viewerUserId];
+  const isViewerMafia = viewerSession?.allInIdentity?.layer1Faction === 'MAFIA';
+  const isLobbyPhase = lobby.phase === 'LOBBY';
+  const isEnded = lobby.phase === 'ENDED';
+
+  const sanitizedPlayers: Record<string, PlayerSession> = {};
+  for (const [id, p] of Object.entries(lobby.players)) {
+    const isSelf = id === viewerUserId;
+    const isTeammateMafia = isViewerMafia && p.allInIdentity?.layer1Faction === 'MAFIA';
+    const isRevealedDead = !p.isAlive;
+
+    if (isLobbyPhase) {
+      sanitizedPlayers[id] = {
+        ...p,
+        displayRole: formatRoleDisplay(p.username, 'Pending', 'Gözləmədə'),
+        allInIdentity: undefined,
+      };
+    } else if (isEnded || isSelf || isTeammateMafia || isRevealedDead) {
+      sanitizedPlayers[id] = p;
+    } else {
+      sanitizedPlayers[id] = {
+        ...p,
+        displayRole: formatRoleDisplay(p.username, 'Secret', 'Gizli Rol'),
+        allInIdentity: undefined, // civic office and faction hidden!
+      };
+    }
+  }
+
+  // Only expose private investigation results belonging to this requesting user
+  const viewerInvestigations = lobby.privateInvestigations?.[viewerUserId] ?? [];
+
+  return {
+    ...lobby,
+    players: sanitizedPlayers,
+    privateInvestigations: {
+      [viewerUserId]: viewerInvestigations,
+    },
+  };
+}
+
+/**
+ * Progresses the lobby phase to the next logical step with full resolution:
+ *  • NIGHT_BUFFER → resolves kills/protections/intel, updates newspaper, transitions to DAY_VOTING.
+ *  • DAY_VOTING → resolves court votes, lynch victim, checks win, transitions to NIGHT_BUFFER (or ENDED).
+ */
+async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
+  let lobby = inMemoryLobbyStore.getLobby(lobbyId);
+  if (!lobby) throw new Error('Lobby not found');
+
+  if (lobby.phase === 'NIGHT_BUFFER') {
+    // 1. Ensure all bots acted
+    await botTakeoverController.executeAllBotActions(lobbyId);
+    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+    // 2. Resolve night actions
+    const resolution = resolveNightActions({ lobby });
+
+    // 3. Group private investigations by investigator
+    const groupedInvestigations: Record<string, InvestigationResult[]> = {};
+    for (const inv of resolution.newspaper.privateInvestigationResults) {
+      if (!groupedInvestigations[inv.investigatorPlayerId]) {
+        groupedInvestigations[inv.investigatorPlayerId] = [];
+      }
+      groupedInvestigations[inv.investigatorPlayerId].push(inv);
+    }
+
+    // 4. Update lobby state
+    inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
+      ...l,
+      players: resolution.updatedPlayers,
+      lastLynchedUserId: null,
+      bufferedNightActions: [],
+      latestNewspaper: resolution.newspaper,
+      privateInvestigations: {
+        ...(l.privateInvestigations || {}),
+        ...groupedInvestigations,
+      },
+    }));
+
+    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+    const win = evaluateWinCondition(lobby);
+    if (win.kind !== 'GAME_CONTINUES') {
+      inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, winnerResult: win }));
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
+    } else {
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 75);
+      await botTakeoverController.executeAllBotActions(lobbyId);
+    }
+    return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+  } else if (lobby.phase === 'DAY_VOTING') {
+    // 1. Ensure bots voted
+    await botTakeoverController.executeAllBotActions(lobbyId);
+    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+    // 2. Run voting court engine
+    const voteOutput = runVotingEngine({ lobby });
+    const updatedPlayers = { ...lobby.players };
+    let lynchedId: string | null = null;
+    if (voteOutput.outcome.kind === 'LYNCHED') {
+      lynchedId = voteOutput.outcome.victimId;
+      if (updatedPlayers[lynchedId]) {
+        updatedPlayers[lynchedId] = {
+          ...updatedPlayers[lynchedId],
+          isAlive: false,
+        };
+      }
+    }
+
+    inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
+      ...l,
+      players: updatedPlayers,
+      lastLynchedUserId: lynchedId,
+      liveVotes: {},
+    }));
+
+    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+    const win = evaluateWinCondition(lobby);
+    if (win.kind !== 'GAME_CONTINUES') {
+      inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, winnerResult: win }));
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
+    } else {
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'NIGHT_BUFFER', 60);
+      await botTakeoverController.executeAllBotActions(lobbyId);
+    }
+    return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+  } else if (lobby.phase === 'DAY_REGIONAL_CAUCUS' || lobby.phase === 'DAY_CENTRAL_ASSEMBLY') {
+    inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 75);
+    await botTakeoverController.executeAllBotActions(lobbyId);
+    return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+  }
+
+  return lobby;
+}
+
 function getOrCreateLobby(lobbyId: string, initialHostUser?: { userId: string; username: string; tier: PlayerTier }): LobbyState {
   let lobby = inMemoryLobbyStore.getLobby(lobbyId);
   if (!lobby) {
@@ -131,7 +277,6 @@ function getOrCreateLobby(lobbyId: string, initialHostUser?: { userId: string; u
     const hostName = initialHostUser?.username || 'Host';
     const hostTier = initialHostUser?.tier || 'TIER_1';
 
-    // In LOBBY phase, role is strictly pending / unassigned!
     const hostSession: PlayerSession = {
       socketId: `sock-${hostId}`,
       userId: hostId,
@@ -160,18 +305,29 @@ export async function GET(request: Request, context: RouteContext) {
 
   let lobby = getOrCreateLobby(lobbyId);
 
-  // Auto-execute pending bot actions if in an active phase
-  if (lobby.phase === 'NIGHT_BUFFER' || lobby.phase === 'DAY_VOTING') {
+  // Sync remaining countdown seconds based on authoritative phaseEndsAt
+  lobby = inMemoryLobbyStore.syncCountdown(lobbyId) || lobby;
+
+  // Auto-advance phase when authoritative timer runs out
+  if (
+    lobby.phase !== 'LOBBY' &&
+    lobby.phase !== 'ENDED' &&
+    lobby.phaseEndsAt &&
+    Date.now() >= lobby.phaseEndsAt
+  ) {
+    lobby = await progressLobbyPhase(lobbyId);
+  } else if (lobby.phase === 'NIGHT_BUFFER' || lobby.phase === 'DAY_VOTING') {
     await botTakeoverController.executeAllBotActions(lobbyId);
     lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
   }
 
   const scrubbed = buildScrubbedLobbyView(lobby, userId);
+  const safeLobby = sanitizeLobbyForViewer(lobby, userId);
 
   return NextResponse.json({
     success: true,
     lobby: scrubbed,
-    rawLobby: lobby,
+    rawLobby: safeLobby,
     timestamp: Date.now(),
   });
 }
@@ -215,7 +371,6 @@ export async function POST(request: Request, context: RouteContext) {
         }
       }
     } else if (action === 'ADD_BOT') {
-      // Add a single AI Bot
       const existingNames = new Set(Object.values(lobby.players).map(p => p.username));
       const chosenName = BOT_NAME_POOL.find(n => !existingNames.has(n)) || `Bot_${Math.floor(100 + Math.random() * 900)}`;
       const botId = `bot-${chosenName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Math.floor(100 + Math.random() * 900)}`;
@@ -239,7 +394,6 @@ export async function POST(request: Request, context: RouteContext) {
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
     } else if (action === 'FILL_BOTS') {
-      // Fill room with bots to desired target (default: 5)
       const targetCount = Math.max(4, Math.min(10, Number(body.targetCount) || 5));
       let currentCount = Object.keys(lobby.players).length;
       const existingNames = new Set(Object.values(lobby.players).map(p => p.username));
@@ -279,23 +433,51 @@ export async function POST(request: Request, context: RouteContext) {
 
     } else if (action === 'START_GAME' || (action === 'OVERRIDE_PHASE' && lobby?.phase === 'LOBBY')) {
       if (!lobby) lobby = getOrCreateLobby(lobbyId);
-      // Start game and distribute secret roles
       lobby = distributeSecretRoles(lobby);
-      // Persist distributed roles into inMemoryLobbyStore!
       const currentPlayers = lobby.players;
       inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
         ...l,
         players: currentPlayers,
+        winnerResult: null,
+        latestNewspaper: null,
+        privateInvestigations: {},
       }));
 
       const nextPhase = (body.nextPhase as any) || (lobby.mode === 'ALL_IN' ? 'DAY_REGIONAL_CAUCUS' : 'NIGHT_BUFFER');
-      const duration = Number(body.durationSeconds) || 90;
+      const duration = Number(body.durationSeconds) || 60;
       inMemoryLobbyStore.transitionPhase(lobbyId, nextPhase, duration);
 
-      // Immediately execute bot night actions if started into NIGHT_BUFFER!
       if (nextPhase === 'NIGHT_BUFFER') {
         await botTakeoverController.executeAllBotActions(lobbyId);
       }
+      lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+    } else if (action === 'RESTART_GAME') {
+      // Re-initialize all players to alive and return room to LOBBY
+      const revivedPlayers: Record<string, PlayerSession> = {};
+      for (const [id, p] of Object.entries(lobby.players)) {
+        revivedPlayers[id] = {
+          ...p,
+          isAlive: true,
+          displayRole: formatRoleDisplay(p.username, 'Pending', 'Gözləmədə'),
+          allInIdentity: undefined,
+        };
+      }
+      inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
+        ...l,
+        phase: 'LOBBY',
+        players: revivedPlayers,
+        roundNumber: 0,
+        lastLynchedUserId: null,
+        bufferedNightActions: [],
+        liveVotes: {},
+        latestNewspaper: null,
+        privateInvestigations: {},
+        winnerResult: null,
+        phaseEndsAt: null,
+        phaseTimeRemaining: 300,
+        hostReady: false,
+      }));
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
     } else if (action === 'READY') {
@@ -309,7 +491,6 @@ export async function POST(request: Request, context: RouteContext) {
     } else if (action === 'VOTE') {
       const candidateId = String(body.candidateId);
       inMemoryLobbyStore.castVote(lobbyId, userId, candidateId);
-      // Ensure all bots also cast their votes
       await botTakeoverController.executeAllBotActions(lobbyId);
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
@@ -319,8 +500,18 @@ export async function POST(request: Request, context: RouteContext) {
 
     } else if (action === 'NIGHT_ACTION') {
       const targetPlayerId = String(body.targetPlayerId);
-      const actionType = body.actionType;
-      const priority = actionType === 'BLOCK' ? 1 : actionType === 'PROTECT' ? 3 : 4;
+      const actionType = body.actionType as NightActionType;
+
+      const priorityMap: Record<NightActionType, NightActionPriority> = {
+        BLOCK: 1,
+        MISDIRECT: 2,
+        PROTECT: 3,
+        KILL: 4,
+        FRAME: 5,
+        INVESTIGATE: 6,
+      };
+      const priority = priorityMap[actionType] || 4;
+
       inMemoryLobbyStore.bufferNightAction(lobbyId, {
         actorPlayerId: userId,
         targetPlayerId,
@@ -328,80 +519,36 @@ export async function POST(request: Request, context: RouteContext) {
         priority,
         timestamp: Date.now(),
       });
+
       // Ensure all living bots also submit night actions
       await botTakeoverController.executeAllBotActions(lobbyId);
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
-    } else if (action === 'PROGRESS_PHASE' || action === 'OVERRIDE_PHASE') {
-      // Advance to next logical phase with full night/vote resolution
-      if (lobby.phase === 'NIGHT_BUFFER') {
-        // 1. Ensure all bots acted
-        await botTakeoverController.executeAllBotActions(lobbyId);
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+      // Check if all living night actors have submitted actions: auto-advance early if so!
+      const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
+      const activeNightActors = alivePlayers.filter(p => {
+        const f = p.allInIdentity?.layer1Faction;
+        const off = p.allInIdentity?.layer2Office;
+        return (
+          f === 'MAFIA' ||
+          f === 'YAKUZA' ||
+          f === 'VOID_CULT' ||
+          f === 'NEUTRAL_KILLER' ||
+          off === 'CITY_SURGEON' ||
+          off === 'CITY_INVESTIGATOR' ||
+          off === 'CHIEF_FIRE_MARSHAL' ||
+          off === 'PRISON_WARDEN'
+        );
+      });
+      const actedSet = new Set(lobby.bufferedNightActions.map(a => a.actorPlayerId));
+      const allActed = activeNightActors.length > 0 && activeNightActors.every(a => actedSet.has(a.userId));
 
-        // 2. Resolve night actions (kills, protections, etc.)
-        const resolution = resolveNightActions({ lobby });
-
-        // 3. Update lobby state with resolved players
-        inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
-          ...l,
-          players: resolution.updatedPlayers,
-          lastLynchedUserId: null,
-          bufferedNightActions: [],
-        }));
-
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-        const win = evaluateWinCondition(lobby);
-        if (win.kind !== 'GAME_CONTINUES') {
-          inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
-        } else {
-          inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 90);
-          // Trigger bots to vote during DAY_VOTING!
-          await botTakeoverController.executeAllBotActions(lobbyId);
-        }
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-
-      } else if (lobby.phase === 'DAY_VOTING') {
-        // 1. Ensure all bots voted
-        await botTakeoverController.executeAllBotActions(lobbyId);
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-
-        // 2. Run voting court engine
-        const voteOutput = runVotingEngine({ lobby });
-        const updatedPlayers = { ...lobby.players };
-        let lynchedId: string | null = null;
-        if (voteOutput.outcome.kind === 'LYNCHED') {
-          lynchedId = voteOutput.outcome.victimId;
-          if (updatedPlayers[lynchedId]) {
-            updatedPlayers[lynchedId] = {
-              ...updatedPlayers[lynchedId],
-              isAlive: false,
-            };
-          }
-        }
-
-        inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
-          ...l,
-          players: updatedPlayers,
-          lastLynchedUserId: lynchedId,
-          liveVotes: {},
-        }));
-
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-        const win = evaluateWinCondition(lobby);
-        if (win.kind !== 'GAME_CONTINUES') {
-          inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
-        } else {
-          inMemoryLobbyStore.transitionPhase(lobbyId, 'NIGHT_BUFFER', 90);
-          // Trigger bots to submit night actions!
-          await botTakeoverController.executeAllBotActions(lobbyId);
-        }
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-
-      } else if (body.nextPhase) {
-        inMemoryLobbyStore.transitionPhase(lobbyId, body.nextPhase, Number(body.durationSeconds) || 90);
-        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+      if (allActed && lobby.phase === 'NIGHT_BUFFER') {
+        lobby = await progressLobbyPhase(lobbyId);
       }
+
+    } else if (action === 'PROGRESS_PHASE' || action === 'OVERRIDE_PHASE') {
+      lobby = await progressLobbyPhase(lobbyId);
 
     } else if (action === 'DUAL_UNLOCK') {
       const role = body.role === 'THE_ARCHITECT' ? 'THE_ARCHITECT' : 'THE_BAILIFF';
@@ -410,10 +557,12 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const scrubbed = buildScrubbedLobbyView(lobby, userId);
+    const safeLobby = sanitizeLobbyForViewer(lobby, userId);
+
     return NextResponse.json({
       success: true,
       lobby: scrubbed,
-      rawLobby: lobby,
+      rawLobby: safeLobby,
     });
   } catch {
     return NextResponse.json({ success: false, error: 'ACTION_FAILED' }, { status: 400 });

@@ -86,7 +86,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
               Hazırda Söz Alan:
             </div>
             <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-              {lobbyState.players[currentSpeakerId]?.displayRole.formatted ?? currentSpeakerId}
+              {lobbyState.players[currentSpeakerId]?.username ?? currentSpeakerId}
             </div>
           </div>
         ) : (
@@ -108,7 +108,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
                 .filter((p) => p.isAlive && !queue.includes(p.userId))
                 .map((p) => (
                   <option key={p.userId} value={p.userId}>
-                    {p.username} ({p.displayRole.originalRoleName})
+                    {p.username}
                   </option>
                 ))}
             </select>

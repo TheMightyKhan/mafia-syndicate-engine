@@ -50,6 +50,7 @@ export class InMemoryLobbyStore {
       assignedBailiffId: null,
       phaseDurationSeconds: metadata.defaultTimings.dayCentralAssemblySeconds,
       phaseTimeRemaining: metadata.defaultTimings.dayCentralAssemblySeconds,
+      phaseEndsAt: null,
       nightJitterDelaySeconds: this.computeNightJitter(),
       liveVotes: {},
       speakerQueue: [],
@@ -58,6 +59,9 @@ export class InMemoryLobbyStore {
       roundNumber: 0,
       lastLynchedUserId: null,
       globalNightKillCap: mode === 'ALL_IN' ? 3 : 99,
+      latestNewspaper: null,
+      privateInvestigations: {},
+      winnerResult: null,
     };
 
     this.lobbies.set(lobbyId, initialLobby);
@@ -227,6 +231,7 @@ export class InMemoryLobbyStore {
       phase: nextPhase,
       phaseDurationSeconds: durationSeconds,
       phaseTimeRemaining: durationSeconds,
+      phaseEndsAt: nextPhase === 'ENDED' || nextPhase === 'LOBBY' ? null : Date.now() + durationSeconds * 1000,
       nightJitterDelaySeconds: nextPhase === 'NIGHT_BUFFER' ? this.computeNightJitter() : lobby.nightJitterDelaySeconds,
       liveVotes: nextPhase === 'DAY_VOTING' ? {} : lobby.liveVotes,
       bufferedNightActions: nextPhase === 'NIGHT_BUFFER' ? [] : lobby.bufferedNightActions,
@@ -235,6 +240,22 @@ export class InMemoryLobbyStore {
 
     this.lobbies.set(lobbyId, updatedLobby);
     return updatedLobby;
+  }
+
+  /** Synchronize remaining seconds based on authoritative phaseEndsAt */
+  public syncCountdown(lobbyId: string): LobbyState | null {
+    const lobby = this.lobbies.get(lobbyId);
+    if (!lobby) return null;
+    if (!lobby.phaseEndsAt || lobby.phase === 'LOBBY' || lobby.phase === 'ENDED') {
+      return lobby;
+    }
+    const remaining = Math.max(0, Math.ceil((lobby.phaseEndsAt - Date.now()) / 1000));
+    if (remaining !== lobby.phaseTimeRemaining) {
+      const updated = { ...lobby, phaseTimeRemaining: remaining };
+      this.lobbies.set(lobbyId, updated);
+      return updated;
+    }
+    return lobby;
   }
 
   /** Compute 3-7s jitter delay to prevent timing deduction */

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Link as LinkIcon,
   Check,
@@ -17,6 +17,9 @@ import {
   Sliders,
   Volume2,
   VolumeX,
+  Trophy,
+  RotateCcw,
+  X,
 } from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
@@ -52,6 +55,26 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [isReadyLocal, setIsReadyLocal] = useState<boolean>(false);
   const [soundMuted, setSoundMuted] = useState<boolean>(false);
   const [speakingIds, setSpeakingIds] = useState<Set<string>>(new Set());
+
+  // Toast notifications
+  const [toast, setToast] = useState<{
+    message: string;
+    tone: 'info' | 'success' | 'warning' | 'danger';
+  } | null>(null);
+
+  const showToast = useCallback(
+    (message: string, tone: 'info' | 'success' | 'warning' | 'danger' = 'info') => {
+      setToast({ message, tone });
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Initialize lobby state in clean waiting room phase
   const [lobbyState, setLobbyState] = useState<LobbyState>(() => {
@@ -246,8 +269,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   // Start Game Trigger (Only for Host)
   const handleStartGame = () => {
     if (totalPlayersCount < 3) {
-      alert(
-        'Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ 5 Botla Doldur" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!'
+      showToast(
+        'Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ 5 Botla Doldur" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!',
+        'warning'
       );
       return;
     }
@@ -297,7 +321,19 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const handleTriggerAction = (actionType: NightActionType, targetPlayerId: string) => {
     playCard();
     dispatchAction({ action: 'NIGHT_ACTION', actionType, targetPlayerId });
-    alert(`Əmr serverə göndərildi: ${actionType} -> ${targetPlayerId}`);
+    const targetName = lobbyState.players[targetPlayerId]?.username || targetPlayerId;
+    const actionNames: Record<NightActionType, string> = {
+      KILL: 'Qətl əmri',
+      PROTECT: 'Mühafizə əmri',
+      INVESTIGATE: 'Təhqiqat sorğusu',
+      BLOCK: 'Bloklama əmri',
+      MISDIRECT: 'Yönləndirmə əmri',
+      FRAME: 'Şər atma əmri',
+    };
+    showToast(
+      `Əmr qeydə alındı: ${actionNames[actionType] || actionType} ➔ ${targetName}`,
+      'success'
+    );
   };
 
   const isHost =
@@ -325,12 +361,99 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     }));
 
   const [isNewspaperOpen, setIsNewspaperOpen] = useState<boolean>(false);
-  const [newspaper] = useState<MorningNewspaper | null>({
+
+  // Auto-progression countdown timer
+  const autoProgressTriggeredRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (lobbyState.phase === 'LOBBY' || lobbyState.phase === 'ENDED') return;
+
+    const timer = setInterval(() => {
+      setLobbyState((prev) => {
+        if (prev.phase === 'LOBBY' || prev.phase === 'ENDED') return prev;
+
+        let remaining = prev.phaseTimeRemaining;
+        if (prev.phaseEndsAt) {
+          remaining = Math.max(0, Math.ceil((prev.phaseEndsAt - Date.now()) / 1000));
+        } else {
+          remaining = Math.max(0, prev.phaseTimeRemaining - 1);
+        }
+
+        const phaseKey = `${prev.phase}-${prev.roundNumber}`;
+        if (remaining === 0 && autoProgressTriggeredRef.current !== phaseKey) {
+          const isUserHost =
+            prev.hostUserId === currentUserId || Object.keys(prev.players).length <= 1;
+          if (isUserHost) {
+            autoProgressTriggeredRef.current = phaseKey;
+            dispatchAction({ action: 'PROGRESS_PHASE' });
+          }
+        }
+
+        return {
+          ...prev,
+          phaseTimeRemaining: remaining,
+        };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [lobbyState.phase, currentUserId, dispatchAction]);
+
+  // Phase transition detector (audio cues and dawn newspaper auto-popup)
+  const prevPhaseRef = useRef<GamePhase>(lobbyState.phase);
+
+  useEffect(() => {
+    const prevPhase = prevPhaseRef.current;
+    const currentPhase = lobbyState.phase;
+
+    if (prevPhase !== currentPhase) {
+      prevPhaseRef.current = currentPhase;
+      autoProgressTriggeredRef.current = null;
+
+      if (currentPhase === 'NIGHT_BUFFER') {
+        playNight();
+      } else if (
+        currentPhase === 'DAY_VOTING' ||
+        currentPhase === 'DAY_CENTRAL_ASSEMBLY' ||
+        currentPhase === 'DAY_REGIONAL_CAUCUS'
+      ) {
+        playDay();
+        // If coming from night, automatically reveal morning newspaper
+        if (prevPhase === 'NIGHT_BUFFER') {
+          setIsNewspaperOpen(true);
+        }
+      }
+    }
+  }, [lobbyState.phase]);
+
+  // Derived state for Newspaper, Investigations, and Winner Modal
+  const fallbackNewspaper: MorningNewspaper = {
     publicDeaths: [],
     privateInvestigationResults: [],
     heresyClue: null,
     jitterAppliedMs: 4000,
-  });
+  };
+  const activeNewspaper = lobbyState.latestNewspaper || fallbackNewspaper;
+
+  const playerNames: Record<string, string> = Object.fromEntries(
+    Object.values(lobbyState.players).map((p) => [p.userId, p.username])
+  );
+  const lastLynchedName = lobbyState.lastLynchedUserId
+    ? lobbyState.players[lobbyState.lastLynchedUserId]?.username || lobbyState.lastLynchedUserId
+    : null;
+  const myPrivateInvestigations = lobbyState.privateInvestigations?.[currentUserId] || [];
+
+  const isGameOver =
+    lobbyState.phase === 'ENDED' ||
+    Boolean(
+      lobbyState.winnerResult?.kind && lobbyState.winnerResult.kind !== 'GAME_CONTINUES'
+    );
+  const winnerKind = lobbyState.winnerResult?.kind;
+  const isTownVictory = winnerKind === 'TOWN_VICTORY';
+  const isMafiaVictory =
+    winnerKind === 'MAFIA_MAJORITY' || winnerKind === 'YAKUZA_MAJORITY';
+  const winnerIds = lobbyState.winnerResult?.winnerPlayerIds || [];
+  const winnerNames = winnerIds.map((id) => lobbyState.players[id]?.username || id);
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 transition-colors duration-200">
@@ -706,11 +829,108 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           {/* Morning Newspaper Modal */}
           <MorningNewspaperModal
             isOpen={isNewspaperOpen}
-            newspaper={newspaper}
+            newspaper={activeNewspaper}
             roundNumber={lobbyState.roundNumber}
             minigameSubStates={lobbyState.minigameSubStates}
+            lastLynchedPlayerName={lastLynchedName}
+            playerNames={playerNames}
+            privateInvestigations={myPrivateInvestigations}
             onClose={() => setIsNewspaperOpen(false)}
           />
+        </div>
+      )}
+
+      {/* ─── GAME OVER / VICTORY MODAL ───────────────────────────────── */}
+      {isGameOver && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+          <div className="w-full max-w-lg rounded-3xl border border-purple-500/40 bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-5">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-amber-500 flex items-center justify-center text-4xl shadow-xl shadow-purple-500/30">
+              {isTownVictory ? '🏆' : isMafiaVictory ? '🕶️' : '💀'}
+            </div>
+
+            <div>
+              <span className="text-xs font-black uppercase tracking-widest text-purple-600 dark:text-purple-400">
+                Oyun Nəticəsi
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black mt-1">
+                {isTownVictory
+                  ? 'Şəhər (Dinc Vətəndaşlar) Qalib Gəldi!'
+                  : isMafiaVictory
+                  ? 'Mafiya Şəhəri Ələ Keçirdi!'
+                  : 'Oyun Başa Çatdı!'}
+              </h2>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 max-w-sm">
+                {lobbyState.winnerResult?.reason ||
+                  'Bütün rəqiblər aradan qaldırıldı və qələbə şərti tam təmin olundu.'}
+              </p>
+            </div>
+
+            {/* Winners list if available */}
+            {winnerNames.length > 0 && (
+              <div className="w-full p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left">
+                <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+                  Qalib Heyət:
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {winnerNames.map((name, i) => (
+                    <Badge key={i} tone="purple">
+                      {name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 w-full mt-2">
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full"
+                onClick={() => {
+                  playCard();
+                  dispatchAction({ action: 'RESTART_GAME' });
+                }}
+                icon={<RotateCcw className="w-4 h-4" />}
+              >
+                Yenidən Başla (Lobbiyə Qayıt)
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── FLOATING TOAST NOTIFICATION ─────────────────────────────── */}
+      {toast && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border shadow-2xl flex items-center gap-3 backdrop-blur-md transition-all animate-bounceIn max-w-md ${
+            toast.tone === 'success'
+              ? 'border-emerald-500/40 bg-emerald-950/95 text-emerald-100 shadow-emerald-500/20'
+              : toast.tone === 'warning'
+              ? 'border-amber-500/40 bg-amber-950/95 text-amber-100 shadow-amber-500/20'
+              : toast.tone === 'danger'
+              ? 'border-red-500/40 bg-red-950/95 text-red-100 shadow-red-500/20'
+              : 'border-purple-500/40 bg-purple-950/95 text-purple-100 shadow-purple-500/20'
+          }`}
+        >
+          <span className="text-base shrink-0">
+            {toast.tone === 'success'
+              ? '✅'
+              : toast.tone === 'warning'
+              ? '⚠️'
+              : toast.tone === 'danger'
+              ? '⛔'
+              : 'ℹ️'}
+          </span>
+          <span className="text-xs sm:text-sm font-semibold leading-snug">
+            {toast.message}
+          </span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-auto p-1 text-xs opacity-70 hover:opacity-100 cursor-pointer shrink-0"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
     </div>

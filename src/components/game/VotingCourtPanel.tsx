@@ -114,7 +114,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
                 >
                   <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{distName}</div>
                   <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                    {p?.displayRole.formatted ?? finalistId}
+                    {p?.username ?? finalistId}
                   </div>
                 </div>
               );
@@ -131,13 +131,13 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
           </span>
           <div className="text-sm font-extrabold text-zinc-900 dark:text-zinc-100">
             {selectedCandidateId
-              ? lobbyState.players[selectedCandidateId]?.displayRole.formatted ?? selectedCandidateId
+              ? lobbyState.players[selectedCandidateId]?.username ?? selectedCandidateId
               : 'Heç bir oyunçu seçilməyib (kartlardan birinə toxunun)'}
           </div>
           {currentVotedCandidateId && (
             <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
               Sizin cari səsiniz:{' '}
-              {lobbyState.players[currentVotedCandidateId]?.displayRole.nickname ??
+              {lobbyState.players[currentVotedCandidateId]?.username ??
                 currentVotedCandidateId}
             </div>
           )}

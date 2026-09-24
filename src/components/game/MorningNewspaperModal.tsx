@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Newspaper, X, Skull, AlertTriangle, Flame, Clock } from 'lucide-react';
-import { MorningNewspaper } from '../../types/engine';
+import { Newspaper, X, Skull, AlertTriangle, Flame, Clock, Search } from 'lucide-react';
+import { MorningNewspaper, InvestigationResult } from '../../types/engine';
 import { MinigameSubStates } from '../../types/minigames';
 import { AZ_DEATH_CAUSES, AZ_UI, AZ_DANTE_CIRCLES } from '../../config/i18n/az';
 import { Button } from '../ui/Button';
@@ -14,6 +14,8 @@ export interface MorningNewspaperModalProps {
   readonly roundNumber: number;
   readonly minigameSubStates?: MinigameSubStates;
   readonly lastLynchedPlayerName?: string | null;
+  readonly playerNames?: Record<string, string>;
+  readonly privateInvestigations?: readonly InvestigationResult[];
   readonly onClose: () => void;
 }
 
@@ -23,6 +25,8 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
   roundNumber,
   minigameSubStates,
   lastLynchedPlayerName,
+  playerNames = {},
+  privateInvestigations = [],
   onClose,
 }) => {
   if (!isOpen || !newspaper) return null;
@@ -93,7 +97,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                      Qurban: {death.victimPlayerId}
+                      Qurban: {playerNames[death.victimPlayerId] ?? death.victimPlayerId}
                     </span>
                     <Badge tone="red">{AZ_DEATH_CAUSES[death.cause] ?? death.cause}</Badge>
                   </div>
@@ -113,6 +117,32 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
             </div>
           )}
         </div>
+
+        {/* Private Investigation Results for the Investigator */}
+        {privateInvestigations.length > 0 && (
+          <div className="p-4 rounded-xl border border-blue-400/50 dark:border-blue-700/60 bg-blue-50/90 dark:bg-blue-950/40 font-sans flex flex-col gap-2.5 shadow-sm">
+            <div className="flex items-center gap-2 text-xs font-black text-blue-900 dark:text-blue-300 uppercase tracking-wider">
+              <Search className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>Şəxsi Gecə İstintaq Nəticəniz (Yalnız Sizə Görünür)</span>
+            </div>
+            {privateInvestigations.map((inv, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-blue-200 dark:border-blue-800/80 flex items-center justify-between gap-3 text-xs sm:text-sm"
+              >
+                <div>
+                  <span className="text-zinc-500 dark:text-zinc-400">Şübhəli Hədəf:</span>{' '}
+                  <strong className="text-zinc-900 dark:text-zinc-100 font-bold">
+                    {playerNames[inv.targetPlayerId] ?? inv.targetPlayerId}
+                  </strong>
+                </div>
+                <Badge tone={inv.revealedFaction === 'MAFIA' ? 'red' : 'emerald'}>
+                  {inv.revealedFaction === 'MAFIA' ? '🚨 MAFİYA ŞÜBHƏLİSİ' : '🛡️ MƏSUM VƏTƏNDAŞ'}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Heresy Clue Leaked */}
         {newspaper.heresyClue && (

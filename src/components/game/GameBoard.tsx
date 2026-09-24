@@ -136,23 +136,33 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   let primaryActionLabel: string = AZ_UI.investigate;
   let primaryActionType: NightActionType = 'INVESTIGATE';
+  let canActAtNight = false;
+
   if (
     faction === 'MAFIA' ||
     faction === 'YAKUZA' ||
     faction === 'VOID_CULT' ||
     faction === 'NEUTRAL_KILLER'
   ) {
-    primaryActionLabel = AZ_UI.strike;
+    primaryActionLabel = '🎯 ' + AZ_UI.strike;
     primaryActionType = 'KILL';
+    canActAtNight = true;
   } else if (office === 'CITY_SURGEON') {
-    primaryActionLabel = AZ_UI.protect;
+    primaryActionLabel = '💉 ' + AZ_UI.protect;
     primaryActionType = 'PROTECT';
+    canActAtNight = true;
+  } else if (office === 'CITY_INVESTIGATOR' || office === 'POLICE_COMMISSIONER') {
+    primaryActionLabel = '🔍 ' + AZ_UI.investigate;
+    primaryActionType = 'INVESTIGATE';
+    canActAtNight = true;
   } else if (office === 'CHIEF_FIRE_MARSHAL' || office === 'PRISON_WARDEN') {
-    primaryActionLabel = AZ_UI.disrupt;
+    primaryActionLabel = '⛔ ' + AZ_UI.disrupt;
     primaryActionType = 'BLOCK';
+    canActAtNight = true;
   } else if (office === 'BLACK_MARKET_BROKER') {
-    primaryActionLabel = AZ_UI.misdirect;
+    primaryActionLabel = '🔀 ' + AZ_UI.misdirect;
     primaryActionType = 'MISDIRECT';
+    canActAtNight = true;
   }
 
   // Calculate vote counts and leading candidate for court / voting phase
@@ -439,39 +449,84 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
-      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
+      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+            isNightPhase
+              ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
+              : 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
+          }`}>
             <Target className="w-5 h-5" />
           </div>
           <div>
             <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
-              {AZ_UI.nightOrder} & Əməliyyat Paneli
+              {isNightPhase
+                ? `${AZ_UI.nightOrder} & Əməliyyat Paneli`
+                : isVotingPhase
+                ? 'Gündüz Məhkəməsi & İttiham Səsverməsi'
+                : 'Müzakirə Fazası'}
             </span>
             <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-              {selectedPlayerId
+              {isNightPhase && !canActAtNight
+                ? '🌙 Siz Məsum Vətəndaşsınız. Şəhər yatır, səhərin açılmasını gözləyin.'
+                : selectedPlayerId
                 ? `Seçilmiş Hədəf: ${
-                    lobbyState.players[selectedPlayerId]?.displayRole.formatted ?? selectedPlayerId
+                    lobbyState.players[selectedPlayerId]?.username ?? selectedPlayerId
                   }`
-                : 'Əmr icra etmək üçün yuxarıdakı kartlardan hədəf seçin'}
+                : isNightPhase
+                ? 'Əmr icra etmək üçün yuxarıdakı kartlardan hədəf seçin'
+                : isVotingPhase
+                ? 'Səs vermək üçün yuxarıdakı kartlardan namizəd seçin'
+                : 'Müzakirə davam edir, söz hüququndan istifadə edin'}
             </div>
           </div>
         </div>
 
-        <Button
-          variant="primary"
-          size="md"
-          disabled={!isAlive || !selectedPlayerId || selectedPlayerId === currentUserId}
-          onClick={() => {
-            if (selectedPlayerId && onTriggerAction) {
-              onTriggerAction(primaryActionType, selectedPlayerId);
-            }
-          }}
-          icon={<Zap className="w-4 h-4" />}
-          className="shrink-0"
-        >
-          {primaryActionLabel}
-        </Button>
+        {isNightPhase ? (
+          canActAtNight ? (
+            <Button
+              variant="purple"
+              size="md"
+              disabled={
+                !isAlive ||
+                !selectedPlayerId ||
+                (primaryActionType !== 'PROTECT' && selectedPlayerId === currentUserId)
+              }
+              onClick={() => {
+                if (selectedPlayerId && onTriggerAction) {
+                  onTriggerAction(primaryActionType, selectedPlayerId);
+                }
+              }}
+              icon={<Zap className="w-4 h-4" />}
+              className="shrink-0"
+            >
+              {primaryActionLabel}
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="md"
+              disabled
+              className="shrink-0 opacity-70"
+            >
+              💤 Şəhər Yatır
+            </Button>
+          )
+        ) : isVotingPhase ? (
+          <Button
+            variant="danger"
+            size="md"
+            disabled={!isAlive || !selectedPlayerId || selectedPlayerId === currentUserId}
+            onClick={() => {
+              if (selectedPlayerId && onCastVote) {
+                onCastVote(selectedPlayerId);
+              }
+            }}
+            className="shrink-0"
+          >
+            ⚖️ Səs Ver
+          </Button>
+        ) : null}
       </div>
     </div>
   );
