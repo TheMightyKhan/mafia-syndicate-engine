@@ -25,6 +25,7 @@ import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
 import { BailiffConsole } from '../../../components/admin/BailiffConsole';
 import { GameBoard } from '../../../components/game/GameBoard';
+import { PhaseTransitionOverlay } from '../../../components/game/PhaseTransitionOverlay';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
@@ -820,6 +821,8 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               MƏXFİ
             </span>
           </div>
+
+          <PhaseTransitionOverlay phase={lobbyState.phase} />
 
           {/* Interactive Game Board */}
           <GameBoard
