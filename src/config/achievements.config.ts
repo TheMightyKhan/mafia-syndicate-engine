@@ -42,7 +42,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_bodyguard_noble_sacrifice',
-    title: "Üç Müşketyor (Biri Hamı Üçün)",
+    title: "Şərəf Qanunu (Code of Honor)",
     description: 'Cangüdən olaraq qoruduğun şəhərliyə hücum edən qatili öldürüb onun yerinə şəhid ol.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -102,7 +102,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_investigator_cross_faction',
-    title: "Da Vinçi Şifrəsi (The Da Vinci Code)",
+    title: "Rozetta Daşı (The Rosetta Stone)",
     description: 'Şəhər Müstəntiqi olaraq iki şübhəlinin eyni cinayətkar fraksiyaya aid olduğunu təsdiqlə.',
     category: 'TOWN',
     tier: 'GOLD',
@@ -132,7 +132,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_doctor_double_save',
-    title: "Həyat Ağacı (The Tree of Life)",
+    title: "Lazarın Dirilişi (The Raising of Lazarus)",
     description: 'Həkim olaraq eyni oyunda 2 fərqli raundda qətl hədəflərini uğurla qoru və ölümdən xilas et.',
     category: 'TOWN',
     tier: 'GOLD',
@@ -152,7 +152,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_unanimous_conviction',
-    title: "Kütlələrin Üsyanı (The Revolt of the Masses)",
+    title: "İctimai Müqavilə (The Social Contract)",
     description: 'Məhkəmə mərhələsində masadakı bütün canlı şəhərlilərin eyni Mafiya namizədinə 100% səs verməsi.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -186,7 +186,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_consort_block_doctor',
-    title: "Ölümcül Cazibə (Fatal Attraction)",
+    title: "Sirenaların Nəğməsi (Song of the Sirens)",
     description: 'İllüziyaçı olaraq Həkimi gecə blokla və Mafiyanın seçdiyi hədəfin müdafiəsiz qalmasını təmin et.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -226,7 +226,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_framer_deception',
-    title: "Dreyfus İşi (The Dreyfus Affair)",
+    title: "Günah Keçisi (The Scapegoat)",
     description: "Şər Atan kimi günahsız vətəndaşı çərçivəyə salaraq Şərifin onu 'Mafioz' görməsinə nail ol.",
     category: 'MAFIA',
     tier: 'SILVER',
@@ -256,7 +256,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_clean_sweep',
-    title: "Kosa Nostra (Cosa Nostra)",
+    title: "Kölgə İmperiyası (Empire of Shadows)",
     description: 'Mafiya ailəsinin heç bir üzvü öldürülmədən və edam edilmədən oyunu tam qələbə ilə bitir.',
     category: 'MAFIA',
     tier: 'LEGENDARY',
@@ -276,7 +276,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_triple_night_kills',
-    title: "Varfolomey Gecəsi (St. Bartholomew's Day Massacre)",
+    title: "Uzun Bıçaqlar Gecəsi (Night of the Long Knives)",
     description: 'All-In və ya böyük rejimdə tək gecədə təyin olunmuş 3 qətl limitinin hamısını uğurla tamamla.',
     category: 'MAFIA',
     tier: 'PLATINUM',
@@ -286,7 +286,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_parity_domination',
-    title: "Şah Mat (Checkmate)",
+    title: "Rubikonu Keçmək (Crossing the Rubicon)",
     description: 'Masadakı canlı Mafiya sayını vətəndaş sayına çatdıraraq (50%-ə qarşı 50%) oyunu dərhal bitir.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -340,7 +340,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_sk_deflect_mafia',
-    title: "Ölümsüz (The Immortal)",
+    title: "Ziqfridin Zirehi (Armor of Siegfried)",
     description: 'Seriyalı Qatil olaraq gecə Mafiyanın hücumuna tuş gəl və daxili zireh sayəsində sağ qal.',
     category: 'NEUTRAL',
     tier: 'SILVER',
@@ -350,7 +350,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_sk_triple_kill_streak',
-    title: "Dorian Qreyin Portreti (The Picture of Dorian Gray)",
+    title: "Makbetin Qanlı Əlləri (Macbeth's Bloody Hands)",
     description: 'Seriyalı Qatil kimi ardıcıl 3 gecə fasiləsiz olaraq hədəflərini məhv et.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
