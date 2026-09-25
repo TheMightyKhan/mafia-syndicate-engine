@@ -204,15 +204,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <div
-      className={`flex flex-col gap-6 rounded-3xl transition-all duration-700 ease-in-out ${
-        isNightPhase
-          ? 'bg-zinc-950/90 shadow-[inset_0_0_120px_rgba(2,6,23,0.95)] p-2 sm:p-4 border border-purple-950/50'
-          : isVotingPhase
-          ? 'ring-4 ring-red-500/30 shadow-[inset_0_0_100px_rgba(239,68,68,0.15)] p-2 sm:p-4 rounded-3xl'
-          : isDayDiscussion
-          ? 'bg-gradient-to-b from-amber-500/[0.04] via-transparent to-amber-500/[0.02] p-2 sm:p-4 rounded-3xl'
-          : ''
-      }`}
+      className={`flex flex-col gap-6 rounded-3xl transition-colors duration-1000 ease-in-out ${
+          isNightPhase
+            ? 'bg-zinc-950/20 p-2 sm:p-4 border border-zinc-900/30'
+            : isVotingPhase
+            ? 'bg-red-950/20 p-2 sm:p-4 rounded-3xl border border-red-900/30'
+            : isDayDiscussion
+            ? 'bg-amber-50/40 dark:bg-amber-900/10 p-2 sm:p-4 rounded-3xl border border-amber-500/10'
+            : ''
+        }`}
     >
       {/* ─── NIGHT PULSING WARNING BANNER ─────────────────────────── */}
       {isNightPhase && (
@@ -294,9 +294,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               <span
                 className={`text-base font-black leading-tight ${
                   lobbyState.phaseTimeRemaining <= 10
-                    ? 'text-red-600 animate-pulse'
-                    : 'text-zinc-900 dark:text-zinc-100'
-                }`}
+                      ? 'text-red-600 animate-pulse'
+                      : 'text-zinc-900 dark:text-zinc-100'
+                  } tabular-nums`}
               >
                 {lobbyState.phaseTimeRemaining}s
               </span>
