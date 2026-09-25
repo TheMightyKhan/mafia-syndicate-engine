@@ -39,7 +39,30 @@ import { resolveNightActions } from '../engine/night-action-resolver';
 import { runVotingEngine } from '../engine/voting-engine';
 import { executePhaseTransition, evaluateWinCondition } from '../engine/phase-manager';
 
+// ─── Investigation result accumulator ────────────────────────────────────────
+
+/**
+ * Merges new investigation results into the running per-investigator record.
+ * Each investigator's history is append-only across rounds.
+ */
+function mergeInvestigationResults(
+  existing: Readonly<Record<string, readonly InvestigationResult[]>>,
+  newResults: readonly InvestigationResult[],
+): Record<string, readonly InvestigationResult[]> {
+  const merged: Record<string, InvestigationResult[]> = {};
+  for (const [id, list] of Object.entries(existing)) {
+    merged[id] = [...list];
+  }
+  for (const result of newResults) {
+    const inv = result.investigatorPlayerId;
+    if (!merged[inv]) merged[inv] = [];
+    merged[inv]!.push(result);
+  }
+  return merged;
+}
+
 // ─── Typed Socket Abstraction ─────────────────────────────────────────────────
+
 
 export interface TypedServerSocket {
   readonly id: string;
@@ -240,13 +263,31 @@ export class ZeroKnowledgeDispatcher {
 
   /**
    * Execute night resolution, emit morning newspaper (public) and private intel.
-   * Returns the resolution output for the phase manager to persist player deaths.
+   * CRITICAL: Persists updatedPlayers (deaths + vest-spent trait resets) back
+   * into inMemoryLobbyStore so subsequent phase transitions see the correct state.
    */
   public resolveNightAndBroadcast(lobbyId: string): NightResolutionOutput | null {
     const lobby = inMemoryLobbyStore.getLobby(lobbyId);
     if (!lobby) return null;
 
     const resolution = resolveNightActions({ lobby });
+
+    // ── Persist updated player states (deaths + vest-depletion) ──────────────
+    // Without this, the lobby.players map is never updated: dead players remain
+    // alive on the next turn and vest charges reset every night (game-stall bug).
+    inMemoryLobbyStore.updateLobby(lobbyId, (current) => ({
+      ...current,
+      players: {
+        ...current.players,
+        ...resolution.updatedPlayers,
+      },
+      latestNewspaper: resolution.newspaper,
+      // Merge new private investigation results into the running record
+      privateInvestigations: mergeInvestigationResults(
+        current.privateInvestigations ?? {},
+        resolution.newspaper.privateInvestigationResults,
+      ),
+    }));
 
     // Broadcast morning newspaper publicly
     const anySocket = Object.values(this.userSocketMap)[0];
@@ -262,6 +303,7 @@ export class ZeroKnowledgeDispatcher {
 
     return resolution;
   }
+
 
   // ── Voting Pipeline ───────────────────────────────────────────────────────
 

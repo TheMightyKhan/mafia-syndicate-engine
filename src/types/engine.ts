@@ -71,10 +71,20 @@ export interface MorningNewspaper {
 
 export interface NightResolutionOutput {
   readonly newspaper: MorningNewspaper;
-  /** Updated player map (isAlive toggled, vestCharges decremented) */
+  /**
+   * Updated player map (isAlive toggled for killed players).
+   * Also includes players whose vest trait was fully spent this night
+   * so their allInIdentity.layer3Trait is reset to avoid infinite re-protection.
+   */
   readonly updatedPlayers: Readonly<Record<string, PlayerSession>>;
   /** Kill count this night (enforced ≤ globalNightKillCap for ALL_IN) */
   readonly killCount: number;
+  /**
+   * Player IDs whose BULLETPROOF_VEST / SURGICAL_RESILIENCE charges reached 0
+   * this night (whether or not a kill was attempted). Callers must persist
+   * the trait depletion into LobbyState so next night they are not re-protected.
+   */
+  readonly vestSpentPlayerIds: readonly string[];
 }
 
 // ─── Voting Engine Output ────────────────────────────────────────────────────

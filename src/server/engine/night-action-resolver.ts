@@ -475,6 +475,35 @@ export function resolveNightActions(input: NightResolverInput): NightResolutionO
     updatedPlayers[id] = p;
   }
 
+  // ── Vest-depletion persistence fix ─────────────────────────────────────────
+  // The flags struct is transient — it is rebuilt from PlayerSession each night.
+  // Without persisting vest exhaustion into PlayerSession, every night restores
+  // the BULLETPROOF_VEST / SURGICAL_RESILIENCE protection (game-stall bug).
+  //
+  // When vestChargesRemaining hits 0 in the final flags, we overwrite the
+  // player's layer3Trait with a neutral trait ('CONTRABAND_POCKET') so that
+  // next night buildInitialFlags() assigns vestChargesRemaining = 0 for them.
+  const vestSpentPlayerIds: string[] = [];
+  for (const [id, f] of Object.entries(flags)) {
+    const player = updatedPlayers[id];
+    if (!player || !player.isAlive) continue;
+    if (!player.allInIdentity) continue;
+    const hadVest =
+      player.allInIdentity.layer3Trait === 'BULLETPROOF_VEST' ||
+      player.allInIdentity.layer3Trait === 'SURGICAL_RESILIENCE';
+    if (hadVest && f.vestChargesRemaining === 0) {
+      vestSpentPlayerIds.push(id);
+      updatedPlayers[id] = {
+        ...player,
+        allInIdentity: {
+          ...player.allInIdentity,
+          // Swap to a neutral trait with no defensive passive effect
+          layer3Trait: 'CONTRABAND_POCKET',
+        },
+      };
+    }
+  }
+
   const newspaper: MorningNewspaper = {
     publicDeaths,
     privateInvestigationResults: investigationResults,
@@ -486,5 +515,7 @@ export function resolveNightActions(input: NightResolverInput): NightResolutionO
     newspaper,
     updatedPlayers,
     killCount: publicDeaths.filter(d => d.cause !== 'RETALIATION_FUSE_COUNTER').length,
+    vestSpentPlayerIds,
   };
 }
+
