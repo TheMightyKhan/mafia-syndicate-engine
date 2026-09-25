@@ -159,7 +159,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-8 border-t border-zinc-200/80 dark:border-zinc-800/80">
           <div
             onClick={() => setIsCatalogOpen(true)}
-            className="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
+            className="flex items-center gap-3 p-3.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
           >
             <div className="w-10 h-10 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
               <Layers className="w-5 h-5" />
@@ -170,7 +170,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50">
+          <div className="flex items-center gap-3 p-3.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <Clock className="w-5 h-5" />
             </div>
@@ -180,7 +180,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50">
+          <div className="flex items-center gap-3 p-3.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50">
             <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5" />
             </div>
@@ -192,7 +192,7 @@ export default function HomePage() {
 
           <div
             onClick={() => setIsLeaderboardOpen(true)}
-            className="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
+            className="flex items-center gap-3 p-3.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer transition-all duration-200 hover:-translate-y-0.5"
           >
             <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
               <Trophy className="w-5 h-5" />
@@ -321,7 +321,7 @@ export default function HomePage() {
       {/* ─── CATALOG PROMO STRIP ─────────────────────────────────────── */}
       <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm dark:shadow-none transition-colors duration-200">
         <div className="flex items-start sm:items-center gap-4 max-w-2xl">
-          <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
             <Sparkles className="w-6 h-6" />
           </div>
 
@@ -390,7 +390,7 @@ export default function HomePage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleJoinByCode();
               }}
-              className="w-full px-4 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+              className="w-full px-4 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">

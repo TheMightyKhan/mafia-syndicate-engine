@@ -40,11 +40,11 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
   const majorityThreshold = Math.floor(alivePlayers.length / 2) + 1;
 
   return (
-    <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+    <div className="p-5 sm:p-6 rounded-[20px] p-4 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
       {/* Court Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
             <Gavel className="w-5 h-5" />
           </div>
           <div>
@@ -78,7 +78,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
       {/* Dante Special Mode Notices */}
       {isWrath && (
-        <div className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
+        <div className="p-3.5 rounded-[8px] border border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
           <span>
             <strong>Dantenin V Dairəsi (Qəzəb):</strong> Bitərəf qalmaq qadağandır! Hər bir canlı vətəndaş hökm verməlidir.
@@ -87,7 +87,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
       )}
 
       {isTreacheryBlind && (
-        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-800 dark:text-purple-300 text-xs flex items-center gap-2">
+        <div className="p-3.5 rounded-[8px] border border-purple-500/30 bg-purple-500/10 text-purple-800 dark:text-purple-300 text-xs flex items-center gap-2">
           <EyeOff className="w-4 h-4 shrink-0 text-purple-600" />
           <span>
             <strong>Dantenin IX Dairəsi (Xəyanət / Kokit):</strong> {AZ_UI.blindVotingDesc}
@@ -97,7 +97,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
       {/* All-In District Finalists */}
       {isAllIn && districtFinalists.length > 0 && (
-        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/5 dark:bg-blue-950/20">
+        <div className="p-4 rounded-[8px] border border-blue-500/30 bg-blue-500/5 dark:bg-blue-950/20">
           <div className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-2">
             {AZ_UI.districtFinalists} (3 Kvartal Finalisti)
           </div>
@@ -124,7 +124,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
       )}
 
       {/* Active Selection & Action Controls */}
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
             Seçilmiş İttiham Hədəfi:

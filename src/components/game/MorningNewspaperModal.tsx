@@ -43,7 +43,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-amber-50/95 dark:bg-stone-900/95 text-stone-900 dark:text-stone-100 p-6 sm:p-8 shadow-2xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto font-serif"
+        className="w-full max-w-2xl rounded-[20px] p-4 border border-zinc-300 dark:border-zinc-700 bg-amber-50/95 dark:bg-stone-900/95 text-stone-900 dark:text-stone-100 p-6 sm:p-8 shadow-sm border border-zinc-200 dark:border-zinc-800 flex flex-col gap-6 max-h-[90vh] overflow-y-auto font-serif tracking-tight"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Newspaper Masthead */}
@@ -51,7 +51,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
           <div className="text-[11px] tracking-widest uppercase text-stone-600 dark:text-stone-400 font-sans font-bold">
             TDV MAFIA • Səhər Xüsusi Buraxılışı
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider my-1 text-stone-950 dark:text-stone-50 font-serif">
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider my-1 text-stone-950 dark:text-stone-50 font-serif tracking-tight">
             {AZ_UI.morningBulletin}
           </h1>
           <div className="flex items-center justify-between text-xs text-stone-600 dark:text-stone-400 border-t border-stone-300 dark:border-stone-800 pt-2 font-sans">
@@ -63,7 +63,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
         {/* Yesterday's Lynch Headline */}
         {lastLynchedPlayerName && (
-          <div className="p-4 rounded-xl border border-rose-300 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/20 font-sans">
+          <div className="p-4 rounded-[8px] border border-rose-300 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/20 font-sans">
             <div className="text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-1">
               Məhkəmə İttihamı Nəticəsi
             </div>
@@ -93,7 +93,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
               {newspaper.publicDeaths.map((death) => (
                 <div
                   key={death.victimPlayerId}
-                  className="p-3.5 rounded-xl border-l-4 border-l-rose-600 border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-950/50 flex flex-col gap-1"
+                  className="p-3.5 rounded-[8px] border-l-4 border-l-rose-600 border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-950/50 flex flex-col gap-1"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-sm text-stone-900 dark:text-stone-100">
@@ -120,7 +120,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
         {/* Private Investigation Results for the Investigator */}
         {privateInvestigations.length > 0 && (
-          <div className="p-4 rounded-xl border border-blue-400/50 dark:border-blue-700/60 bg-blue-50/90 dark:bg-blue-950/40 font-sans flex flex-col gap-2.5 shadow-sm">
+          <div className="p-4 rounded-[8px] border border-blue-400/50 dark:border-blue-700/60 bg-blue-50/90 dark:bg-blue-950/40 font-sans flex flex-col gap-2.5 shadow-sm">
             <div className="flex items-center gap-2 text-xs font-black text-blue-900 dark:text-blue-300 uppercase tracking-wider">
               <Search className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Şəxsi Gecə İstintaq Nəticəniz (Yalnız Sizə Görünür)</span>
@@ -146,7 +146,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
         {/* Heresy Clue Leaked */}
         {newspaper.heresyClue && (
-          <div className="p-4 rounded-xl border border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30 font-sans">
+          <div className="p-4 rounded-[8px] border border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30 font-sans">
             <div className="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 mb-1">
               {AZ_UI.heresyLeakedHeader}
             </div>
@@ -158,7 +158,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
         {/* Minigame Event Announcements */}
         {dante && (
-          <div className="p-3.5 rounded-xl border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20 font-sans">
+          <div className="p-3.5 rounded-[8px] border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20 font-sans">
             <div className="text-xs font-bold text-red-700 dark:text-red-400">
               Dante Cəhənnəmi: {AZ_DANTE_CIRCLES[dante.currentCircle]?.name ?? dante.currentCircle}
             </div>

@@ -216,7 +216,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     >
       {/* ─── NIGHT PULSING WARNING BANNER ─────────────────────────── */}
       {isNightPhase && (
-        <div className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-red-950/90 via-purple-950/90 to-red-950/90 border border-red-500/40 shadow-[0_0_35px_rgba(239,68,68,0.3)] flex items-center justify-center gap-3 animate-pulse select-none">
+        <div className="w-full py-3 px-4 rounded-[20px] bg-gradient-to-r from-red-950/90 via-purple-950/90 to-red-950/90 border border-red-500/40 shadow-[0_0_35px_rgba(239,68,68,0.3)] flex items-center justify-center gap-3 animate-pulse select-none">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
           <span className="text-xs sm:text-sm font-black tracking-widest text-red-200 uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] text-center">
             🌑 ŞƏHƏR YATIR, QATİLLƏR OYANIR 🌑
@@ -226,7 +226,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       )}
 
       {/* ─── TOP PHASE HUD ─────────────────────────────────────────── */}
-      <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-200">
+      <div className="p-5 sm:p-6 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-200">
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
@@ -475,7 +475,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
-      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
+      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
             isNightPhase

@@ -97,9 +97,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   if (!isAlive && !isLobbyPhase) {
     containerClasses = 'bg-zinc-100/60 dark:bg-zinc-950/60 border-zinc-200 dark:border-zinc-800/60 opacity-60 grayscale-[40%]';
   } else if (isAccused) {
-    containerClasses = 'bg-red-500/10 dark:bg-red-950/40 border-red-500 ring-2 ring-red-500/80 shadow-[0_0_25px_rgba(239,68,68,0.5)] animate-pulse';
+    containerClasses = 'bg-red-500/10 dark:bg-red-950/40 border-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]/80 shadow-[0_0_25px_rgba(239,68,68,0.5)] animate-pulse';
   } else if (isSelected) {
-    containerClasses = 'bg-blue-50/90 dark:bg-blue-950/50 border-blue-500 ring-2 ring-blue-500/40 shadow-lg shadow-blue-500/20';
+    containerClasses = 'bg-blue-50/90 dark:bg-blue-950/50 border-blue-500 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]/40 shadow-lg shadow-blue-500/20';
   } else if (isSpeaking) {
     containerClasses = 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-500/20';
   } else if (isCurrentTurn) {
@@ -114,8 +114,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`relative p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
-        onSelect ? 'cursor-pointer hover:-translate-y-1 hover:shadow-md' : 'cursor-default'
+      className={`relative p-4 rounded-[20px] p-2 border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
+        onSelect ? 'cursor-pointer hover:-translate-y-1 hover:' : 'cursor-default'
       } ${containerClasses}`}
     >
       {/* Radiant Glow ambient accent if self */}
@@ -135,7 +135,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         <div className="flex items-center gap-2.5 min-w-0">
           {/* Avatar Circle */}
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 border shadow-sm transition-transform duration-200 ${
+            className={`w-10 h-10 rounded-[8px] flex items-center justify-center font-black text-sm shrink-0 border shadow-sm transition-transform duration-200 ${
               isHost
                 ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border-amber-400/50 shadow-amber-500/20'
                 : isSelf
