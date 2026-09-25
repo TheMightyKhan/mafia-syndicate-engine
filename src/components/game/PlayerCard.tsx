@@ -72,14 +72,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     : isGameOver
     ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
       ? player.displayRole.localizedRoleName || player.displayRole.originalRoleName
-      : 'Açıq Rol'
+      : ''
     : !isAlive
     ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
       ? player.displayRole.localizedRoleName || player.displayRole.originalRoleName
       : '✝️ Ələnmiş İştirakçı'
     : isViewerMafia && isFullSession(player) && player.allInIdentity?.layer1Faction === 'MAFIA'
     ? '🕶️ Mafiya Ortağı'
-    : 'Məlum deyil (Gizli Rol)';
+    : '';
 
   const district = !isLobbyPhase ? player.currentDistrict : null;
   const officeRaw = !isLobbyPhase && (isSelf || !isAlive || isGameOver)

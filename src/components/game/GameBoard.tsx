@@ -71,6 +71,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const [activeDistrictTab, setActiveDistrictTab] = useState<AllInDistrict | 'ALL'>('ALL');
   const [soundMuted, setSoundMuted] = useState<boolean>(false);
   const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showRoleReveal, setShowRoleReveal] = useState<boolean>(true);
   
   useEffect(() => {
