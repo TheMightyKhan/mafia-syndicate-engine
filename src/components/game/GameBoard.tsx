@@ -206,6 +206,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   });
   const leadingCandidateId = Object.entries(voteCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
 
+  
+  const totalPlayers = Object.keys(lobbyState.players).length;
+  const alivePlayersCount = Object.values(lobbyState.players).filter(p => p.isAlive).length;
+  const deadPlayersCount = totalPlayers - alivePlayersCount;
+  const progressPercentage = Math.max(0, Math.min(100, (lobbyState.phaseTimeRemaining / Math.max(1, lobbyState.phaseDurationSeconds)) * 100));
+
   const isNightPhase = phase === 'NIGHT_BUFFER';
   const isVotingPhase = phase === 'DAY_VOTING';
   const isDayDiscussion =
@@ -480,7 +486,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
-      <div className="sticky bottom-0 sm:bottom-4 z-50 p-4 sm:p-5 rounded-t-[24px] sm:rounded-[24px] border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-[0_12px_40px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 w-full mb-0 sm:mb-4 border-b-0 sm:border-b">
+      {!isAlive ? (
+        <div className="sticky bottom-0 sm:bottom-4 z-50 p-4 sm:p-5 rounded-t-[24px] sm:rounded-[24px] border border-red-500/30 bg-zinc-950/95 backdrop-blur-[32px] shadow-[0_-10px_40px_rgba(220,38,38,0.1)] sm:shadow-[0_12px_40px_rgba(220,38,38,0.1)] flex items-center justify-center gap-4 transition-all duration-300 w-full mb-0 sm:mb-4">
+            <span className="text-red-400 font-mono uppercase tracking-widest text-sm flex items-center gap-2">
+               <svg className="w-4 h-4 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+               MÜŞAHİDƏÇİ REJİMİ AKTİVDİR (Səsvermə və əmrlər deaktivdir)
+            </span>
+        </div>
+      ) : (
+        <div className="sticky bottom-0 sm:bottom-4 z-50 p-4 sm:p-5 rounded-t-[24px] sm:rounded-[24px] border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-[0_12px_40px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 w-full mb-0 sm:mb-4 border-b-0 sm:border-b">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
             isNightPhase
@@ -559,6 +573,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           </Button>
         ) : null}
       </div>
+      )}
     </div>
   );
 };
