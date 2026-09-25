@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
     const lobbyId = String(body.lobbyId || `room-${Date.now()}`);
     const name = String(body.name || 'Yeni Mafiya Masası');
-    const mode = String(body.mode || 'SE7EN_DEADLY_SINS');
+    const mode = String(body.mode || 'CLASSIC_7');
     const hostUsername = String(body.hostUsername || 'Host');
     const isPrivate = Boolean(body.isPrivate);
     const maxPlayers = Number(body.maxPlayers) || 12;

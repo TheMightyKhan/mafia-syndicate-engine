@@ -6,14 +6,14 @@
 import { LobbyAccessRule, PlayerTier } from './access';
 
 export type StandardPackId =
-  | 'SE7EN_DEADLY_SINS'        // 5–7 players, Tier 1
-  | 'AND_THEN_THERE_WERE_NONE'  // 8–11 players, Tier 1
-  | 'CRIME_AND_PUNISHMENT'     // 12–15 players, Tier 2 baseline
-  | 'STEINS_GATE'              // 16–20 players, Tier 2 baseline
-  | 'DIES_IRAE'                // 21–24 players, Tier 2 baseline
-  | 'ALL_TOMORROWS'            // 25–30 players, Tier 3 baseline
-  | 'FULL_HOUSE'               // 30+ players, Tier 3 baseline
-  | 'TABULA_RASA';             // Custom lobby
+  | 'CLASSIC_7'        // 5–7 players, Tier 1
+  | 'STANDARD_11'  // 8–11 players, Tier 1
+  | 'EXTENDED_15'     // 12–15 players, Tier 2 baseline
+  | 'GRAND_20'              // 16–20 players, Tier 2 baseline
+  | 'EPIC_24'                // 21–24 players, Tier 2 baseline
+  | 'MASSIVE_30'            // 25–30 players, Tier 3 baseline
+  | 'LIMITLESS_MAX'               // 30+ players, Tier 3 baseline
+  | 'CUSTOM_LOBBY';             // Custom lobby
 
 export type MinigameId =
   | 'CATENACCIO'                     // 10–12 players
@@ -57,14 +57,14 @@ export interface PackMetadata {
 /** Type guard to determine if a given GameMode is a StandardPackId */
 export function isStandardPack(mode: GameMode): mode is StandardPackId {
   return (
-    mode === 'SE7EN_DEADLY_SINS' ||
-    mode === 'AND_THEN_THERE_WERE_NONE' ||
-    mode === 'CRIME_AND_PUNISHMENT' ||
-    mode === 'STEINS_GATE' ||
-    mode === 'DIES_IRAE' ||
-    mode === 'ALL_TOMORROWS' ||
-    mode === 'FULL_HOUSE' ||
-    mode === 'TABULA_RASA'
+    mode === 'CLASSIC_7' ||
+    mode === 'STANDARD_11' ||
+    mode === 'EXTENDED_15' ||
+    mode === 'GRAND_20' ||
+    mode === 'EPIC_24' ||
+    mode === 'MASSIVE_30' ||
+    mode === 'LIMITLESS_MAX' ||
+    mode === 'CUSTOM_LOBBY'
   );
 }
 

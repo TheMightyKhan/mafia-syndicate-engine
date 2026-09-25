@@ -39,7 +39,7 @@ export const Navbar: React.FC = () => {
   const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
   const [isCreateRoomOpen, setIsCreateRoomOpen] = useState<boolean>(false);
-  const [catalogSelectedMode, setCatalogSelectedMode] = useState<GameMode>('SE7EN_DEADLY_SINS');
+  const [catalogSelectedMode, setCatalogSelectedMode] = useState<GameMode>('CLASSIC_7');
 
   const [isEcoDropdownOpen, setIsEcoDropdownOpen] = useState<boolean>(false);
   const [soundMuted, setSoundMuted] = useState<boolean>(false);

@@ -32,7 +32,7 @@ export default function HomePage() {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
   const [isCatalogOpen, setIsCatalogOpen] = useState<boolean>(false);
-  const [selectedPackForModal, setSelectedPackForModal] = useState<GameMode>('SE7EN_DEADLY_SINS');
+  const [selectedPackForModal, setSelectedPackForModal] = useState<GameMode>('CLASSIC_7');
 
   // Join by room code
   const [roomCodeInput, setRoomCodeInput] = useState<string>('');

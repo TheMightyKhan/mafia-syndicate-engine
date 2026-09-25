@@ -133,43 +133,43 @@ const getRoleChipClass = (roleText: string) => {
 };
 
 const PACK_SPECIAL_FEATURES: Record<string, { label: string; icon: string }[]> = {
-  SE7EN_DEADLY_SINS: [
+  CLASSIC_7: [
     { label: 'Gözbağlama (Əngəl)', icon: 'fa-wand-magic-sparkles' },
     { label: 'Lusifer Qələbəsi (Tək)', icon: 'fa-masks-theater' },
     { label: 'Müstəntiq Təhqiqatı', icon: 'fa-magnifying-glass' },
   ],
-  AND_THEN_THERE_WERE_NONE: [
+  STANDARD_11: [
     { label: 'Pataloqanatom Otopsiyası', icon: 'fa-microscope' },
     { label: 'Gözbağlayıcı İllüziyası', icon: 'fa-wand-magic-sparkles' },
     { label: 'Gizli Sui-qəsd', icon: 'fa-crosshairs' },
   ],
-  CRIME_AND_PUNISHMENT: [
+  EXTENDED_15: [
     { label: 'Prokuror Sərt İttihamı', icon: 'fa-scale-balanced' },
     { label: 'Vəkil Bəraəti', icon: 'fa-file-shield' },
     { label: 'Şantaj (Səssizlik Təzyiqi)', icon: 'fa-comment-slash' },
     { label: 'Pataloqanatom Otopsiyası', icon: 'fa-microscope' },
   ],
-  STEINS_GATE: [
+  GRAND_20: [
     { label: 'Zaman Səyahəti (Döngə)', icon: 'fa-clock-rotate-left' },
     { label: 'Gözbağlayıcı Əngəli', icon: 'fa-wand-magic-sparkles' },
     { label: 'İllüziya Tələsi', icon: 'fa-eye' },
   ],
-  DIES_IRAE: [
+  EPIC_24: [
     { label: 'İnkvizitor Təmizlənməsi', icon: 'fa-fire' },
     { label: 'Kuklaçı İdarəetməsi', icon: 'fa-hands' },
     { label: 'Regional Palata Səsverməsi', icon: 'fa-landmark' },
   ],
-  ALL_TOMORROWS: [
+  MASSIVE_30: [
     { label: 'Fədai Qurbanı', icon: 'fa-shield-heart' },
     { label: 'Casus Məlumatı', icon: 'fa-user-secret' },
     { label: 'Cüt Müstəqil Qatil', icon: 'fa-skull' },
   ],
-  FULL_HOUSE: [
+  LIMITLESS_MAX: [
     { label: 'Xaç Atası Toxunulmazlığı', icon: 'fa-crown' },
     { label: 'Kuklaçı & Şantajçı Şəbəkəsi', icon: 'fa-network-wired' },
     { label: '3-lü Şərif & Həkim Alyansı', icon: 'fa-shield-halved' },
   ],
-  TABULA_RASA: [
+  CUSTOM_LOBBY: [
     { label: 'Sərbəst Rol Konstruktoru', icon: 'fa-sliders' },
     { label: 'Bütün Xüsusi Qabiliyyətlər Açıq', icon: 'fa-unlock' },
   ],

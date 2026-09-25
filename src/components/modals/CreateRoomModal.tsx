@@ -25,7 +25,7 @@ export interface CreateRoomModalProps {
 
 export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   isOpen,
-  defaultMode = 'SE7EN_DEADLY_SINS',
+  defaultMode = 'CLASSIC_7',
   onClose,
   onRoomCreated,
 }) => {
@@ -147,14 +147,14 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
             >
               <optgroup label="Klassik Paketlər">
-                <option value="SE7EN_DEADLY_SINS">Se7en Deadly Sins (5–7 Oyunçu)</option>
-                <option value="AND_THEN_THERE_WERE_NONE">And Then There Were None (8–11 Oyunçu)</option>
-                <option value="CRIME_AND_PUNISHMENT">Crime and Punishment (12–15 Oyunçu)</option>
-                <option value="STEINS_GATE">Steins;Gate (16–20 Oyunçu)</option>
-                <option value="DIES_IRAE">Dies Irae (21–24 Oyunçu)</option>
-                <option value="ALL_TOMORROWS">All Tomorrows (25–30 Oyunçu)</option>
-                <option value="FULL_HOUSE">Full House (30–39 Oyunçu)</option>
-                <option value="TABULA_RASA">Tabula Rasa (5–50 Oyunçu)</option>
+                <option value="CLASSIC_7">Klassik (5–7 Oyunçu)</option>
+                <option value="STANDARD_11">Standart (8–11 Oyunçu)</option>
+                <option value="EXTENDED_15">Genişləndirilmiş (12–15 Oyunçu)</option>
+                <option value="GRAND_20">Böyük (16–20 Oyunçu)</option>
+                <option value="EPIC_24">Epik (21–24 Oyunçu)</option>
+                <option value="MASSIVE_30">Kütləvi (25–30 Oyunçu)</option>
+                <option value="LIMITLESS_MAX">Sərhədsiz (30-39 Oyunçu)</option>
+                <option value="CUSTOM_LOBBY">Xüsusi Otaq (5-50 Oyunçu)</option>
               </optgroup>
               <optgroup label="Asimmetrik Xüsusi Rejimlər">
                 <option value="CATENACCIO">Catenaccio (10–12 Oyunçu)</option>

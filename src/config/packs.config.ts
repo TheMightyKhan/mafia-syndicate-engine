@@ -7,9 +7,9 @@ import { GameMode, PackMetadata } from '../types/packs';
 
 export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
   // === STANDARD PACKS ===
-  SE7EN_DEADLY_SINS: {
-    id: 'SE7EN_DEADLY_SINS',
-    name: 'Se7en Deadly Sins',
+  CLASSIC_7: {
+    id: 'CLASSIC_7',
+    name: 'Klassik (5-7 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '1 Qatil (Mafiya), 1 Şərif (Müstəntiq), 1 Həkim, 1 Lusiferin Kölgəsi (Dəli), 1 Gözbağlayıcı, 2 Məsum Vətəndaş',
@@ -34,9 +34,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  AND_THEN_THERE_WERE_NONE: {
-    id: 'AND_THEN_THERE_WERE_NONE',
-    name: 'And Then There Were None',
+  STANDARD_11: {
+    id: 'STANDARD_11',
+    name: 'Standart (8-11 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '2 Gizli Qatil (Mafiya), 1 Şərif (Müstəntiq), 1 Həkim, 1 Lusiferin Kölgəsi (Dəli), 1 Gözbağlayıcı, 1 Pataloqanatom, 4 Qonaq (Vətəndaş)',
@@ -61,9 +61,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  CRIME_AND_PUNISHMENT: {
-    id: 'CRIME_AND_PUNISHMENT',
-    name: 'Crime and Punishment',
+  EXTENDED_15: {
+    id: 'EXTENDED_15',
+    name: 'Genişləndirilmiş (12-15 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '3 İcraçı Qatil (Mafiya), 1 Prokuror, 1 Vəkil, 1 Şantajçı, 1 Pataloqanatom, 1 Həkim, 7 Vətəndaş',
@@ -88,9 +88,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  STEINS_GATE: {
-    id: 'STEINS_GATE',
-    name: 'Steins;Gate',
+  GRAND_20: {
+    id: 'GRAND_20',
+    name: 'Böyük (16-20 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '4 Mafiya, 1 Zaman Səyyahı, 1 Gözbağlayıcı, 1 İllüziyaçı, 1 Şərif, 1 Həkim, 11 Vətəndaş',
@@ -115,9 +115,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  DIES_IRAE: {
-    id: 'DIES_IRAE',
-    name: 'Dies Irae',
+  EPIC_24: {
+    id: 'EPIC_24',
+    name: 'Epik (21-24 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '5 Mafiya, 2 Şərif, 2 Həkim, 1 İnkvizitor, 1 Pataloqanatom, 1 Kuklaçı, 12 Vətəndaş',
@@ -143,9 +143,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  ALL_TOMORROWS: {
-    id: 'ALL_TOMORROWS',
-    name: 'All Tomorrows',
+  MASSIVE_30: {
+    id: 'MASSIVE_30',
+    name: 'Kütləvi (25-30 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '6 Mafiya, 2 Şərif, 2 Həkim, 2 Müstəqil Qatil, 1 Fədai, 1 Casus, 16 Vətəndaş',
@@ -171,9 +171,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  FULL_HOUSE: {
-    id: 'FULL_HOUSE',
-    name: 'Full House',
+  LIMITLESS_MAX: {
+    id: 'LIMITLESS_MAX',
+    name: 'Sərhədsiz (30+ Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '8 Mafiya (Xaç Atası, Don, Şantajçı, Kuklaçı), 3 Şərif, 3 Həkim, 2 Pataloqanatom, 23 Vətəndaş',
@@ -199,9 +199,9 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  TABULA_RASA: {
-    id: 'TABULA_RASA',
-    name: 'Tabula Rasa',
+  CUSTOM_LOBBY: {
+    id: 'CUSTOM_LOBBY',
+    name: 'Xüsusi Otaq',
     tagline: '',
     description: '',
     roleBreakdown: 'Sərbəst Seçim (Bütün Rollar və Xüsusi Qabiliyyətlər Əlçatandır)',

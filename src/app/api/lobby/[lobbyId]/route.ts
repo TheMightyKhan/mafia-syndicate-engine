@@ -40,7 +40,7 @@ function deriveModeFromLobbyId(lobbyId: string): GameMode {
       return mode;
     }
   }
-  return 'SE7EN_DEADLY_SINS';
+  return 'CLASSIC_7';
 }
 
 /**
