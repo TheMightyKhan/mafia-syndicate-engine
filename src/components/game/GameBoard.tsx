@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Clock,
+  Skull,
   Newspaper,
   Shield,
   Zap,
@@ -469,7 +470,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
 
         <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : theme.gridContainer}`}>
-          {displayedPlayers.map((player) => (
+          {displayedPlayers.filter(p => p.isAlive).map((player) => (
             <PlayerCard
               key={player.userId}
               player={player}
@@ -477,6 +478,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               isSelected={selectedPlayerId === player.userId}
               targetIntent={selectedPlayerId === player.userId ? primaryActionType : undefined}
               isAccused={
+                canSeeVotes &&
                 isVotingPhase &&
                 Boolean(leadingCandidateId) &&
                 player.userId === leadingCandidateId &&
@@ -492,6 +494,43 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             />
           ))}
         </div>
+
+        {displayedPlayers.some(p => !p.isAlive) && (
+          <div className="mt-12 mb-4 animate-fadeIn">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent flex-1"></div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-zinc-900/50 border border-zinc-800 flex items-center justify-center">
+                  <Skull className="w-4 h-4 text-zinc-500" />
+                </div>
+                <span className="text-[10px] font-black tracking-[0.3em] text-zinc-500 uppercase">
+                  Qəbiristanlıq
+                </span>
+              </div>
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent flex-1"></div>
+            </div>
+            
+            <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : theme.gridContainer} opacity-60 hover:opacity-100 transition-opacity duration-500`}>
+              {displayedPlayers.filter(p => !p.isAlive).map((player) => (
+                <PlayerCard
+                  key={player.userId}
+                  player={player}
+                  isSelf={player.userId === currentUserId}
+                  isSelected={false}
+                  targetIntent={undefined}
+                  isAccused={false}
+                  isCurrentTurn={false}
+                  hasVoteOnTarget={false}
+                  voteCount={0}
+                  isSpeaking={speakingIds?.has(player.userId) ?? false}
+                  isViewerMafia={isMafia}
+                  isGameOver={lobbyState.phase === 'ENDED'}
+                  onSelect={() => {}}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
