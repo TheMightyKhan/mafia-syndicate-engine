@@ -135,3 +135,15 @@ body {
 .animate-pulse-dot {
   animation: pulseDot 2s infinite ease-in-out;
 }
+
+/* Typography refinements */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.tracking-tight { letter-spacing: -0.02em; }
+
+/* Micro-interactions */
+.btn-spring {
+  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-spring:active {
+  transform: scale(0.98);
+}
