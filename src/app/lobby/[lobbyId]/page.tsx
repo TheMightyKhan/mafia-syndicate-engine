@@ -9,6 +9,7 @@ import {
   Zap,
   Users,
   Shield,
+  Target,
   Eye,
   Clock,
   Sparkles,
@@ -801,26 +802,66 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       ) : (
         /* ─── 2. ACTIVE GAME PHASE ───────────────────────────────────── */
         <div className="flex flex-col gap-6">
-          {/* Secret Role Card with Radiant Glow */}
-          <div className="p-5 rounded-2xl border border-purple-500/40 bg-gradient-to-r from-purple-500/15 via-purple-600/10 to-purple-500/15 shadow-[0_0_25px_rgba(147,51,234,0.25)] flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-purple-500/30">
-                🎭
-              </div>
-              <div>
-                <span className="text-[11px] font-extrabold text-purple-700 dark:text-purple-300 uppercase tracking-widest block">
-                  Sizin Gizli Şəxsi Rolunuz
-                </span>
-                <div className="text-xl font-black text-zinc-950 dark:text-white tracking-tight">
-                  {lobbyState.players[currentUserId]?.displayRole.formatted ?? `${currentUsername} (Vətəndaş)`}
+          {/* Secret Role Card with Dynamic Faction Glow */}
+          {(() => {
+            const roleStr = lobbyState.players[currentUserId]?.displayRole.formatted ?? '';
+            const isMafia = roleStr.toLowerCase().includes('mafiya') || roleStr.toLowerCase().includes('mafia') || roleStr.toLowerCase().includes('don');
+            const isNeutral = roleStr.toLowerCase().includes('qatil') || roleStr.toLowerCase().includes('yandırıcı') || roleStr.toLowerCase().includes('təlxək');
+            
+            let containerBg = 'bg-gradient-to-r from-emerald-500/15 via-emerald-600/10 to-emerald-500/15';
+            let borderColor = 'border-emerald-500/40';
+            let shadowColor = 'shadow-[0_0_25px_rgba(16,185,129,0.25)]';
+            let iconBg = 'bg-gradient-to-tr from-emerald-600 to-teal-500';
+            let iconShadow = 'shadow-emerald-500/30';
+            let textTop = 'text-emerald-700 dark:text-emerald-300';
+            let badgeBg = 'bg-emerald-600';
+            let badgeShadow = 'shadow-emerald-600/30';
+            let RoleIcon = Shield;
+
+            if (isMafia) {
+              containerBg = 'bg-gradient-to-r from-red-500/15 via-red-600/10 to-red-500/15';
+              borderColor = 'border-red-500/40';
+              shadowColor = 'shadow-[0_0_25px_rgba(239,68,68,0.25)]';
+              iconBg = 'bg-gradient-to-tr from-red-600 to-orange-600';
+              iconShadow = 'shadow-red-500/30';
+              textTop = 'text-red-700 dark:text-red-300';
+              badgeBg = 'bg-red-600';
+              badgeShadow = 'shadow-red-600/30';
+              RoleIcon = Target;
+            } else if (isNeutral) {
+              containerBg = 'bg-gradient-to-r from-purple-500/15 via-purple-600/10 to-purple-500/15';
+              borderColor = 'border-purple-500/40';
+              shadowColor = 'shadow-[0_0_25px_rgba(168,85,247,0.25)]';
+              iconBg = 'bg-gradient-to-tr from-purple-600 to-fuchsia-600';
+              iconShadow = 'shadow-purple-500/30';
+              textTop = 'text-purple-700 dark:text-purple-300';
+              badgeBg = 'bg-purple-600';
+              badgeShadow = 'shadow-purple-600/30';
+              RoleIcon = Eye;
+            }
+
+            return (
+              <div className={`p-5 rounded-2xl border ${borderColor} ${containerBg} ${shadowColor} flex items-center justify-between gap-4 transition-colors duration-500`}>
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-xl ${iconBg} text-white flex items-center justify-center shadow-lg ${iconShadow}`}>
+                    <RoleIcon className="w-6 h-6" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <span className={`text-[11px] font-extrabold uppercase tracking-[0.2em] block ${textTop}`}>
+                      SİZİN GİZLİ KİMLİYİNİZ
+                    </span>
+                    <div className="text-2xl font-black text-zinc-950 dark:text-white tracking-tight mt-0.5">
+                      {roleStr || `${currentUsername} (Vətəndaş)`}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-md ${badgeBg} ${badgeShadow} hidden sm:block`}>
+                  MƏXFİ TƏYİNAT
                 </div>
               </div>
-            </div>
-
-            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-600 text-white shadow-md shadow-purple-600/30">
-              MƏXFİ
-            </span>
-          </div>
+            );
+          })()}
 
           <PhaseTransitionOverlay phase={lobbyState.phase} />
 

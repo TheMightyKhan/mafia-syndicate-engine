@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GamePhase } from '@/types/index';
 import { Sun, Moon, Scale, Skull } from 'lucide-react';
+import { playNight, playDay, playGavel } from '../../utils/sfx';
 
 interface PhaseTransitionOverlayProps {
   phase: GamePhase;
@@ -18,6 +19,15 @@ export const PhaseTransitionOverlay: React.FC<PhaseTransitionOverlayProps> = ({ 
     ) {
       setCurrentPhase(phase);
       setShow(true);
+      
+      // Play cinematic audio based on phase
+      if (phase.includes('NIGHT')) {
+        playNight();
+      } else if (phase.includes('VOTING')) {
+        playGavel();
+      } else if (phase.includes('DAY')) {
+        playDay();
+      }
       const timer = setTimeout(() => setShow(false), 3000); // Hide after 3 seconds
       return () => clearTimeout(timer);
     }
