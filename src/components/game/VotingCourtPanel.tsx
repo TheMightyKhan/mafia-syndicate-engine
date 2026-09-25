@@ -7,6 +7,7 @@ import { AllInDistrict } from '../../types/roles';
 import { AZ_DISTRICTS, AZ_UI } from '../../config/i18n/az';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
+import { getTheme } from '../../config/themes.config';
 
 export interface VotingCourtPanelProps {
   readonly lobbyState: LobbyState;
@@ -31,6 +32,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
   const isWrath = dante?.wrathNoAbstainEnforced === true;
   const isTreacheryBlind = dante?.treacherySecretVotingActive === true;
   const isAllIn = lobbyState.mode === 'ALL_IN';
+  const theme = getTheme(lobbyState.mode);
 
   const currentUser = lobbyState.players[currentUserId];
   const isAlive = currentUser?.isAlive ?? false;
@@ -40,19 +42,19 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
   const majorityThreshold = Math.floor(alivePlayers.length / 2) + 1;
 
   return (
-    <div className={`p-5 sm:p-6 p-4 flex flex-col gap-4 transition-colors duration-200 ${isAllIn ? 'bg-zinc-950 border border-red-500/30 rounded-[12px] shadow-[0_0_30px_rgba(239,68,68,0.1)] relative overflow-hidden ring-1 ring-red-500/10' : 'rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm'}`}>
+    <div className={`p-5 sm:p-6 p-4 flex flex-col gap-4 transition-colors duration-200 ${isAllIn ? 'bg-zinc-950 border border-red-500/30 rounded-[12px] shadow-[0_0_30px_rgba(239,68,68,0.1)] relative overflow-hidden ring-1 ring-red-500/10' : theme.courtContainer}`}>
       {/* Court Header */}
       {isAllIn && <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none" />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 flex items-center justify-center shrink-0 ${isAllIn ? 'rounded-full bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.6)] text-white' : 'rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'}`}>
+          <div className={`w-10 h-10 flex items-center justify-center shrink-0 ${isAllIn ? 'rounded-full bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.6)] text-white' : theme.courtGavel}`}>
             <Gavel className="w-5 h-5" />
           </div>
           <div>
             <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
               {isAllIn ? AZ_UI.districtPlebiscite : AZ_UI.currentPhase}
             </span>
-            <h3 className={`font-extrabold leading-tight ${isAllIn ? 'text-2xl text-red-500 tracking-widest uppercase font-mono drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]' : 'text-lg text-zinc-950 dark:text-white'}`}>
+            <h3 className={`font-extrabold leading-tight ${isAllIn ? 'text-2xl text-red-500 tracking-widest uppercase font-mono drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]' : theme.courtTitle}`}>
               {AZ_UI.accuse} & {AZ_UI.vote} Məclisi
             </h3>
           </div>
@@ -125,7 +127,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
       )}
 
       {/* Active Selection & Action Controls */}
-      <div className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10 ${isAllIn ? 'rounded-none border-l-4 border-l-red-500 bg-zinc-900 border-y border-r border-zinc-800' : 'rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950'}`}>
+      <div className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10 ${isAllIn ? 'rounded-none border-l-4 border-l-red-500 bg-zinc-900 border-y border-r border-zinc-800' : theme.courtActiveBox}`}>
         <div>
           <span className={`text-[11px] font-bold uppercase tracking-wider ${isAllIn ? 'text-red-400 font-mono tracking-widest' : 'text-zinc-500 dark:text-zinc-400'}`}>
             Seçilmiş İttiham Hədəfi:

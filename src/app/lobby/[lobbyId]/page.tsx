@@ -35,6 +35,7 @@ import { AZ_PHASES, AZ_UI } from '../../../config/i18n/az';
 import { Button } from '../../../components/ui/Button';
 import { Badge } from '../../../components/ui/Badge';
 import { PACKS_CONFIG } from '../../../config/packs.config';
+import { getTheme } from '../../../config/themes.config';
 import { playCard, playDay, playNight, isSoundMuted, toggleSound, subscribeSound } from '../../../utils/sfx';
 
 interface LobbyPageProps {
@@ -354,6 +355,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const playersList = Object.values(lobbyState.players);
   const totalPlayersCount = playersList.length;
   const currentPack = PACKS_CONFIG[lobbyState.mode];
+  const theme = getTheme(lobbyState.mode);
 
   // Derive my faction for voice phase gating
   const myPlayerSession = lobbyState.players[currentUserId];
@@ -607,7 +609,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       {isLobbyPhase ? (
         <div className="flex flex-col gap-6">
           {/* Table Configuration & Rules Summary Card */}
-          <div className="p-5 sm:p-6 rounded-[24px] border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4">
+          <div className={`p-5 sm:p-6 flex flex-col gap-4 ${theme.lobbyContainer}`}>
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-red-500" />

@@ -20,6 +20,7 @@ import { AllInDistrict } from '../../types/roles';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { PlayerCard } from './PlayerCard';
+import { getTheme } from '../../config/themes.config';
 import { VotingCourtPanel } from './VotingCourtPanel';
 import {
   AZ_DANTE_CIRCLES,
@@ -71,6 +72,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const currentUser = lobbyState.players[currentUserId];
   const isAlive = currentUser?.isAlive ?? false;
   const isAllIn = lobbyState.mode === 'ALL_IN';
+  const theme = getTheme(lobbyState.mode);
   const phase = lobbyState.phase;
 
   // Track sound status
@@ -444,7 +446,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           </span>
         </div>
 
-        <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4'}`}>
+        <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : theme.gridContainer}`}>
           {displayedPlayers.map((player) => (
             <PlayerCard
               key={player.userId}
