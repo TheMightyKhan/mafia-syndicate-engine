@@ -444,7 +444,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'mode_inferno_cocytus_conquest',
-    title: "İlahi Komediya (Divine Comedy)",
+    title: '9 Dairə Zəfəri',
     description: "Dante's Inferno rejimində bütün 9 cəhənnəm dairəsini (Limbo-dan Cocytus-a qədər) canlı başa vur.",
     category: 'MODES',
     tier: 'LEGENDARY',
@@ -454,7 +454,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_inferno_heresy_solve',
-    title: "Gülün Adı (The Name of the Rose)",
+    title: 'Heresy İpucu',
     description: 'Dante rejiminin Heresy dairəsində sızan xüsusi ipucu ilə cinayətkarın kimliyini ifşa et.',
     category: 'MODES',
     tier: 'SILVER',
@@ -464,7 +464,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_inferno_greed_gold_vote',
-    title: "Qızıl Buzov (The Golden Calf)",
+    title: 'Tamahkarın Qızılı',
     description: 'Greed dairəsində səs borcunu qızıl sikkələrlə bağlayaraq məhkəmə edamından qurtul.',
     category: 'MODES',
     tier: 'GOLD',
@@ -474,7 +474,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_earth_klaatu_activation',
-    title: "Dünyanın Durduğu Gün (The Day the Earth Stood Still)",
+    title: 'Klaatu Dondurması',
     description: "The Day The Earth Stood Still rejimində 'World Freeze' qabiliyyətini aktivləşdirərək qətli blokla.",
     category: 'MODES',
     tier: 'GOLD',
@@ -484,7 +484,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_earth_doomsday_hour_eleven',
-    title: "Doktor Qəribəaşk (Dr. Strangelove)",
+    title: 'Qiyamət Ərəfəsi',
     description: 'Doomsday Saatı 11-ci saata çatdığı kritik vəziyyətdə son mafiozu edam edərək dünyanı xilas et.',
     category: 'MODES',
     tier: 'PLATINUM',
@@ -494,7 +494,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_valkyrie_defuse_the_briefcase',
-    title: "Valkiriya Əməliyyatı (Operation Valkyrie)",
+    title: 'Valkyrie Çamadanı',
     description: 'Operation Valkyrie rejimində partlayıcı çamadanın olduğu oyunçunu aşkar edib fitili zərərsizləşdir.',
     category: 'MODES',
     tier: 'GOLD',
@@ -504,7 +504,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_valkyrie_overthrow_dictator',
-    title: "Böyük Diktator (The Great Dictator)",
+    title: 'Diktatorun Sonu',
     description: 'Valkyrie rejimində Diktator rolunu oynayan şəxsi məhkəmə səsverməsi ilə vəzifəsindən kənarlaşdır.',
     category: 'MODES',
     tier: 'SILVER',
@@ -514,7 +514,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_stanford_revolt_maximum',
-    title: "Üç Qəpiklik Opera (The Threepenny Opera)",
+    title: 'Stanford Qiyamı',
     description: 'Stanford Prison rejimində Qiyam Sayğacını 100%-ə çatdıraraq Məhbus fraksiyası ilə zəfər qazan.',
     category: 'MODES',
     tier: 'GOLD',
@@ -524,7 +524,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_catenaccio_defense_barrier',
-    title: "Spartak (Spartacus)",
+    title: 'Catenaccio Səddi',
     description: 'Catenaccio rejimində 4 nəfərlik Müdafiə Divarını keçməyə çalışan Snayperi vaxtında aşkar et.',
     category: 'MODES',
     tier: 'SILVER',
@@ -534,7 +534,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_chernobyl_decontamination',
-    title: "Çernobıl Gündəliyi (Chernobyl)",
+    title: 'Dozimetr Nəzarəti',
     description: 'Çernobıl rejimində Dozimetrist olaraq radiasiya mutantlarının kimliyini ifşa et.',
     category: 'MODES',
     tier: 'GOLD',
@@ -544,7 +544,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_cyberpunk_hack_the_net',
-    title: "Neyromant (Neuromancer)",
+    title: 'Kiber-Təqib',
     description: 'Cyberpunk 2077: Neo-Bakı rejimində qara şəbəkə qatilinin neyro-izini taparaq zərərsizləşdir.',
     category: 'MODES',
     tier: 'GOLD',
@@ -554,7 +554,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_bermuda_triangle_solve',
-    title: "Uçan Hollandiyalı (The Flying Dutchman)",
+    title: 'Bermud Kompası',
     description: 'Bermud Üçbucağı rejimində Şturman Naviqator olaraq ruh quldurlarının yerləşdiyi gəmini tap.',
     category: 'MODES',
     tier: 'SILVER',
@@ -564,7 +564,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_baker_street_takedown',
-    title: "Şerlokun Zəfəri (The Final Problem)",
+    title: 'Holmsun Qələbəsi',
     description: 'Baker Street rejimində Moriarti Şəbəkəsini 3 raund tamamlanmamış tam məhv et.',
     category: 'MODES',
     tier: 'PLATINUM',
@@ -574,7 +574,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_all_in_dual_lock_unlock',
-    title: "Qala (The Castle)",
+    title: 'İkiqat İnzibati Kilid',
     description: 'All-In 40–50 nəfərlik rejimdə Arxitektor və ya Məhkəmə İcraçısı açarını rəsmən təsdiqlə.',
     category: 'MODES',
     tier: 'GOLD',
@@ -584,7 +584,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_all_in_regional_champion',
-    title: "Aclıq Oyunları (The Hunger Games)",
+    title: 'Kvartal Nümayəndəsi',
     description: 'All-In rejimində Regional Caucus mərhələsində kvartalından mərkəzi palataya nümayəndə seçil.',
     category: 'MODES',
     tier: 'SILVER',
@@ -594,7 +594,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mode_all_in_grand_finish',
-    title: "Üzüklərin Hökmdarı (The Lord of the Rings)",
+    title: 'Böyük All-In Zəfəri',
     description: '40+ nəfərlik Meqapolis All-In oyununda öz fraksiyanla yekun qələbə qazan.',
     category: 'MODES',
     tier: 'LEGENDARY',
@@ -608,7 +608,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'mastery_flawless_defense_speech',
-    title: "Sokratın Müdafiəsi (The Apology of Socrates)",
+    title: 'Qızıl Müdafiə',
     description: 'Məhkəmə kürsüsündə ittiham olunarkən 30 saniyəlik müdafiə çıxışından sonra bəraət qazan.',
     category: 'MASTERY',
     tier: 'GOLD',
@@ -618,7 +618,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_first_time_host',
-    title: "Üzük Qardaşlığı (The Fellowship of the Ring)",
+    title: 'Masa Rəhbəri',
     description: 'Host olaraq ilk oyun masasını yarat və ən azı 4 oyunçu ilə oyunu uğurla başlat.',
     category: 'MASTERY',
     tier: 'BRONZE',
@@ -628,7 +628,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_five_room_host',
-    title: "Qurucu (The Architect)",
+    title: 'Təcrübəli Təşkilatçı',
     description: "Masa Rəhbəri kimi 5 fərqli oyunu 'ENDED' (Tamamlandı) fazasına qədər idarə et.",
     category: 'MASTERY',
     tier: 'SILVER',
@@ -638,7 +638,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_voice_chat_orator',
-    title: "Kralın Danışığı (The King's Speech)",
+    title: 'Canlı Səs Natiqi',
     description: 'WebRTC canlı səsli rabitə aktiv olan oyunda məhkəmə müzakirəsində iştirak edərək qalib gəl.',
     category: 'MASTERY',
     tier: 'SILVER',
@@ -648,7 +648,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_three_win_streak',
-    title: "Yenilməz (Invincible)",
+    title: 'Bürünc Qələbə Seriyası',
     description: 'Ard-arda 3 oyunda fasiləsiz qələbə qazan.',
     category: 'MASTERY',
     tier: 'SILVER',
@@ -658,7 +658,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_five_win_streak',
-    title: "Sonuncu Mogikan (The Last of the Mohicans)",
+    title: 'Gümüş Qələbə Seriyası',
     description: 'Ard-arda 5 oyunda fasiləsiz qələbə qazan.',
     category: 'MASTERY',
     tier: 'GOLD',
@@ -668,7 +668,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_ten_win_streak',
-    title: "İsgəndərin Yürüşü (Alexander's Campaign)",
+    title: 'Qızıl Rekord Seriyası',
     description: 'Ard-arda 10 oyunda məğlub olmadan qalib gələrək lisey rekordunu vur.',
     category: 'MASTERY',
     tier: 'LEGENDARY',
@@ -678,7 +678,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_ten_games_played',
-    title: "İki Şəhərin Hekayəsi (A Tale of Two Cities)",
+    title: 'Aktiv Şəhərli',
     description: 'Ümumilikdə 10 tam mafiya oyununda iştirak et.',
     category: 'MASTERY',
     tier: 'BRONZE',
@@ -688,7 +688,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_fifty_games_played',
-    title: "Yüz İllik Tənhalıq (One Hundred Years of Solitude)",
+    title: 'Lisey Veteranı',
     description: 'Ümumilikdə 50 tam mafiya oyunu tamamla.',
     category: 'MASTERY',
     tier: 'GOLD',
@@ -698,7 +698,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_hundred_games_played',
-    title: "Odisseya (Odyssey)",
+    title: 'Mafiya Əfsanəsi',
     description: 'Ümumilikdə 100 tam mafiya oyunu başa vur.',
     category: 'MASTERY',
     tier: 'LEGENDARY',
@@ -708,7 +708,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_anti_afk_sentinel',
-    title: "Dəmir Maskalı Adam (The Man in the Iron Mask)",
+    title: 'Dəmir İntizam',
     description: '20 oyun boyunca bir dəfə də olsun AFK qalmadan bütün gecə və gündüz fazalarında iştirak et.',
     category: 'MASTERY',
     tier: 'SILVER',
@@ -728,7 +728,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_ten_thousand_coins',
-    title: "Qraf Monte-Kristonun Xəzinəsi",
+    title: 'Uoll Strit Canavarı',
     description: 'Oyun daxilində ümumilikdə 10,000 🪙 qızıl balansına sahib ol.',
     category: 'MASTERY',
     tier: 'LEGENDARY',
@@ -738,7 +738,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_all_modes_played',
-    title: "Min Bir Gecə Nağılları (1001 Nights)",
+    title: 'Formatlar Ustası',
     description: 'Mövcud olan bütün 15 oyun formatında ən azı 1 tam oyun oyna.',
     category: 'MASTERY',
     tier: 'PLATINUM',
