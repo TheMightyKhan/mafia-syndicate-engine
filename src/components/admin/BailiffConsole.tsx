@@ -34,13 +34,13 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
   const allPlayers = Object.values(lobbyState.players);
 
   return (
-    <div className="p-5 sm:p-6 rounded-[16px] border border-rose-500/30 bg-zinc-950 text-zinc-300 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col gap-4 transition-colors duration-200 font-mono">
+    <div className="p-5 sm:p-6 rounded-[16px] border border-rose-500/30 bg-zinc-950 text-zinc-300 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col gap-4 transition-colors duration-200 font-mono tabular-nums tracking-tight">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Gavel className="w-5 h-5 text-rose-500" />
-            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest">
+            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest tabular-nums tracking-tight">
               Məhkəmə İcraçısı Konsolu (The Bailiff Console)
             </h3>
             <Badge tone="red">Məhkəmə Nizam-İntizamı</Badge>
@@ -62,9 +62,9 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
       </div>
 
       {/* Speaker Queue Management */}
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+      <div className="p-2.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3 min-h-[44px]">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+          <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5 tabular-nums tracking-tight">
             <Mic className="w-3.5 h-3.5 text-rose-500" />
             <span>Canlı Çıxış Növbəsi ({queue.length} Nəfər)</span>
           </span>
@@ -81,16 +81,16 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
         </div>
 
         {currentSpeakerId ? (
-          <div className="p-3 rounded-lg border-l-4 border-l-rose-500 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-            <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+          <div className="p-2.5 rounded-[8px] border-l-4 border-l-rose-500 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 min-h-[44px]">
+            <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider tabular-nums tracking-tight">
               Hazırda Söz Alan:
             </div>
-            <div className="text-sm font-bold text-zinc-100 font-mono uppercase tracking-wide">
+            <div className="text-sm font-bold text-zinc-100 font-mono uppercase tracking-wide tabular-nums tracking-tight">
               {lobbyState.players[currentSpeakerId]?.username ?? currentSpeakerId}
             </div>
           </div>
         ) : (
-          <div className="text-xs text-zinc-500 italic py-1">
+          <div className="text-xs text-zinc-500 italic py-1 tabular-nums tracking-tight">
             Növbədə heç kim yoxdur.
           </div>
         )}
@@ -101,7 +101,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={selectedAddSpeaker}
               onChange={(e) => setSelectedAddSpeaker(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="p-2.5.5 rounded-[8px] border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-1 focus:ring-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 cursor-pointer min-h-[44px] tabular-nums tracking-tight"
             >
               <option value="">Növbəyə Əlavə Et...</option>
               {allPlayers
@@ -131,8 +131,8 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
 
       {/* Temporary Mute & Court Discipline Tools */}
       {onMutePlayer && (
-        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2.5">
-          <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
+        <div className="p-2.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2.5 min-h-[44px]">
+          <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-1.5 tabular-nums tracking-tight">
             <MicOff className="w-3.5 h-3.5 text-rose-500" />
             <span>İntizam Cəzası: Müvəqqəti Səssizləşdirmə (Mute)</span>
           </div>
@@ -140,7 +140,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={selectedMuteTarget}
               onChange={(e) => setSelectedMuteTarget(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="p-2.5.5 rounded-[8px] border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-1 focus:ring-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 cursor-pointer min-h-[44px] tabular-nums tracking-tight"
             >
               <option value="">Cəzalandırılacaq Oyunçu...</option>
               {allPlayers
@@ -155,7 +155,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={muteSeconds}
               onChange={(e) => setMuteSeconds(Number(e.target.value))}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="p-2.5.5 rounded-[8px] border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-1 focus:ring-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 cursor-pointer min-h-[44px] tabular-nums tracking-tight"
             >
               <option value={15}>15 saniyə</option>
               <option value={30}>30 saniyə</option>

@@ -50,7 +50,7 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest">
+            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest tabular-nums tracking-tight">
               Cüt Açarlı Platforma Admin İcazəsi (All-In 40–50)
             </h3>
             {isHost && (
@@ -84,10 +84,10 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
       {/* Dual Key Panels */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Key 1: The Architect */}
-        <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 dark:bg-amber-950/20 flex flex-col justify-between gap-3">
+        <div className="p-2.5 rounded-[8px] border border-amber-500/25 bg-amber-500/5 dark:bg-amber-950/20 flex flex-col justify-between gap-3 min-h-[44px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-sm text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+              <span className="font-bold text-sm text-amber-900 dark:text-amber-200 flex items-center gap-1.5 tabular-nums tracking-tight">
                 <Key className="w-4 h-4 text-amber-500" />
                 <span>Açar 1: {AZ_UI.architect}</span>
               </span>
@@ -95,8 +95,8 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
                 {unlockState.architectUnlocked ? AZ_UI.turned : AZ_UI.awaitingTurn}
               </Badge>
             </div>
-            <div className="text-xs text-zinc-600 dark:text-zinc-400">
-              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide">{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
+            <div className="text-xs text-zinc-600 dark:text-zinc-400 tabular-nums tracking-tight">
+              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide tabular-nums tracking-tight">{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 
@@ -112,10 +112,10 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
         </div>
 
         {/* Key 2: The Bailiff */}
-        <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-500/5 dark:bg-rose-950/20 flex flex-col justify-between gap-3">
+        <div className="p-2.5 rounded-[8px] border border-rose-500/25 bg-rose-500/5 dark:bg-rose-950/20 flex flex-col justify-between gap-3 min-h-[44px]">
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-sm text-rose-900 dark:text-rose-200 flex items-center gap-1.5">
+              <span className="font-bold text-sm text-rose-900 dark:text-rose-200 flex items-center gap-1.5 tabular-nums tracking-tight">
                 <Key className="w-4 h-4 text-rose-500" />
                 <span>Açar 2: {AZ_UI.bailiff}</span>
               </span>
@@ -123,8 +123,8 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
                 {unlockState.bailiffUnlocked ? AZ_UI.turned : AZ_UI.awaitingTurn}
               </Badge>
             </div>
-            <div className="text-xs text-zinc-600 dark:text-zinc-400">
-              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide">{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
+            <div className="text-xs text-zinc-600 dark:text-zinc-400 tabular-nums tracking-tight">
+              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide tabular-nums tracking-tight">{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 

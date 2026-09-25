@@ -57,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       style={style}
-      className={`inline-flex items-center justify-center font-medium btn-spring cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none tap-target ${
+      className={`inline-flex items-center justify-center font-medium btn-spring active:scale-[0.98] min-h-[44px] cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none tap-target ${
         VARIANT_CLASSES[variant]
       } ${SIZE_CLASSES[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...rest}
