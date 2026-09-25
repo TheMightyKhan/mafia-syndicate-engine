@@ -424,6 +424,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           currentUserId={currentUserId}
           selectedCandidateId={selectedPlayerId}
           districtFinalists={districtFinalists}
+          voteCounts={voteCounts}
           onCastVote={onCastVote}
           onRetractVote={onRetractVote}
         />

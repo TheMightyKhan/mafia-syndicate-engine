@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Gavel, AlertCircle, EyeOff, Users, ArrowRight } from 'lucide-react';
+import { Gavel, AlertCircle,
+  Scale, EyeOff, Users, ArrowRight } from 'lucide-react';
 import { LobbyState, PlayerSession } from '../../types/game';
 import { AllInDistrict } from '../../types/roles';
 import { AZ_DISTRICTS, AZ_UI } from '../../config/i18n/az';
@@ -17,6 +18,7 @@ export interface VotingCourtPanelProps {
   readonly onCastVote: (candidateId: string) => void;
   readonly onRetractVote: () => void;
   readonly onSkipVote?: () => void;
+  readonly voteCounts?: Record<string, number>;
 }
 
 export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
@@ -27,6 +29,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
   onCastVote,
   onRetractVote,
   onSkipVote,
+  voteCounts = {},
 }) => {
   const dante = lobbyState.minigameSubStates.dantesInferno;
   const isWrath = dante?.wrathNoAbstainEnforced === true;
@@ -40,6 +43,14 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
   const alivePlayers = Object.values(lobbyState.players).filter((p) => p.isAlive);
   const majorityThreshold = Math.floor(alivePlayers.length / 2) + 1;
+  const topSuspects = React.useMemo(() => {
+    return Object.entries(voteCounts)
+      .filter(([_, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([id, count]) => ({ id, count, player: lobbyState.players[id] }));
+  }, [voteCounts, lobbyState.players]);
+
 
   return (
     <div className={`p-4 sm:p-6 flex flex-col gap-4 transition-colors duration-200 ${isAllIn ? 'bg-zinc-950 border border-red-500/30 rounded-[12px] shadow-[0_0_30px_rgba(239,68,68,0.1)] relative overflow-hidden ring-1 ring-red-500/10' : theme.courtContainer}`}>
@@ -118,6 +129,43 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
                   <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{distName}</div>
                   <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                     {p?.username ?? finalistId}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      
+      {/* Dynamic Top Suspects Leaderboard */}
+      {topSuspects.length > 0 && !isTreacheryBlind && (
+        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm">
+          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <Scale className="w-3 h-3 text-red-500" />
+            Cari Məhkəmə Liderləri (Ən çox səs toplayanlar)
+          </div>
+          <div className="flex flex-col gap-2">
+            {topSuspects.map((suspect, idx) => {
+              const percentage = Math.min(100, (suspect.count / majorityThreshold) * 100);
+              const isDanger = suspect.count >= majorityThreshold - 1;
+              
+              return (
+                <div key={suspect.id} className="flex flex-col gap-1.5 relative">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                      <span className="text-zinc-400 font-mono text-xs">#{idx + 1}</span>
+                      {suspect.player?.username ?? suspect.id}
+                    </span>
+                    <span className={`font-black font-mono ${isDanger ? 'text-red-500 animate-pulse' : 'text-zinc-500'}`}>
+                      {suspect.count} / {majorityThreshold}
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-500 ease-out ${isDanger ? 'bg-red-500' : 'bg-zinc-500'}`}
+                      style={{ width: `${percentage}%` }}
+                    />
                   </div>
                 </div>
               );
