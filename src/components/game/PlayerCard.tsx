@@ -148,6 +148,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
          </div>
       )}
       
+      {/* Cinematic Death Watermark */}
+      {!isAlive && !isLobbyPhase && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center overflow-hidden pointer-events-none rounded-[12px]">
+          <div className="absolute inset-0 bg-red-950/10 backdrop-grayscale-[30%]"></div>
+          <div className="transform -rotate-[15deg] bg-red-600/90 text-white font-black text-[10px] tracking-[0.4em] uppercase px-12 py-1.5 shadow-[0_0_20px_rgba(220,38,38,0.6)] whitespace-nowrap backdrop-blur-sm border-y border-red-400/50">
+            MƏHV EDİLİB
+          </div>
+        </div>
+      )}
+      
       {/* Header: Avatar, Name & Badges */}
       <div className="flex items-center justify-between gap-2.5">
         <div className="flex items-center gap-2.5 min-w-0">

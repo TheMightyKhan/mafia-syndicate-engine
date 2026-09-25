@@ -490,6 +490,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               isSpeaking={speakingIds?.has(player.userId) ?? false}
               isViewerMafia={isMafia}
               isGameOver={lobbyState.phase === 'ENDED'}
+              isLobbyPhase={lobbyState.phase === 'LOBBY'}
               onSelect={handleCardClick}
             />
           ))}
@@ -525,6 +526,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                   isSpeaking={speakingIds?.has(player.userId) ?? false}
                   isViewerMafia={isMafia}
                   isGameOver={lobbyState.phase === 'ENDED'}
+              isLobbyPhase={lobbyState.phase === 'LOBBY'}
                   onSelect={() => {}}
                 />
               ))}
