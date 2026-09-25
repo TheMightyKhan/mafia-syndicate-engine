@@ -235,16 +235,16 @@ export const Navbar: React.FC = () => {
               <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-purple-600 rounded-full border-2 border-white dark:border-zinc-950 animate-pulse" />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-black text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white leading-tight">
-                  TDV BTL <span className="text-red-600 dark:text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">MAFIA</span>
+                  <span className="hidden sm:inline">TDV BTL </span><span className="text-red-600 dark:text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">MAFIA</span>
                 </span>
                 <span className="hidden xs:inline-flex text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-600/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30">
                   PRO
                 </span>
               </div>
-              <span className="text-[10px] font-extrabold tracking-widest text-amber-600 dark:text-amber-400 uppercase">
+              <span className="text-[10px] font-extrabold tracking-widest text-amber-600 dark:text-amber-400 uppercase hidden min-[400px]:inline">
                 Bakı Türk Liseyi
               </span>
             </div>
@@ -467,7 +467,7 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* ─── RIGHT: CTA, SOUND, THEME & USER AUTH ─────────────────── */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
           {/* Red Glowing CTA "+ Masa Yarat" */}
           <button
@@ -476,10 +476,10 @@ export const Navbar: React.FC = () => {
               playCard();
               setIsCreateRoomOpen(true);
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 shadow-md shadow-red-600/30 hover:shadow-red-600/50 hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-red-400/30"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 shadow-md shadow-red-600/30 hover:shadow-red-600/50 hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer border border-red-400/30"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
-            <span className="tracking-wide">Masa Yarat</span>
+            <span className="tracking-wide hidden xs:inline">Masa Yarat</span>
           </button>
 
           {/* Sound Toggle (Web Audio API) */}
@@ -488,7 +488,7 @@ export const Navbar: React.FC = () => {
             onClick={handleSoundToggle}
             title={soundMuted ? 'Səsi Aç (Web Audio SFX)' : 'Səsi Bağla'}
             aria-label={soundMuted ? 'Səsi Aç' : 'Səsi Bağla'}
-            className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
+            className={`hidden sm:inline-flex p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
               soundMuted
                 ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 hover:text-red-500'
                 : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 shadow-sm'
@@ -504,7 +504,7 @@ export const Navbar: React.FC = () => {
           {currentUser ? (
             <div
               onClick={() => setIsAuthOpen(true)}
-              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/90 hover:bg-zinc-200 dark:hover:bg-zinc-800/80 cursor-pointer transition-all duration-200 select-none shadow-sm"
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/90 hover:bg-zinc-200 dark:hover:bg-zinc-800/80 cursor-pointer transition-all duration-200 select-none shadow-sm"
             >
               <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-red-600 to-rose-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
                 {currentUser.username.charAt(0).toUpperCase()}
@@ -541,10 +541,11 @@ export const Navbar: React.FC = () => {
                   setAuthInitialTab('login');
                   setIsAuthOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-150 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-150 cursor-pointer"
               >
                 <UserIcon className="w-3.5 h-3.5 text-zinc-500" />
-                <span>Daxil Ol</span>
+                <span className="hidden xs:inline">Daxil Ol</span>
+                <span className="xs:hidden text-xs">Giriş</span>
               </button>
               <button
                 type="button"
