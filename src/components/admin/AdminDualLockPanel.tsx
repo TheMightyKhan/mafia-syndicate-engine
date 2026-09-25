@@ -50,7 +50,7 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest">
               Cüt Açarlı Platforma Admin İcazəsi (All-In 40–50)
             </h3>
             {isHost && (
@@ -59,7 +59,7 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
               </Badge>
             )}
           </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-400 font-mono text-[10px] uppercase tabular-nums">
             All-In metropolitan rejimini başlatmaq üçün həm Memar, həm də Məhkəmə İcraçısının müstəqil açarları tələb olunur.
           </p>
         </div>
@@ -67,7 +67,7 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
         <div className="flex items-center gap-2">
           {isHost && onHostReadyToggle && (
             <Button
-              size="sm"
+              size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
               variant={hostReady ? 'outline' : 'primary'}
               onClick={() => onHostReadyToggle(!hostReady)}
             >
@@ -96,12 +96,12 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
               </Badge>
             </div>
             <div className="text-xs text-zinc-600 dark:text-zinc-400">
-              Təyin edilib: <strong className="text-zinc-900 dark:text-zinc-100">{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
+              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide">{assignedArchitectId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 
           <Button
-            size="sm"
+            size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
             variant="warning"
             disabled={!canArchitectUnlock}
             onClick={() => onUnlockSubmit('THE_ARCHITECT')}
@@ -124,12 +124,12 @@ export const AdminDualLockPanel: React.FC<AdminDualLockPanelProps> = ({
               </Badge>
             </div>
             <div className="text-xs text-zinc-600 dark:text-zinc-400">
-              Təyin edilib: <strong className="text-zinc-900 dark:text-zinc-100">{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
+              Təyin edilib: <strong className="text-zinc-100 font-mono uppercase tracking-wide">{assignedBailiffId ?? 'Otaqda yoxdur'}</strong>
             </div>
           </div>
 
           <Button
-            size="sm"
+            size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
             variant="danger"
             disabled={!canBailiffUnlock}
             onClick={() => onUnlockSubmit('THE_BAILIFF')}

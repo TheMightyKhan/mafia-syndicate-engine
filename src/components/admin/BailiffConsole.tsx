@@ -34,18 +34,18 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
   const allPlayers = Object.values(lobbyState.players);
 
   return (
-    <div className="p-5 sm:p-6 rounded-2xl border border-rose-500/30 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+    <div className="p-5 sm:p-6 rounded-[16px] border border-rose-500/30 bg-zinc-950 text-zinc-300 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col gap-4 transition-colors duration-200 font-mono">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Gavel className="w-5 h-5 text-rose-500" />
-            <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest">
               Məhkəmə İcraçısı Konsolu (The Bailiff Console)
             </h3>
             <Badge tone="red">Məhkəmə Nizam-İntizamı</Badge>
           </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-400 font-mono text-[10px] uppercase tabular-nums">
             Canlı çıxış növbəsi, yavaş rejim və intizam cəzaları (səssizləşdirmə).
           </p>
         </div>
@@ -53,7 +53,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
         {onToggleSlowMode && (
           <Button
             variant={isSlowModeActive ? 'primary' : 'outline'}
-            size="sm"
+            size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
             onClick={() => onToggleSlowMode(!isSlowModeActive)}
           >
             {isSlowModeActive ? 'Yavaş Rejim Aktivdir' : 'Yavaş Rejimi Aktivləşdir'}
@@ -71,7 +71,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
           {onNextSpeaker && queue.length > 0 && (
             <Button
               variant="danger"
-              size="sm"
+              size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
               onClick={onNextSpeaker}
               iconRight={<SkipForward className="w-3.5 h-3.5" />}
             >
@@ -85,7 +85,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
               Hazırda Söz Alan:
             </div>
-            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+            <div className="text-sm font-bold text-zinc-100 font-mono uppercase tracking-wide">
               {lobbyState.players[currentSpeakerId]?.username ?? currentSpeakerId}
             </div>
           </div>
@@ -101,7 +101,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={selectedAddSpeaker}
               onChange={(e) => setSelectedAddSpeaker(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
             >
               <option value="">Növbəyə Əlavə Et...</option>
               {allPlayers
@@ -113,7 +113,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
                 ))}
             </select>
             <Button
-              size="sm"
+              size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
               variant="secondary"
               disabled={!selectedAddSpeaker}
               onClick={() => {
@@ -140,7 +140,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={selectedMuteTarget}
               onChange={(e) => setSelectedMuteTarget(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
             >
               <option value="">Cəzalandırılacaq Oyunçu...</option>
               {allPlayers
@@ -155,7 +155,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             <select
               value={muteSeconds}
               onChange={(e) => setMuteSeconds(Number(e.target.value))}
-              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-rose-500 cursor-pointer"
             >
               <option value={15}>15 saniyə</option>
               <option value={30}>30 saniyə</option>
@@ -164,7 +164,7 @@ export const BailiffConsole: React.FC<BailiffConsoleProps> = ({
             </select>
 
             <Button
-              size="sm"
+              size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
               variant="danger"
               disabled={!selectedMuteTarget}
               onClick={() => {

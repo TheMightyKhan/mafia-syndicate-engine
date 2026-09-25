@@ -36,18 +36,18 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
   const [showSnapshot, setShowSnapshot] = useState<boolean>(false);
 
   return (
-    <div className="p-5 sm:p-6 rounded-2xl border border-amber-500/30 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+    <div className="p-5 sm:p-6 rounded-[16px] border border-amber-500/30 bg-zinc-950 text-zinc-300 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex flex-col gap-4 transition-colors duration-200 font-mono">
       {/* Console Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Settings className="w-5 h-5 text-amber-500" />
-            <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
+            <h3 className="font-extrabold text-base text-white font-mono uppercase tracking-widest">
               Memar Konsolu (The Architect Console)
             </h3>
             <Badge tone="amber">Platform Admin</Badge>
           </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-400 font-mono text-[10px] uppercase tabular-nums">
             Mərhələlərin səlahiyyətli dəyişdirilməsi, taymer idarəsi və sistem snapshot tənzimləmələri.
           </p>
         </div>
@@ -56,7 +56,7 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
           {onToggleTimerPause && (
             <Button
               variant={isTimerPaused ? 'primary' : 'warning'}
-              size="sm"
+              size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
               onClick={onToggleTimerPause}
               icon={isTimerPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
             >
@@ -66,7 +66,7 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
 
           <Button
             variant="outline"
-            size="sm"
+            size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
             onClick={() => setShowSnapshot(!showSnapshot)}
             icon={<Terminal className="w-3.5 h-3.5" />}
           >
@@ -84,7 +84,7 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
           <select
             value={selectedPhase}
             onChange={(e) => setSelectedPhase(e.target.value as GamePhase)}
-            className="px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            className="px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-amber-500 cursor-pointer"
           >
             {PHASES_LIST.map((p) => (
               <option key={p} value={p}>
@@ -94,19 +94,19 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
           </select>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">Müddət:</span>
+            <span className="text-xs text-zinc-400 font-mono text-[10px] uppercase tabular-nums">Müddət:</span>
             <input
               type="number"
               value={durationSec}
               onChange={(e) => setDurationSec(Number(e.target.value))}
-              className="w-20 px-2.5 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs focus:ring-2 focus:ring-amber-500"
+              className="w-20 px-2.5 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-100 font-mono uppercase tracking-wide text-xs focus:ring-2 focus:ring-amber-500"
             />
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">san</span>
+            <span className="text-xs text-zinc-400 font-mono text-[10px] uppercase tabular-nums">san</span>
           </div>
 
           <Button
             variant="primary"
-            size="sm"
+            size="sm" className="btn-spring font-mono tracking-wider tabular-nums"
             onClick={() => onOverridePhase(selectedPhase, durationSec)}
           >
             Dərhal Tətbiq Et
@@ -137,7 +137,7 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
             <span className="text-sm font-bold text-amber-600 dark:text-amber-400">
               {jitterSec} saniyə
             </span>
-            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <span className="text-[11px] text-zinc-400 font-mono text-[10px] uppercase tabular-nums">
               (AI botları ilə insan oyunçuların reaksiya vaxtını maskalayır)
             </span>
           </div>
@@ -147,7 +147,7 @@ export const ArchitectConsole: React.FC<ArchitectConsoleProps> = ({
       {/* State Snapshot Inspector */}
       {showSnapshot && (
         <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-950 font-mono text-xs max-h-60 overflow-y-auto">
-          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2 font-bold">
+          <div className="text-[10px] text-zinc-400 font-mono text-[10px] uppercase tabular-nums uppercase tracking-wider mb-2 font-bold">
             Canlı Otaq Vəziyyəti JSON
           </div>
           <pre className="text-blue-600 dark:text-blue-400 text-xs">

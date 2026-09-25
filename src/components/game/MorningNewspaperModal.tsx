@@ -39,22 +39,22 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-[20px] p-4 border border-zinc-300 dark:border-zinc-700 bg-amber-50/95 dark:bg-stone-900/95 text-stone-900 dark:text-stone-100 p-6 sm:p-8 shadow-sm border border-zinc-200 dark:border-zinc-800 flex flex-col gap-6 max-h-[90vh] overflow-y-auto font-serif tracking-tight"
+        className="w-full max-w-4xl rounded-[20px] ring-1 ring-white/10 p-6 sm:p-10 border border-zinc-300 dark:border-zinc-700 bg-[#f4f1ea] dark:bg-[#1a1918] text-zinc-900 dark:text-zinc-200 shadow-2xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto font-serif relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Newspaper Masthead */}
-        <div className="border-b-4 border-double border-stone-400 dark:border-stone-700 pb-4 text-center">
+        <div className="border-y border-zinc-500/30 py-6 text-center mb-4 flex flex-col gap-2">
           <div className="text-[11px] tracking-widest uppercase text-stone-600 dark:text-stone-400 font-sans font-bold">
             TDV MAFIA • Səhər Xüsusi Buraxılışı
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider my-1 text-stone-950 dark:text-stone-50 font-serif tracking-tight">
+          <h1 className="text-5xl sm:text-6xl font-black uppercase tracking-tighter my-2 text-zinc-900 dark:text-zinc-100 font-serif">
             {AZ_UI.morningBulletin}
           </h1>
-          <div className="flex items-center justify-between text-xs text-stone-600 dark:text-stone-400 border-t border-stone-300 dark:border-stone-800 pt-2 font-sans">
+          <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-500/20 pt-3 mt-2 font-mono uppercase tabular-nums font-bold tracking-widest">
             <span>Raund #{roundNumber}</span>
             <span>Gecə Əməliyyatlarının Nəticələri</span>
             <span>Jitter: {(newspaper.jitterAppliedMs / 1000).toFixed(1)}s</span>
@@ -89,7 +89,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
               {AZ_UI.newspaperNoDeaths} Şəhər bu gecə sakit qaldı.
             </p>
           ) : (
-            <div className="flex flex-col gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {newspaper.publicDeaths.map((death) => (
                 <div
                   key={death.victimPlayerId}
