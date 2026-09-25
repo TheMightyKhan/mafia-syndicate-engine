@@ -134,13 +134,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     );
 
     if (!matched) {
-      setErrorMsg(`⚠️ '${cleanUser}' istifadəçi adı ilə qeydiyyat tapılmadı! Yalnız qeydiyyatdan keçmiş istifadəçilər daxil ola bilər.`);
+      setErrorMsg(`<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> '${cleanUser}' istifadəçi adı ilə qeydiyyat tapılmadı! Yalnız qeydiyyatdan keçmiş istifadəçilər daxil ola bilər.`);
       return;
     }
 
     if (matched.pin && String(matched.pin).trim() !== '') {
       if (!loginPin.trim() || loginPin.trim() !== String(matched.pin).trim()) {
-        setErrorMsg('❌ Daxil edilmiş PIN kod və ya şifrə yanlışdır!');
+        setErrorMsg('<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> Daxil edilmiş PIN kod və ya şifrə yanlışdır!');
         return;
       }
     }
@@ -164,7 +164,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       grade: matched.grade || 10,
       schoolClass: matched.schoolClass || '10A',
       role: matched.role || 'player',
-      avatar: matched.avatar || '🎭',
+      avatar: matched.avatar || '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M2 10s1.5-2 4-2 4 2 4 2"/><path d="M14 10s1.5-2 4-2 4 2 4 2"/><path d="M2 14c0 3 4 5 10 5s10-2 10-5"/><path d="M7 14v1"/><path d="M17 14v1"/></svg></span>',
       ecosystem: {
         eschool: { active: true, grade: matched.grade || 10 },
         sports: { team: matched.schoolClass || '10A', role: 'player' },
@@ -213,7 +213,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       (u: any) => u.username && u.username.toLowerCase() === regUsername.trim().toLowerCase()
     );
     if (alreadyTaken) {
-      setErrorMsg(`⚠️ '${regUsername.trim()}' ləqəbi artıq qeydiyyatdan keçib! Zəhmət olmasa başqa ləqəb seçin.`);
+      setErrorMsg(`<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> '${regUsername.trim()}' ləqəbi artıq qeydiyyatdan keçib! Zəhmət olmasa başqa ləqəb seçin.`);
       return;
     }
 
@@ -227,7 +227,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       grade: regGrade,
       schoolClass: regGrade > 0 ? `${regGrade}A` : 'Müəllim',
       pin: regPin.trim(),
-      avatar: '🎭',
+      avatar: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M2 10s1.5-2 4-2 4 2 4 2"/><path d="M14 10s1.5-2 4-2 4 2 4 2"/><path d="M2 14c0 3 4 5 10 5s10-2 10-5"/><path d="M7 14v1"/><path d="M17 14v1"/></svg></span>',
       createdAt: Date.now(),
       gamesPlayed: 0,
       winRate: 100,
@@ -243,7 +243,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         grade: newUser.grade,
         schoolClass: newUser.schoolClass,
         role: 'player',
-        avatar: '🎭',
+        avatar: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M2 10s1.5-2 4-2 4 2 4 2"/><path d="M14 10s1.5-2 4-2 4 2 4 2"/><path d="M2 14c0 3 4 5 10 5s10-2 10-5"/><path d="M7 14v1"/><path d="M17 14v1"/></svg></span>',
         ecosystem: {
           eschool: { active: true, grade: newUser.grade },
           sports: { team: newUser.schoolClass, role: 'player' },
@@ -275,7 +275,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -285,7 +285,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
               <User className="w-5 h-5" />
             </div>
             <div>
@@ -308,10 +308,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Logged in view */}
         {currentUser ? (
           <div className="flex flex-col gap-5">
-            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
+            <div className="p-4 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold tabular-nums text-sm flex items-center justify-center">
                     {currentUser.username.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -327,7 +327,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
-                <div className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div className="p-3 rounded-[8px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mb-1">
                     <Gamepad2 className="w-3.5 h-3.5 text-zinc-400" />
                     <span>Oyunlar</span>
@@ -337,7 +337,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <div className="p-3 rounded-[8px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 mb-1">
                     <Trophy className="w-3.5 h-3.5 text-amber-500" />
                     <span>Qələbə</span>
@@ -369,7 +369,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           /* Not logged in: Tabbed Interface */
           <div className="flex flex-col gap-4">
             {/* Segmented Switcher */}
-            <div className="grid grid-cols-2 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
+            <div className="grid grid-cols-2 p-1 rounded-[8px] bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
               <button
                 type="button"
                 onClick={() => {
@@ -377,7 +377,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                className={`py-2 text-xs font-bold rounded-[8px] transition-all ${
                   tab === 'login'
                     ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
@@ -392,7 +392,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                className={`py-2 text-xs font-bold rounded-[8px] transition-all ${
                   tab === 'register'
                     ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
@@ -404,7 +404,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             {/* Error / Success Notifications */}
             {errorMsg && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex flex-col gap-2">
+              <div className="p-3 rounded-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
@@ -420,13 +420,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     }}
                     className="self-start text-[11px] font-bold text-red-600 dark:text-red-400 underline hover:opacity-80 transition-opacity"
                   >
-                    ➡️ &apos;{usernameInput.trim()}&apos; kimi indi qeydiyyatdan keçin
+                    <span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> &apos;{usernameInput.trim()}&apos; kimi indi qeydiyyatdan keçin
                   </button>
                 )}
               </div>
             )}
             {successMsg && (
-              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium flex items-center gap-2">
+              <div className="p-3 rounded-[8px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 shrink-0" />
                 <span>{successMsg}</span>
               </div>
@@ -445,7 +445,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                     autoFocus
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
@@ -458,7 +458,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Məs: 1000"
                     value={loginPin}
                     onChange={(e) => setLoginPin(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-mono"
                   />
                 </div>
 
@@ -478,7 +478,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                           setSelectedTier(s.tier);
                           setErrorMsg('');
                         }}
-                        className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 border border-zinc-200 dark:border-zinc-700 transition-colors"
+                        className="px-2 py-1 text-[11px] font-semibold rounded-[8px] bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 border border-zinc-200 dark:border-zinc-700 transition-colors"
                       >
                         {s.username} ({s.pin})
                       </button>
@@ -493,7 +493,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <select
                     value={selectedTier}
                     onChange={(e) => setSelectedTier(e.target.value as PlayerTier)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
+                    className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
                   >
                     <option value="TIER_1">{TIER_TITLES.TIER_1}</option>
                     <option value="TIER_2">{TIER_TITLES.TIER_2}</option>
@@ -528,7 +528,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Məs: Elmir Qasımov"
                     value={regFullName}
                     onChange={(e) => setRegFullName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                    className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
@@ -541,7 +541,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Məs: Don_Elmir"
                     value={regUsername}
                     onChange={(e) => setRegUsername(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                    className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
                 </div>
 
@@ -553,7 +553,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <select
                       value={regGrade}
                       onChange={(e) => setRegGrade(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                      className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     >
                       <option value={10}>10-cu Sinif</option>
                       <option value={11}>11-ci Sinif</option>
@@ -572,7 +572,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <select
                       value={regTier}
                       onChange={(e) => setRegTier(e.target.value as PlayerTier)}
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                      className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     >
                       <option value="TIER_1">Əsgər (Tier 1)</option>
                       <option value="TIER_2">Kapo (Tier 2)</option>
@@ -591,7 +591,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       placeholder="••••••••"
                       value={regPin}
                       onChange={(e) => setRegPin(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                      className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     />
                   </div>
                   <div>
@@ -603,7 +603,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       placeholder="••••••••"
                       value={regConfirmPin}
                       onChange={(e) => setRegConfirmPin(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                      className="w-full px-3 py-2 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                     />
                   </div>
                 </div>

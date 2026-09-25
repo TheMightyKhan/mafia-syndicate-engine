@@ -415,7 +415,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -428,7 +428,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           {/* Row 1: Brand Title & Modal Controls */}
           <div className="p-4 sm:px-6 sm:py-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[20px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0 shadow-sm">
                 <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
 
@@ -459,12 +459,12 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           <div className="px-4 sm:px-6 py-3 bg-zinc-50 dark:bg-zinc-950/80 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
             
             {/* Elegant Segmented Tab Pills */}
-            <div className="inline-flex items-center p-1 rounded-2xl bg-zinc-200/80 dark:bg-zinc-800/90 border border-zinc-300/60 dark:border-zinc-700/60 gap-1 overflow-x-auto max-w-full">
+            <div className="inline-flex items-center p-1 rounded-[20px] bg-zinc-200/80 dark:bg-zinc-800/90 border border-zinc-300/60 dark:border-zinc-700/60 gap-1 overflow-x-auto max-w-full">
               
               <button
                 type="button"
                 onClick={() => handleTabChange('phases')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                   activeTab === 'phases'
                     ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
                     : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -477,7 +477,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => handleTabChange('town')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                   activeTab === 'town'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                     : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -490,7 +490,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => handleTabChange('mafia')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                   activeTab === 'mafia'
                     ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
                     : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -503,7 +503,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => handleTabChange('neutral')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                   activeTab === 'neutral'
                     ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
                     : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -516,7 +516,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => handleTabChange('court')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                   activeTab === 'court'
                     ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
                     : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -536,7 +536,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
                   placeholder="Rol axtar (Şərif, Həkim, Don...)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-medium"
+                  className="w-full pl-9 pr-8 py-2 rounded-[8px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-medium"
                 />
                 {searchQuery && (
                   <button
@@ -558,24 +558,24 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
           {/* Tab 1: Phases Loop */}
           {activeTab === 'phases' && (
             <div className="flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-300">
-              <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
+              <div className="p-5 sm:p-6 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-3">
                 <h3 className="font-extrabold text-base text-zinc-950 dark:text-white flex items-center gap-2">
                   <span className="text-red-500">1.</span> Mərhələlər Dövrü (Day & Night Loop)
                 </h3>
                 <div className="flex flex-col gap-3 mt-1">
-                  <div className="p-3.5 rounded-xl border-l-4 border-blue-500 bg-blue-500/5 dark:bg-blue-500/10">
-                    <strong className="text-zinc-900 dark:text-zinc-100">☀️ Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən hadisələri təhlil edir və şübhəliləri müəyyənləşdirir.
+                  <div className="p-3.5 rounded-[8px] border-l-4 border-blue-500 bg-blue-500/5 dark:bg-blue-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> Gündüz Regional Məclis (Müzakirə Fazası):</strong> Bütün oyunçular açıq çatda arqumentlər irəli sürür, dünən gecə baş verən hadisələri təhlil edir və şübhəliləri müəyyənləşdirir.
                   </div>
-                  <div className="p-3.5 rounded-xl border-l-4 border-amber-500 bg-amber-500/5 dark:bg-amber-500/10">
-                    <strong className="text-zinc-900 dark:text-zinc-100">⚖️ Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa şəxs edam olunur.
+                  <div className="p-3.5 rounded-[8px] border-l-4 border-amber-500 bg-amber-500/5 dark:bg-amber-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> Ümumşəhər Məhkəməsi (Səsvermə Fazası):</strong> İttiham olunan şəxs kürsüyə çıxır. Oyunçular &quot;Edam&quot;, &quot;Bəraət&quot; və ya &quot;Bitərəf&quot; səs verir. Mütləq səs çoxluğu toplanarsa şəxs edam olunur.
                   </div>
-                  <div className="p-3.5 rounded-xl border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10">
-                    <strong className="text-zinc-900 dark:text-zinc-100">🌙 Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya hədəf seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
+                  <div className="p-3.5 rounded-[8px] border-l-4 border-red-500 bg-red-500/5 dark:bg-red-500/10">
+                    <strong className="text-zinc-900 dark:text-zinc-100"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span> Qaranlıq Gecə (Gizli Əməliyyatlar):</strong> Şəhər yatır! Mafiya hədəf seçir, Həkim mühafizə edir, Şərif təhqiqat aparır. Əmrlər şifrələnərək qeydə alınır.
                   </div>
                 </div>
               </div>
 
-              <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+              <div className="p-5 sm:p-6 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-extrabold text-base text-zinc-950 dark:text-white">
                     2. 75 Saniyəlik Gemini AI Qoruma Protokolu
@@ -591,7 +591,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
           {/* Tab 5: Court Rules */}
           {activeTab === 'court' && (
-            <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
+            <div className="p-5 sm:p-6 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-4">
               <h3 className="font-extrabold text-base text-zinc-950 dark:text-white flex items-center gap-2">
                 <Gavel className="w-5 h-5 text-red-500" />
                 <span>Məhkəmə və Edam Qaydaları</span>
@@ -619,12 +619,12 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
               {filteredRoles.map((role) => (
                 <div
                   key={role.id}
-                  className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col justify-between gap-3 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
+                  className="p-5 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col justify-between gap-3 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center text-sm font-bold border border-zinc-200 dark:border-zinc-700 shrink-0">
+                        <div className="w-9 h-9 rounded-[8px] bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center text-sm font-bold border border-zinc-200 dark:border-zinc-700 shrink-0">
                           <i className={`fa-solid ${role.iconName}`} style={{ color: role.iconColor }} />
                         </div>
                         <div>
@@ -641,21 +641,21 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
 
                     <div className="space-y-1.5 text-xs pt-2.5 border-t border-zinc-100 dark:border-zinc-800/80">
                       <div>
-                        <strong className="text-blue-600 dark:text-blue-400">🌙 Gecə: </strong>
+                        <strong className="text-blue-600 dark:text-blue-400"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></span> Gecə: </strong>
                         <span className="text-zinc-600 dark:text-zinc-300">{role.nightAbility}</span>
                       </div>
                       <div>
-                        <strong className="text-amber-600 dark:text-amber-400">☀️ Gündüz: </strong>
+                        <strong className="text-amber-600 dark:text-amber-400"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> Gündüz: </strong>
                         <span className="text-zinc-600 dark:text-zinc-300">{role.dayAbility}</span>
                       </div>
                       <div>
-                        <strong className="text-emerald-600 dark:text-emerald-400">🏆 Qələbə: </strong>
+                        <strong className="text-emerald-600 dark:text-emerald-400"><span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span> Qələbə: </strong>
                         <span className="text-zinc-600 dark:text-zinc-300">{role.winCondition}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-red-500/20 bg-red-500/5 text-xs text-red-800 dark:text-red-300 flex items-start gap-2">
+                  <div className="p-3 rounded-[8px] border border-red-500/20 bg-red-500/5 text-xs text-red-800 dark:text-red-300 flex items-start gap-2">
                     <Lightbulb className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
                     <span>
                       <strong>Taktika: </strong>

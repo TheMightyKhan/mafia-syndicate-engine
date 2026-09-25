@@ -49,7 +49,7 @@ interface TierVisualTheme {
 const TIER_THEMES: Record<AchievementTier, TierVisualTheme> = {
   BRONZE: {
     label: 'Bürünc',
-    emoji: '🥉',
+    emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>',
     pillActive: 'bg-gradient-to-r from-amber-700 to-amber-800 text-white shadow-md shadow-amber-900/30 border border-amber-600/60',
     pillInactive: 'text-amber-800 dark:text-amber-300 hover:bg-amber-500/10 border border-amber-600/25',
     cardBorderUnlocked: 'border-amber-600/40 dark:border-amber-600/45 hover:border-amber-500 dark:hover:border-amber-400',
@@ -65,7 +65,7 @@ const TIER_THEMES: Record<AchievementTier, TierVisualTheme> = {
   },
   SILVER: {
     label: 'Gümüş',
-    emoji: '🥈',
+    emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>',
     pillActive: 'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-md shadow-slate-800/30 border border-slate-400/60',
     pillInactive: 'text-slate-700 dark:text-slate-300 hover:bg-slate-500/10 border border-slate-400/30',
     cardBorderUnlocked: 'border-slate-300 dark:border-slate-600/60 hover:border-slate-400 dark:hover:border-slate-400',
@@ -81,7 +81,7 @@ const TIER_THEMES: Record<AchievementTier, TierVisualTheme> = {
   },
   GOLD: {
     label: 'Qızıl',
-    emoji: '🥇',
+    emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>',
     pillActive: 'bg-gradient-to-r from-yellow-500 to-amber-600 text-zinc-950 font-black shadow-md shadow-yellow-500/30 border border-yellow-400/70',
     pillInactive: 'text-yellow-800 dark:text-yellow-400 hover:bg-yellow-500/10 border border-yellow-500/30',
     cardBorderUnlocked: 'border-yellow-500/50 dark:border-yellow-500/55 hover:border-yellow-400 dark:hover:border-yellow-300',
@@ -97,7 +97,7 @@ const TIER_THEMES: Record<AchievementTier, TierVisualTheme> = {
   },
   PLATINUM: {
     label: 'Platin',
-    emoji: '💎',
+    emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13"/><path d="M13 3l3 6-4 13"/></svg></span>',
     pillActive: 'bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-500/30 border border-cyan-400/60',
     pillInactive: 'text-cyan-800 dark:text-cyan-300 hover:bg-cyan-500/10 border border-cyan-500/30',
     cardBorderUnlocked: 'border-cyan-500/50 dark:border-cyan-500/60 hover:border-cyan-400 dark:hover:border-cyan-300',
@@ -113,7 +113,7 @@ const TIER_THEMES: Record<AchievementTier, TierVisualTheme> = {
   },
   LEGENDARY: {
     label: 'Əfsanəvi',
-    emoji: '👑',
+    emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.518l4.276 3.664a1 1 0 0 0 1.516-.294z"/></svg></span>',
     pillActive: 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white shadow-md shadow-purple-600/35 border border-purple-400/60',
     pillInactive: 'text-purple-800 dark:text-purple-300 hover:bg-purple-500/10 border border-purple-500/30',
     cardBorderUnlocked: 'border-purple-500/60 dark:border-purple-500/70 hover:border-rose-400 ring-1 ring-purple-500/25',
@@ -139,12 +139,12 @@ const CATEGORIES: readonly { id: AchievementCategory; label: string; count: numb
 ];
 
 const TIERS: readonly { id: AchievementTier | 'ALL'; label: string; count: number; emoji: string }[] = [
-  { id: 'ALL', label: 'Bütün Tiers', count: 72, emoji: '⚡' },
-  { id: 'BRONZE', label: 'Bürünc', count: 8, emoji: '🥉' },
-  { id: 'SILVER', label: 'Gümüş', count: 22, emoji: '🥈' },
-  { id: 'GOLD', label: 'Qızıl', count: 21, emoji: '🥇' },
-  { id: 'PLATINUM', label: 'Platin', count: 12, emoji: '💎' },
-  { id: 'LEGENDARY', label: 'Əfsanəvi', count: 9, emoji: '👑' },
+  { id: 'ALL', label: 'Bütün Tiers', count: 72, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span>' },
+  { id: 'BRONZE', label: 'Bürünc', count: 8, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>' },
+  { id: 'SILVER', label: 'Gümüş', count: 22, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>' },
+  { id: 'GOLD', label: 'Qızıl', count: 21, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>' },
+  { id: 'PLATINUM', label: 'Platin', count: 12, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13"/><path d="M13 3l3 6-4 13"/></svg></span>' },
+  { id: 'LEGENDARY', label: 'Əfsanəvi', count: 9, emoji: '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.518l4.276 3.664a1 1 0 0 0 1.516-.294z"/></svg></span>' },
 ];
 
 export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose }) => {
@@ -214,7 +214,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -227,7 +227,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
           {/* Row 1: Title, Progress Stats & Close */}
           <div className="p-4 sm:px-6 sm:py-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-amber-500/20 via-yellow-500/15 to-purple-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[20px] bg-gradient-to-br from-amber-500/20 via-yellow-500/15 to-purple-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0 shadow-sm">
                 <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
 
@@ -271,7 +271,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
           {/* Row 2: Category Tabs & Search Bar */}
           <div className="px-4 sm:px-6 py-2.5 bg-zinc-50 dark:bg-zinc-950/80 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
             {/* Category Tabs */}
-            <div className="inline-flex items-center p-1 rounded-2xl bg-zinc-200/80 dark:bg-zinc-800/90 border border-zinc-300/60 dark:border-zinc-700/60 gap-1 overflow-x-auto max-w-full no-scrollbar">
+            <div className="inline-flex items-center p-1 rounded-[20px] bg-zinc-200/80 dark:bg-zinc-800/90 border border-zinc-300/60 dark:border-zinc-700/60 gap-1 overflow-x-auto max-w-full no-scrollbar">
               {CATEGORIES.map((cat) => {
                 const IconComponent = cat.icon;
                 const isActive = activeCategory === cat.id;
@@ -280,7 +280,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                     key={cat.id}
                     type="button"
                     onClick={() => handleCategoryChange(cat.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-black transition-all shrink-0 cursor-pointer select-none leading-none ${
                       isActive
                         ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
                         : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-zinc-700/60'
@@ -301,7 +301,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 placeholder="Nailiyyət axtar..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-medium"
+                className="w-full pl-9 pr-8 py-1.5 rounded-[8px] border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-medium"
               />
               {searchQuery && (
                 <button
@@ -340,7 +340,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                     key={tier.id}
                     type="button"
                     onClick={() => handleTierChange(tier.id)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 cursor-pointer select-none leading-none ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-[11px] font-bold transition-all shrink-0 cursor-pointer select-none leading-none ${
                       isSelected ? activeClass : inactiveClass
                     }`}
                   >
@@ -368,7 +368,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-zinc-50/40 dark:bg-zinc-900/40">
           {filteredAchievements.length === 0 ? (
             <div className="h-64 flex flex-col items-center justify-center text-center p-6">
-              <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-400 flex items-center justify-center mb-3">
+              <div className="w-12 h-12 rounded-[20px] bg-zinc-100 dark:bg-zinc-800 text-zinc-400 flex items-center justify-center mb-3">
                 <Search className="w-6 h-6" />
               </div>
               <h4 className="text-sm font-black text-zinc-900 dark:text-zinc-100 mb-1">
@@ -390,7 +390,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 return (
                   <div
                     key={item.id}
-                    className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
+                    className={`p-4 rounded-[20px] border transition-all duration-200 flex flex-col justify-between gap-3 relative overflow-hidden select-none ${
                       isUnlocked
                         ? `${theme.cardBgUnlocked} ${theme.cardBorderUnlocked} ${theme.glowShadow} hover:-translate-y-0.5`
                         : `${theme.cardBgLocked} ${theme.cardBorderLocked} opacity-80 hover:opacity-100`
@@ -401,7 +401,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                       <div className="flex items-start justify-between gap-2 mb-2.5">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div
-                            className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 border ${
+                            className={`w-9 h-9 rounded-[8px] flex items-center justify-center font-bold text-sm shrink-0 border ${
                               isUnlocked ? theme.iconBoxUnlocked : theme.iconBoxLocked
                             }`}
                           >
@@ -438,7 +438,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                       <div className="flex items-center gap-2">
                         <span className="font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
                           <Coins className="w-3 h-3" />
-                          +{item.coinReward} 🪙
+                          +{item.coinReward} <span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M10 10h4"/><path d="M10 14h4"/></svg></span>
                         </span>
                         <span className="text-zinc-300 dark:text-zinc-700">•</span>
                         <span className="font-bold text-purple-600 dark:text-purple-400">

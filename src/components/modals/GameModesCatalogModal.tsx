@@ -252,7 +252,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -262,7 +262,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
         {/* Modal Header */}
         <div className="p-5 sm:p-6 border-b border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
               <Layers className="w-5 h-5" />
             </div>
             <div>
@@ -277,41 +277,41 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
 
           <div className="flex items-center gap-3">
             {/* Segmented Switcher */}
-            <div className="flex items-center p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
+            <div className="flex items-center p-1 rounded-[8px] bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60">
               <button
                 type="button"
                 onClick={() => setActiveTab('CLASSIC')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
                   activeTab === 'CLASSIC'
                     ? 'bg-red-600 text-white shadow-sm'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                 }`}
               >
-                🏛️ Klassik ({classicPacks.length})
+                <span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M4 4h16"/><path d="M4 20h16"/><path d="M8 4v16"/><path d="M16 4v16"/><path d="M12 4v16"/></svg></span> Klassik ({classicPacks.length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('MINIGAMES')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
                   activeTab === 'MINIGAMES'
                     ? 'bg-amber-600 text-white shadow-sm'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                 }`}
               >
-                🎭 Xüsusi ({minigamePacks.length})
+                <span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M2 10s1.5-2 4-2 4 2 4 2"/><path d="M14 10s1.5-2 4-2 4 2 4 2"/><path d="M2 14c0 3 4 5 10 5s10-2 10-5"/><path d="M7 14v1"/><path d="M17 14v1"/></svg></span> Xüsusi ({minigamePacks.length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('ALL_IN')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
                   activeTab === 'ALL_IN'
                     ? 'bg-purple-600 text-white shadow-sm'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                 }`}
               >
-                👑 All-In
+                <span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.518l4.276 3.664a1 1 0 0 0 1.516-.294z"/></svg></span> All-In
               </button>
             </div>
 
@@ -336,7 +336,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                 return (
                   <div
                     key={pack.id}
-                    className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950 flex flex-col justify-between gap-4 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 hover:-translate-y-0.5"
+                    className="p-5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-950 flex flex-col justify-between gap-4 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 hover:-translate-y-0.5"
                   >
                     <div className="flex flex-col gap-3">
                       <div className="flex items-start justify-between gap-2">
@@ -357,7 +357,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                           {rolesList.map((role, idx) => (
                             <span
                               key={idx}
-                              className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border ${getRoleChipClass(
+                              className={`px-2 py-0.5 rounded-[8px] text-[11px] font-semibold border ${getRoleChipClass(
                                 role
                               )}`}
                             >
@@ -369,7 +369,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
 
                       {/* Special Features */}
                       {features.length > 0 && (
-                        <div className="p-2.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60">
+                        <div className="p-2.5 rounded-[8px] border border-zinc-200/80 dark:border-zinc-800 bg-white/70 dark:bg-black/40">
                           <div className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
                             Xüsusi Mexanika:
                           </div>
@@ -407,11 +407,11 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
 
           {/* All-In Tab */}
           {activeTab === 'ALL_IN' && allInPack && (
-            <div className="p-6 rounded-2xl border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10 flex flex-col gap-6">
+            <div className="p-6 rounded-[20px] border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10 flex flex-col gap-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-black text-zinc-950 dark:text-white">
+                    <h3 className="text-xl xl tabular-nums text-zinc-950 dark:text-white">
                       {allInPack.name} (40–50 Nəfərlik Şəhər Kütləvi Döyüşü)
                     </h3>
                     <Badge tone="purple">{allInPack.minPlayers}–{allInPack.maxPlayers} nəfər</Badge>
@@ -443,7 +443,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                     return (
                       <span
                         key={idx}
-                        className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${getRoleChipClass(
+                        className={`px-2.5 py-1 rounded-[8px] text-xs font-semibold border ${getRoleChipClass(
                           trimmed
                         )}`}
                       >
@@ -455,7 +455,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
               </div>
 
               {/* Civic Offices */}
-              <div className="p-4 rounded-xl border border-blue-500/25 bg-blue-500/5 dark:bg-blue-500/10">
+              <div className="p-4 rounded-[8px] border border-blue-500/25 bg-blue-500/5 dark:bg-blue-500/10">
                 <div className="flex items-center gap-2 mb-2 text-xs font-bold text-blue-700 dark:text-blue-300">
                   <Building className="w-4 h-4 text-blue-500" />
                   <span>16 İctimai Vəzifə (Kvartal Səlahiyyətləri & Bonus Səslər):</span>
@@ -464,7 +464,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                   {civicOfficesList.map((office, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 border border-blue-500/20 text-xs font-medium text-blue-900 dark:text-blue-200"
+                      className="px-2.5 py-1 rounded-[8px] bg-white dark:bg-zinc-800 border border-blue-500/20 text-xs font-medium text-blue-900 dark:text-blue-200"
                     >
                       {office}
                     </span>
@@ -473,7 +473,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
               </div>
 
               {/* Traits */}
-              <div className="p-4 rounded-xl border border-purple-500/25 bg-purple-500/5 dark:bg-purple-500/10">
+              <div className="p-4 rounded-[8px] border border-purple-500/25 bg-purple-500/5 dark:bg-purple-500/10">
                 <div className="flex items-center gap-2 mb-2 text-xs font-bold text-purple-700 dark:text-purple-300">
                   <Zap className="w-4 h-4 text-purple-500" />
                   <span>12 Gizli İstedad (Gecə Passiv & Aktiv Qabiliyyətləri):</span>
@@ -482,7 +482,7 @@ export const GameModesCatalogModal: React.FC<GameModesCatalogModalProps> = ({
                   {innateTraitsList.map((trait, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 border border-purple-500/20 text-xs font-medium text-purple-900 dark:text-purple-200"
+                      className="px-2.5 py-1 rounded-[8px] bg-white dark:bg-zinc-800 border border-purple-500/20 text-xs font-medium text-purple-900 dark:text-purple-200"
                     >
                       {trait}
                     </span>

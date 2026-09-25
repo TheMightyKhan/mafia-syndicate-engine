@@ -92,7 +92,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -102,7 +102,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         {/* Modal Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-[8px] bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
               <Dices className="w-5 h-5" />
             </div>
             <div>
@@ -132,7 +132,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
               placeholder="Məs: Bakı Gecələri #1"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+              className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
             />
           </div>
 
@@ -144,7 +144,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <select
               value={selectedMode}
               onChange={(e) => setSelectedMode(e.target.value as GameMode)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
+              className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
             >
               <optgroup label="Klassik Paketlər">
                 <option value="SE7EN_DEADLY_SINS">Se7en Deadly Sins (5–7 Oyunçu)</option>
@@ -176,7 +176,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
           {/* Selected Pack Info Snapshot */}
           {currentPack && (
-            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+            <div className="p-4 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
                   {currentPack.name}
@@ -214,7 +214,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 placeholder="Masa şifrəsi təyin edin..."
                 value={roomPassword}
                 onChange={(e) => setRoomPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
               />
             </div>
           )}

@@ -38,7 +38,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-[16px] animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
@@ -48,7 +48,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-[8px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
               <Trophy className="w-5 h-5" />
             </div>
             <div>
@@ -67,10 +67,10 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
         </div>
 
         {/* Current User Card */}
-        <div className="p-4 sm:p-5 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-[8px] border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-amber-500 text-white font-black text-lg flex items-center justify-center shadow-sm">
-              {currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : '👤'}
+            <div className="w-11 h-11 rounded-full bg-amber-500 text-white font-black tabular-nums text-lg flex items-center justify-center shadow-sm">
+              {currentUser?.username ? currentUser.username.charAt(0).toUpperCase() : '<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>'}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
         </div>
 
         {/* Season Notice */}
-        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
+        <div className="p-4 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400">
             <Info className="w-4 h-4 shrink-0" />
             <span>Klub Turnir və Reytinq Qaydası</span>
@@ -137,7 +137,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
             Liqa Dərəcələri və Tələblər (Tier Structure)
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-800/40">
+            <div className="p-3.5 rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-800/40">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
                   Tier 1: Əsgər
@@ -149,7 +149,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10">
+            <div className="p-3.5 rounded-[8px] border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
                   Tier 2: Kapo
@@ -161,7 +161,7 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ isOpen, onCl
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10">
+            <div className="p-3.5 rounded-[8px] border border-purple-500/30 bg-purple-500/5 dark:bg-purple-500/10">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
                   Tier 3: Don
