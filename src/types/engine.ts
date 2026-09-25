@@ -85,6 +85,8 @@ export interface NightResolutionOutput {
    * the trait depletion into LobbyState so next night they are not re-protected.
    */
   readonly vestSpentPlayerIds: readonly string[];
+  readonly mutinyActive?: boolean;
+  readonly mutineerIds?: readonly string[];
 }
 
 // ─── Voting Engine Output ────────────────────────────────────────────────────

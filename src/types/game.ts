@@ -82,6 +82,8 @@ export interface LobbyState {
   /** Ordered player IDs with current or upcoming speaking floor */
   readonly speakerQueue: readonly string[];
   readonly bufferedNightActions: readonly NightActionBufferItem[];
+  readonly mafiaMutinyActive?: boolean;
+  readonly mutineerIds?: readonly string[];
   readonly minigameSubStates: MinigameSubStates;
   readonly roundNumber: number;
   readonly lastLynchedUserId: string | null;

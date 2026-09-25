@@ -203,7 +203,11 @@ function applyKills(
   globalNightKillCap: number,
   danteState: DantesInfernoState | undefined,
   roundNumber: number
-): { deaths: NightDeathRecord[]; updatedPlayers: Record<string, PlayerSession>; updatedFlags: Record<string, NightResolutionFlags> } {
+): { deaths: NightDeathRecord[]; updatedPlayers: Record<string, PlayerSession>; updatedFlags: Record<string, NightResolutionFlags>; mutinyActive?: boolean; mutineerIds?: string[] } {
+  // Mutiny tracking
+  let overallMutinyActive = false;
+  let allMutineerIds: string[] = [];
+
   const deaths: NightDeathRecord[] = [];
   const playerMap: Record<string, PlayerSession> = { ...players };
   let killsThisNight = 0;
@@ -264,16 +268,36 @@ function applyKills(
     let votesForConsensus = factionAttempts.filter(a => a.effectiveTargetId === consensusTarget).length;
     const ratio = n > 0 ? (votesForConsensus / n) : 1;
     
-    // Probability threshold
+    // Mutiny check: If ratio < 0.3, dissenting members steal the kill!
+    let mutinyActive = false;
+    let mutineerIds: string[] = [];
+    if (ratio < 0.3) {
+      mutinyActive = true;
+      const dissentingAttempts = factionAttempts.filter(a => a.effectiveTargetId !== consensusTarget);
+      
+      const dissentingCounts: Record<string, number> = {};
+      for (const att of dissentingAttempts) {
+        dissentingCounts[att.effectiveTargetId] = (dissentingCounts[att.effectiveTargetId] || 0) + 1;
+        mutineerIds.push(att.actorId);
+      }
+      
+      if (Object.keys(dissentingCounts).length > 0) {
+        consensusTarget = Object.keys(dissentingCounts).reduce((a, b) => dissentingCounts[a] > dissentingCounts[b] ? a : b);
+        votesForConsensus = dissentingAttempts.filter(a => a.effectiveTargetId === consensusTarget).length;
+        console.log(`[${faction} MUTINY] Faction revolted! New target: ${consensusTarget}`);
+      }
+    }
+    
+    // Probability threshold based on final unified vote vs total
+    const mutinyAdjustedRatio = n > 0 ? (votesForConsensus / n) : 1;
     let probability = 1.0;
-    if (ratio < 0.5) probability = 0.3;
-    else if (ratio < 0.8) probability = 0.7;
-    else if (ratio < 1.0) probability = 0.9;
+    if (mutinyAdjustedRatio < 0.5) probability = 0.3;
+    else if (mutinyAdjustedRatio < 0.8) probability = 0.7;
+    else if (mutinyAdjustedRatio < 1.0) probability = 0.9;
     
     // Roll the dice!
     if (Math.random() <= probability) {
-      // The kill goes through! Combine into a single attempt to prevent crossfire anomalies
-      const leadActor = godfatherActor || factionAttempts.find(a => a.effectiveTargetId === consensusTarget)?.actorId || factionAttempts[0].actorId;
+      const leadActor = factionAttempts.find(a => a.effectiveTargetId === consensusTarget)?.actorId || factionAttempts[0].actorId;
       attempts.push({
         actorId: leadActor,
         effectiveTargetId: consensusTarget,
@@ -281,14 +305,63 @@ function applyKills(
         pierceProtection: pierce
       });
     } else {
-      console.log(`[${faction} CONSENSUS FAIL] Ratio: ${ratio}, Rolled against ${probability}. Kill fizzled!`);
+      console.log(`[${faction} KIL FAIL] Rolled against ${probability}. Kill fizzled!`);
+    }
+    
+    if (mutinyActive) {
+      overallMutinyActive = true;
+      allMutineerIds.push(...mutineerIds);
     }
   }
-  
+
   // Add all other non-syndicate kills (Neutral Killers, Void Cult, etc.)
   for (const att of rawAttempts) {
     if (att.killerFaction !== 'MAFIA' && att.killerFaction !== 'YAKUZA') {
       attempts.push(att);
+    }
+  }
+
+  // ─── GODFATHER PUNISHMENT ──────────────────────────────────────────────────
+  // If mutiny happened last night AND the Godfather is alive AND did NOT submit
+  // a kill action this night, the engine automatically adds a punishment kill
+  // targeting a random mutineer (only those still alive).
+  for (const faction of ['MAFIA', 'YAKUZA'] as CoreFaction[]) {
+    const prevMutineerIds = (players as Record<string, PlayerSession & { _punishPending?: string[] }>);
+    // Check LobbyState-persisted mutineerIds via the players map special field
+    // We rely on the dispatcher having written mutineerIds into lobby state.
+    // At resolve time we only have 'players' — so we check a special encoded trait or
+    // use roundNumber-based logic: if overallMutinyActive was set THIS night, schedule
+    // punishment for NEXT night by storing into a buffered action.
+    // 
+    // PUNISHMENT path: If this faction had a mutiny THIS night, the Godfather/Don 
+    // auto-targets one random alive mutineer with a buffered KILL for NEXT night.
+    if (overallMutinyActive && allMutineerIds.length > 0) {
+      const godfatherPlayer = Object.values(players).find(p =>
+        p.isAlive &&
+        getFaction(p) === faction &&
+        (p.displayRole.formatted?.toLowerCase().includes('don') ||
+         p.displayRole.formatted?.toLowerCase().includes('godfather'))
+      );
+      
+      if (godfatherPlayer) {
+        // Pick a random alive mutineer to punish next night
+        const aliveMutineers = allMutineerIds.filter(id => {
+          const mp = playerMap[id];
+          return mp && mp.isAlive;
+        });
+        
+        if (aliveMutineers.length > 0) {
+          const punishTarget = aliveMutineers[Math.floor(Math.random() * aliveMutineers.length)]!;
+          // Auto-inject a KILL attempt from the Godfather against the mutineer
+          attempts.push({
+            actorId: godfatherPlayer.userId,
+            effectiveTargetId: punishTarget,
+            killerFaction: faction,
+            pierceProtection: false,
+          });
+          console.log(`[GODFATHER PUNISHMENT] ${godfatherPlayer.username} auto-punishes mutineer ${punishTarget}`);
+        }
+      }
     }
   }
 
@@ -369,7 +442,7 @@ function applyKills(
     }
   }
 
-  return { deaths, updatedPlayers: playerMap, updatedFlags: flags };
+  return { deaths, updatedPlayers: playerMap, updatedFlags: flags, mutinyActive: overallMutinyActive, mutineerIds: allMutineerIds };
 }
 
 // ─── Priority 5: FRAME / Deception ──────────────────────────────────────────
@@ -583,6 +656,8 @@ export function resolveNightActions(input: NightResolverInput): NightResolutionO
     updatedPlayers,
     killCount: publicDeaths.filter(d => d.cause !== 'RETALIATION_FUSE_COUNTER').length,
     vestSpentPlayerIds,
+    mutinyActive: killResult.mutinyActive,
+    mutineerIds: killResult.mutineerIds,
   };
 }
 

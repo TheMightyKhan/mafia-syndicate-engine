@@ -282,6 +282,8 @@ export class ZeroKnowledgeDispatcher {
         ...resolution.updatedPlayers,
       },
       latestNewspaper: resolution.newspaper,
+      mafiaMutinyActive: resolution.mutinyActive,
+      mutineerIds: resolution.mutineerIds,
       // Merge new private investigation results into the running record
       privateInvestigations: mergeInvestigationResults(
         current.privateInvestigations ?? {},
