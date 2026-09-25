@@ -81,7 +81,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [lobbyState, setLobbyState] = useState<LobbyState>(() => {
     const isAllIn = lobbyId.toUpperCase().includes('ALL_IN');
     const isInferno = lobbyId.toUpperCase().includes('INFERNO');
-    const mode = isAllIn ? 'ALL_IN' : isInferno ? 'DANTES_INFERNO' : 'CLASSIC_7';
+    const mode = isAllIn ? 'ALL_IN' : isInferno ? 'DANTES_INFERNO' : 'BLITZ';
 
     return {
       lobbyId,

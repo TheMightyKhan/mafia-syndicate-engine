@@ -12,7 +12,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'town_sheriff_first_bust',
-    title: 'İlk Həbs',
+    title: 'Məhkəmə (The Trial)',
     description: "Şərif olaraq 1-ci raundun gecəsində yoxladığın ilk oyunçunun kimliyinin 'Mafioz' çıxması.",
     category: 'TOWN',
     tier: 'BRONZE',
@@ -22,7 +22,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_doctor_miracle_save',
-    title: 'Həyat Qurtaran',
+    title: 'Səfillər (Les Misérables)',
     description: 'Həkim olaraq gecə Mafiyanın hücum etdiyi oyunçunu qoruyub onun sağ qalmasını təmin et.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -32,7 +32,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_mayor_triple_hammer',
-    title: 'Bələdiyyə Hökmü',
+    title: 'Qürur və Qərəz (Pride and Prejudice)',
     description: 'Bələdiyyə Sədri kimi səlahiyyətini elan edərək 3-qat səs (x3) hüququ ilə Mafiya üzvünü məhkəmədə edam et.',
     category: 'TOWN',
     tier: 'GOLD',
@@ -42,7 +42,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_bodyguard_noble_sacrifice',
-    title: 'Fədakar Qalxan',
+    title: 'Gümüş Qılınc (The Silver Sword)',
     description: 'Cangüdən olaraq qoruduğun şəhərliyə hücum edən qatili öldürüb onun yerinə şəhid ol.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -52,7 +52,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_veteran_double_kill',
-    title: 'Qazi Həyəcanı',
+    title: 'Qərb Cəbhəsində Yenilik Yoxdur',
     description: "Qazi olaraq gecə 'Döyüş Həyəcanı' aktiv edib evinə daxil olan ən azı 2 cinayətkarı eyni gecədə məhv et.",
     category: 'TOWN',
     tier: 'PLATINUM',
@@ -62,7 +62,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_detective_track_killer',
-    title: 'İz Axtarışı',
+    title: 'Baskervillərin İti',
     description: 'Xəfiyyə olaraq gecə qətlə yetirilən vətəndaşın evinə daxil olmuş qatilin izini aşkar et.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -72,7 +72,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_coroner_weapon_analysis',
-    title: 'Ekspert Rəyi',
+    title: 'Zəka və Hiss (Sense and Sensibility)',
     description: 'Məhkəmə eksperti olaraq qətl qurbanının cəsədini araşdırıb ölüm səbəbini və cinayət alətini təsdiqlə.',
     category: 'TOWN',
     tier: 'BRONZE',
@@ -82,7 +82,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_citizen_decisive_vote',
-    title: 'Həlledici Vətəndaş Səsi',
+    title: '12 Qəzəbli Kişi',
     description: 'Sıravi Vətəndaş kimi məhkəmədə bərabərlik olan anda sonuncu səsi verərək Mafiya üzvünün edamını təmin et.',
     category: 'TOWN',
     tier: 'BRONZE',
@@ -92,7 +92,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_martyr_take_the_bullet',
-    title: 'Şəhidin Qoruması',
+    title: 'Müqəddəs İohan (Saint Joan)',
     description: 'Fədai olaraq Şərif və ya Həkimə yönəlmiş ölümcül gecə zərbəsini öz üzərinə götürərək onları qurtar.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -112,7 +112,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_flawless_victory',
-    title: 'Qüsursuz Şəhər',
+    title: 'Utopiya (Utopia)',
     description: 'Şəhər İttifaqı olaraq heç bir vətəndaş itirmədən (0 məsum ölüm) bütün düşmənləri məhv edərək qalib gəl.',
     category: 'TOWN',
     tier: 'LEGENDARY',
@@ -142,7 +142,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_acquit_the_innocent',
-    title: 'Məsum Bəraəti',
+    title: 'Bülbülü Öldürmək (To Kill a Mockingbird)',
     description: "Məhkəmə kürsüsündə günahsız vətəndaşa qarşı keçirilən səsvermədə 'Bəraət' səs verərək onun asılmasının qarşısını al.",
     category: 'TOWN',
     tier: 'BRONZE',
@@ -176,7 +176,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_first_blood',
-    title: 'İlk Qan',
+    title: 'Karamazov Qardaşları (Brothers Karamazov)',
     description: 'Mafiya ailəsi olaraq 1-ci raundun gecəsində qətl əmrini uğurla icra et.',
     category: 'MAFIA',
     tier: 'BRONZE',
@@ -186,7 +186,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_consort_block_doctor',
-    title: 'Həkimin Kilidi',
+    title: 'Görünməz Adam (The Invisible Man)',
     description: 'İllüziyaçı olaraq Həkimi gecə blokla və Mafiyanın seçdiyi hədəfin müdafiəsiz qalmasını təmin et.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -196,7 +196,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_blackmail_the_sheriff',
-    title: 'Səssiz Şərif',
+    title: 'Sükutun Səsi (The Sound of Silence)',
     description: 'Şantajçı olaraq Şərifi şantaj et və onun növbəti gündüz məclisində danışmasına mane ol.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -206,7 +206,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_puppeteer_deflection',
-    title: 'İpləri Çəkən',
+    title: 'Şahzadə (The Prince)',
     description: 'Kuklaçı olaraq şəhər müdafiəçisinin və ya qatilinin gecə hərəkətini başqa hədəfə yönləndir.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -216,7 +216,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_forger_alter_evidence',
-    title: 'Saxta Protokol',
+    title: '1984',
     description: 'Saxtakar Katib kimi ölmüş oyunçunun vəsiyyətnaməsini səhər qəzetində uğurla saxtalaşdır.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -226,7 +226,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_framer_deception',
-    title: 'Qurulan Tələ',
+    title: 'Qraf Monte-Kristo (The Count of Monte Cristo)',
     description: "Şər Atan kimi günahsız vətəndaşı çərçivəyə salaraq Şərifin onu 'Mafioz' görməsinə nail ol.",
     category: 'MAFIA',
     tier: 'SILVER',
@@ -236,7 +236,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_don_last_man_standing',
-    title: 'Tək Qalan Don',
+    title: 'Xaçatası (The Godfather)',
     description: 'Bütün mafiya yoldaşların edam edildikdən sonra Don olaraq təkbaşına sağ qalıb qələbə qazan.',
     category: 'MAFIA',
     tier: 'PLATINUM',
@@ -256,7 +256,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_clean_sweep',
-    title: 'Omerta Qələbəsi',
+    title: 'Sözsüz Razılaşma (The Covenant)',
     description: 'Mafiya ailəsinin heç bir üzvü öldürülmədən və edam edilmədən oyunu tam qələbə ilə bitir.',
     category: 'MAFIA',
     tier: 'LEGENDARY',
@@ -266,7 +266,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_tactical_sacrifice',
-    title: 'Qurbanlıq Piyada',
+    title: 'Şahmat Novellası (The Royal Game)',
     description: 'Özünü gizlətmək üçün məhkəmədə şübhə altına düşmüş digər mafiozun edamına səs verərək etimad qazan.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -320,7 +320,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'neutral_jester_early_execution',
-    title: 'Lusiferin Tələsi',
+    title: 'Faust',
     description: 'Dəli (Jester) olaraq ilk 2 raund ərzində şəhər məhkəməsi tərəfindən asılaraq təkbaşına qalib gəl.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
@@ -330,7 +330,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_jester_curse_delivered',
-    title: 'Məzar Lənəti',
+    title: 'İlahi Komediya (Divine Comedy)',
     description: "Dəli kimi edam edildikdən sonra sənə 'Edam' səs vermiş oyunçulardan birini gecə məzara apar.",
     category: 'NEUTRAL',
     tier: 'GOLD',
@@ -360,7 +360,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_sk_sole_survivor',
-    title: 'Tənha Qatil',
+    title: 'Yad (The Stranger)',
     description: 'Masadakı bütün Mafiya və Şəhər sakinlərini məhv edərək sağ qalan tək canlı oyunçu ol.',
     category: 'NEUTRAL',
     tier: 'LEGENDARY',
@@ -380,7 +380,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_amnesiac_become_town',
-    title: 'Ədalət Yolu',
+    title: 'Zülmət Ürəyi (Heart of Darkness)',
     description: 'Kimlik Axtaran kimi ölmüş Şəhər İttifaqı rolunu (Şərif, Həkim və s.) mənimsəyərək Şəhərlə qalib gəl.',
     category: 'NEUTRAL',
     tier: 'SILVER',
@@ -410,7 +410,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_yakuza_clan_victory',
-    title: 'Şərq Əjdahası',
+    title: 'Müharibə Sənəti (The Art of War)',
     description: 'Yakuza Klanı olaraq həm İtalyan Mafiyasını, həm də Şəhəri qabaqlayıb qələbə qazan.',
     category: 'NEUTRAL',
     tier: 'GOLD',
@@ -420,7 +420,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_void_cult_ritual',
-    title: 'Boşluq Ayini',
+    title: 'Ktulhu Çağırışı (Call of Cthulhu)',
     description: 'Boşluq Təriqətçisi olaraq 3 fərqli oyunçunu qaranlıq ayinlə işarələyib portalı aç.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
@@ -718,7 +718,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_five_thousand_coins',
-    title: 'Xəzinə Toplayıcı',
+    title: 'Böyük Qetsbi (The Great Gatsby)',
     description: 'Qələbələrdən və tamamlanan nailiyyətlərdən ümumilikdə 5,000 🪙 qızıl topla.',
     category: 'MASTERY',
     tier: 'PLATINUM',
@@ -728,7 +728,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mastery_ten_thousand_coins',
-    title: 'Milyonçu Klubu',
+    title: 'Uoll Strit Canavarı',
     description: 'Oyun daxilində ümumilikdə 10,000 🪙 qızıl balansına sahib ol.',
     category: 'MASTERY',
     tier: 'LEGENDARY',
@@ -752,7 +752,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'legacy_seven_deadly_sins',
-    title: 'Klassik (5-7)',
+    title: 'Blitz',
     description: "Oyunu düz 7 nəfər sağ qalaraq başa vur və 7 ölümcül günahkarın sonuncusu kimi xilas ol.",
     category: 'MODES',
     tier: 'LEGENDARY',

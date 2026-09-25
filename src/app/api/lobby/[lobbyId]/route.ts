@@ -40,7 +40,7 @@ function deriveModeFromLobbyId(lobbyId: string): GameMode {
       return mode;
     }
   }
-  return 'CLASSIC_7';
+  return 'BLITZ';
 }
 
 /**

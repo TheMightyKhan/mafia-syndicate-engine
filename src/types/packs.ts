@@ -6,13 +6,13 @@
 import { LobbyAccessRule, PlayerTier } from './access';
 
 export type StandardPackId =
-  | 'CLASSIC_7'        // 5–7 players, Tier 1
-  | 'STANDARD_11'  // 8–11 players, Tier 1
-  | 'EXTENDED_15'     // 12–15 players, Tier 2 baseline
-  | 'GRAND_20'              // 16–20 players, Tier 2 baseline
-  | 'EPIC_24'                // 21–24 players, Tier 2 baseline
-  | 'MASSIVE_30'            // 25–30 players, Tier 3 baseline
-  | 'LIMITLESS_MAX'               // 30+ players, Tier 3 baseline
+  | 'BLITZ'        // 5–7 players, Tier 1
+  | 'STANDARD'  // 8–11 players, Tier 1
+  | 'EXTENDED'     // 12–15 players, Tier 2 baseline
+  | 'GRAND'              // 16–20 players, Tier 2 baseline
+  | 'EPIC'                // 21–24 players, Tier 2 baseline
+  | 'MASSIVE'            // 25–30 players, Tier 3 baseline
+  | 'LIMITLESS'               // 30+ players, Tier 3 baseline
   | 'CUSTOM_LOBBY';             // Custom lobby
 
 export type MinigameId =
@@ -57,13 +57,13 @@ export interface PackMetadata {
 /** Type guard to determine if a given GameMode is a StandardPackId */
 export function isStandardPack(mode: GameMode): mode is StandardPackId {
   return (
-    mode === 'CLASSIC_7' ||
-    mode === 'STANDARD_11' ||
-    mode === 'EXTENDED_15' ||
-    mode === 'GRAND_20' ||
-    mode === 'EPIC_24' ||
-    mode === 'MASSIVE_30' ||
-    mode === 'LIMITLESS_MAX' ||
+    mode === 'BLITZ' ||
+    mode === 'STANDARD' ||
+    mode === 'EXTENDED' ||
+    mode === 'GRAND' ||
+    mode === 'EPIC' ||
+    mode === 'MASSIVE' ||
+    mode === 'LIMITLESS' ||
     mode === 'CUSTOM_LOBBY'
   );
 }

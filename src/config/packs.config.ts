@@ -7,9 +7,9 @@ import { GameMode, PackMetadata } from '../types/packs';
 
 export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
   // === STANDARD PACKS ===
-  CLASSIC_7: {
-    id: 'CLASSIC_7',
-    name: 'Klassik (5-7 Oyunçu)',
+  BLITZ: {
+    id: 'BLITZ',
+    name: 'Blitz (5-7 Oyunçu)',
     tagline: '',
     description: '',
     roleBreakdown: '1 Qatil (Mafiya), 1 Şərif (Müstəntiq), 1 Həkim, 1 Lusiferin Kölgəsi (Dəli), 1 Gözbağlayıcı, 2 Məsum Vətəndaş',
@@ -34,8 +34,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  STANDARD_11: {
-    id: 'STANDARD_11',
+  STANDARD: {
+    id: 'STANDARD',
     name: 'Standart (8-11 Oyunçu)',
     tagline: '',
     description: '',
@@ -61,8 +61,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  EXTENDED_15: {
-    id: 'EXTENDED_15',
+  EXTENDED: {
+    id: 'EXTENDED',
     name: 'Genişləndirilmiş (12-15 Oyunçu)',
     tagline: '',
     description: '',
@@ -88,8 +88,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  GRAND_20: {
-    id: 'GRAND_20',
+  GRAND: {
+    id: 'GRAND',
     name: 'Böyük (16-20 Oyunçu)',
     tagline: '',
     description: '',
@@ -115,8 +115,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  EPIC_24: {
-    id: 'EPIC_24',
+  EPIC: {
+    id: 'EPIC',
     name: 'Epik (21-24 Oyunçu)',
     tagline: '',
     description: '',
@@ -143,8 +143,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  MASSIVE_30: {
-    id: 'MASSIVE_30',
+  MASSIVE: {
+    id: 'MASSIVE',
     name: 'Kütləvi (25-30 Oyunçu)',
     tagline: '',
     description: '',
@@ -171,8 +171,8 @@ export const PACKS_CONFIG: Readonly<Record<GameMode, PackMetadata>> = {
     },
   },
 
-  LIMITLESS_MAX: {
-    id: 'LIMITLESS_MAX',
+  LIMITLESS: {
+    id: 'LIMITLESS',
     name: 'Sərhədsiz (30+ Oyunçu)',
     tagline: '',
     description: '',

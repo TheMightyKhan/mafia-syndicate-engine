@@ -133,38 +133,38 @@ const getRoleChipClass = (roleText: string) => {
 };
 
 const PACK_SPECIAL_FEATURES: Record<string, { label: string; icon: string }[]> = {
-  CLASSIC_7: [
+  BLITZ: [
     { label: 'Gözbağlama (Əngəl)', icon: 'fa-wand-magic-sparkles' },
     { label: 'Lusifer Qələbəsi (Tək)', icon: 'fa-masks-theater' },
     { label: 'Müstəntiq Təhqiqatı', icon: 'fa-magnifying-glass' },
   ],
-  STANDARD_11: [
+  STANDARD: [
     { label: 'Pataloqanatom Otopsiyası', icon: 'fa-microscope' },
     { label: 'Gözbağlayıcı İllüziyası', icon: 'fa-wand-magic-sparkles' },
     { label: 'Gizli Sui-qəsd', icon: 'fa-crosshairs' },
   ],
-  EXTENDED_15: [
+  EXTENDED: [
     { label: 'Prokuror Sərt İttihamı', icon: 'fa-scale-balanced' },
     { label: 'Vəkil Bəraəti', icon: 'fa-file-shield' },
     { label: 'Şantaj (Səssizlik Təzyiqi)', icon: 'fa-comment-slash' },
     { label: 'Pataloqanatom Otopsiyası', icon: 'fa-microscope' },
   ],
-  GRAND_20: [
+  GRAND: [
     { label: 'Zaman Səyahəti (Döngə)', icon: 'fa-clock-rotate-left' },
     { label: 'Gözbağlayıcı Əngəli', icon: 'fa-wand-magic-sparkles' },
     { label: 'İllüziya Tələsi', icon: 'fa-eye' },
   ],
-  EPIC_24: [
+  EPIC: [
     { label: 'İnkvizitor Təmizlənməsi', icon: 'fa-fire' },
     { label: 'Kuklaçı İdarəetməsi', icon: 'fa-hands' },
     { label: 'Regional Palata Səsverməsi', icon: 'fa-landmark' },
   ],
-  MASSIVE_30: [
+  MASSIVE: [
     { label: 'Fədai Qurbanı', icon: 'fa-shield-heart' },
     { label: 'Casus Məlumatı', icon: 'fa-user-secret' },
     { label: 'Cüt Müstəqil Qatil', icon: 'fa-skull' },
   ],
-  LIMITLESS_MAX: [
+  LIMITLESS: [
     { label: 'Xaç Atası Toxunulmazlığı', icon: 'fa-crown' },
     { label: 'Kuklaçı & Şantajçı Şəbəkəsi', icon: 'fa-network-wired' },
     { label: '3-lü Şərif & Həkim Alyansı', icon: 'fa-shield-halved' },

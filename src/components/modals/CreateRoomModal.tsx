@@ -25,7 +25,7 @@ export interface CreateRoomModalProps {
 
 export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   isOpen,
-  defaultMode = 'CLASSIC_7',
+  defaultMode = 'BLITZ',
   onClose,
   onRoomCreated,
 }) => {
@@ -147,13 +147,13 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               className="w-full px-3.5 py-2.5 rounded-[8px] border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all cursor-pointer"
             >
               <optgroup label="Klassik Paketlər">
-                <option value="CLASSIC_7">Klassik (5–7 Oyunçu)</option>
-                <option value="STANDARD_11">Standart (8–11 Oyunçu)</option>
-                <option value="EXTENDED_15">Genişləndirilmiş (12–15 Oyunçu)</option>
-                <option value="GRAND_20">Böyük (16–20 Oyunçu)</option>
-                <option value="EPIC_24">Epik (21–24 Oyunçu)</option>
-                <option value="MASSIVE_30">Kütləvi (25–30 Oyunçu)</option>
-                <option value="LIMITLESS_MAX">Sərhədsiz (30-39 Oyunçu)</option>
+                <option value="BLITZ">Blitz (5–7 Oyunçu)</option>
+                <option value="STANDARD">Standart (8–11 Oyunçu)</option>
+                <option value="EXTENDED">Genişləndirilmiş (12–15 Oyunçu)</option>
+                <option value="GRAND">Böyük (16–20 Oyunçu)</option>
+                <option value="EPIC">Epik (21–24 Oyunçu)</option>
+                <option value="MASSIVE">Kütləvi (25–30 Oyunçu)</option>
+                <option value="LIMITLESS">Sərhədsiz (30-39 Oyunçu)</option>
                 <option value="CUSTOM_LOBBY">Xüsusi Otaq (5-50 Oyunçu)</option>
               </optgroup>
               <optgroup label="Asimmetrik Xüsusi Rejimlər">
