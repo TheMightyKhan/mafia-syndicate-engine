@@ -23,6 +23,7 @@ export interface PlayerCardProps {
   readonly isViewerMafia?: boolean;
   readonly isGameOver?: boolean;
   readonly onSelect?: (player: PlayerSession | ScrubbedPlayerView) => void;
+  readonly targetIntent?: 'KILL' | 'PROTECT' | 'INVESTIGATE' | 'BLOCK' | 'MISDIRECT';
 }
 
 function isFullSession(p: PlayerSession | ScrubbedPlayerView): p is PlayerSession {
@@ -49,6 +50,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   isViewerMafia = false,
   isGameOver = false,
   onSelect,
+  targetIntent,
 }) => {
   const isAlive = player.isAlive;
   const isHost = player.isHost;
@@ -127,6 +129,25 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         </div>
       )}
 
+      
+      {/* Target Intent Reticle */}
+      {isSelected && targetIntent && (
+         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden rounded-[20px]">
+            {targetIntent === 'KILL' && (
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(239,68,68,0.2)_100%)] flex items-center justify-center animate-pulse">
+                  <Target className="w-24 h-24 text-red-500/30 absolute animate-ping" />
+                  <Target className="w-24 h-24 text-red-500/60 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" />
+               </div>
+            )}
+            {targetIntent === 'PROTECT' && (
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(16,185,129,0.2)_100%)] flex items-center justify-center animate-pulse">
+                  <Shield className="w-24 h-24 text-emerald-500/30 absolute animate-ping" />
+                  <Shield className="w-24 h-24 text-emerald-500/60 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+               </div>
+            )}
+         </div>
+      )}
+      
       {/* Header: Avatar, Name & Badges */}
       <div className="flex items-center justify-between gap-2.5">
         <div className="flex items-center gap-2.5 min-w-0">

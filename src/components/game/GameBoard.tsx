@@ -13,6 +13,7 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  PenTool,
 } from 'lucide-react';
 import { LobbyState, NightActionType, PlayerSession } from '../../types/game';
 import { ScrubbedPlayerView } from '../../types/engine';
@@ -22,6 +23,7 @@ import { Button } from '../ui/Button';
 import { PlayerCard } from './PlayerCard';
 import { getTheme } from '../../config/themes.config';
 import { VotingCourtPanel } from './VotingCourtPanel';
+import { DetectiveNotebook } from './DetectiveNotebook';
 import {
   AZ_DANTE_CIRCLES,
   AZ_DISTRICTS,
@@ -68,6 +70,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [activeDistrictTab, setActiveDistrictTab] = useState<AllInDistrict | 'ALL'>('ALL');
   const [soundMuted, setSoundMuted] = useState<boolean>(false);
+  const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
   const [showRoleReveal, setShowRoleReveal] = useState<boolean>(true);
   
   useEffect(() => {
@@ -467,6 +470,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               player={player}
               isSelf={player.userId === currentUserId}
               isSelected={selectedPlayerId === player.userId}
+              targetIntent={selectedPlayerId === player.userId ? primaryActionType : undefined}
               isAccused={
                 isVotingPhase &&
                 Boolean(leadingCandidateId) &&
