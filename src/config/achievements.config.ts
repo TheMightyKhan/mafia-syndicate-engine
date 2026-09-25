@@ -12,7 +12,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'town_sheriff_first_bust',
-    title: 'Məhkəmə (The Trial)',
+    title: "Al-Qırmızı Tədqiqat (A Study in Scarlet)",
     description: "Şərif olaraq 1-ci raundun gecəsində yoxladığın ilk oyunçunun kimliyinin 'Mafioz' çıxması.",
     category: 'TOWN',
     tier: 'BRONZE',
@@ -22,7 +22,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_doctor_miracle_save',
-    title: 'Səfillər (Les Misérables)',
+    title: "Hipokrat Andı (The Hippocratic Oath)",
     description: 'Həkim olaraq gecə Mafiyanın hücum etdiyi oyunçunu qoruyub onun sağ qalmasını təmin et.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -32,7 +32,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_mayor_triple_hammer',
-    title: 'Qürur və Qərəz (Pride and Prejudice)',
+    title: "Leviathan (Mütləq Hakimiyyət)",
     description: 'Bələdiyyə Sədri kimi səlahiyyətini elan edərək 3-qat səs (x3) hüququ ilə Mafiya üzvünü məhkəmədə edam et.',
     category: 'TOWN',
     tier: 'GOLD',
@@ -42,7 +42,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_bodyguard_noble_sacrifice',
-    title: 'Gümüş Qılınc (The Silver Sword)',
+    title: "Üç Müşketyor (Biri Hamı Üçün)",
     description: 'Cangüdən olaraq qoruduğun şəhərliyə hücum edən qatili öldürüb onun yerinə şəhid ol.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -52,7 +52,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_veteran_double_kill',
-    title: 'Qərb Cəbhəsində Yenilik Yoxdur',
+    title: "Termopil (300 Spartalı)",
     description: "Qazi olaraq gecə 'Döyüş Həyəcanı' aktiv edib evinə daxil olan ən azı 2 cinayətkarı eyni gecədə məhv et.",
     category: 'TOWN',
     tier: 'PLATINUM',
@@ -62,7 +62,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_detective_track_killer',
-    title: 'Baskervillərin İti',
+    title: "Baskervillərin İti (The Hound of the Baskervilles)",
     description: 'Xəfiyyə olaraq gecə qətlə yetirilən vətəndaşın evinə daxil olmuş qatilin izini aşkar et.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -72,7 +72,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_coroner_weapon_analysis',
-    title: 'Zəka və Hiss (Sense and Sensibility)',
+    title: "Sümük Kolleksiyaçısı (The Bone Collector)",
     description: 'Məhkəmə eksperti olaraq qətl qurbanının cəsədini araşdırıb ölüm səbəbini və cinayət alətini təsdiqlə.',
     category: 'TOWN',
     tier: 'BRONZE',
@@ -82,7 +82,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_citizen_decisive_vote',
-    title: '12 Qəzəbli Kişi',
+    title: "12 Qəzəbli Kişi (12 Angry Men)",
     description: 'Sıravi Vətəndaş kimi məhkəmədə bərabərlik olan anda sonuncu səsi verərək Mafiya üzvünün edamını təmin et.',
     category: 'TOWN',
     tier: 'BRONZE',
@@ -92,7 +92,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_martyr_take_the_bullet',
-    title: 'Müqəddəs İohan (Saint Joan)',
+    title: "Müqəddəs İohan (Janna d'Ark)",
     description: 'Fədai olaraq Şərif və ya Həkimə yönəlmiş ölümcül gecə zərbəsini öz üzərinə götürərək onları qurtar.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -102,7 +102,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_investigator_cross_faction',
-    title: 'Şəbəkə Analizi',
+    title: "Da Vinçi Şifrəsi (The Da Vinci Code)",
     description: 'Şəhər Müstəntiqi olaraq iki şübhəlinin eyni cinayətkar fraksiyaya aid olduğunu təsdiqlə.',
     category: 'TOWN',
     tier: 'GOLD',
