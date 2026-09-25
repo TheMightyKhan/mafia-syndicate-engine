@@ -24,18 +24,19 @@ export interface MinigameTheme {
 }
 
 const defaultTheme: MinigameTheme = {
-  lobbyContainer: 'bg-white dark:bg-zinc-900 border border-black/10 dark:border-white/10 rounded-[24px]',
-  lobbyTitle: 'text-zinc-950 dark:text-white',
-  lobbyButton: 'bg-zinc-900 text-white',
-  gridContainer: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4',
-  courtContainer: 'rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900',
-  courtGavel: 'rounded-[8px] bg-red-500/10 text-red-600 border border-red-500/20',
-  courtTitle: 'text-lg text-zinc-950 dark:text-white',
-  courtActiveBox: 'rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950',
-  newspaperContainer: 'rounded-[20px] ring-1 ring-white/10 border border-zinc-300 dark:border-zinc-700 bg-[#f4f1ea] dark:bg-[#1a1918]',
-  newspaperMasthead: 'border-y border-zinc-500/30',
-  newspaperTitle: 'text-zinc-900 dark:text-white',
-  newspaperCard: 'border border-zinc-500/20 bg-black/5 dark:bg-white/5',
+  // Masterpiece Casual (Apple HIG / Linear / Raycast aesthetic)
+  lobbyContainer: 'backdrop-blur-[24px] bg-white/80 dark:bg-zinc-950/80 border border-zinc-200/50 dark:border-zinc-800/50 rounded-[24px] shadow-[0_8px_40px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.2)] ring-1 ring-white/20',
+  lobbyTitle: 'text-zinc-900 dark:text-zinc-50 font-extrabold tracking-tight drop-shadow-sm',
+  lobbyButton: 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-md rounded-[12px] font-semibold tracking-wide',
+  gridContainer: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5',
+  courtContainer: 'backdrop-blur-[16px] bg-white/90 dark:bg-zinc-950/90 rounded-[24px] border border-zinc-200/50 dark:border-zinc-800/50 shadow-[0_12px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/5 p-6',
+  courtGavel: 'rounded-[12px] bg-gradient-to-br from-red-500/10 to-red-500/5 text-red-600 dark:text-red-400 border border-red-500/20 shadow-inner',
+  courtTitle: 'text-xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight',
+  courtActiveBox: 'rounded-[16px] border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/50 backdrop-blur-md shadow-sm',
+  newspaperContainer: 'backdrop-blur-[32px] bg-white/85 dark:bg-zinc-950/85 rounded-[24px] border border-zinc-200/40 dark:border-zinc-800/40 shadow-[0_20px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ring-1 ring-white/30 text-zinc-900 dark:text-zinc-100 font-serif',
+  newspaperMasthead: 'border-b-2 border-zinc-900/10 dark:border-white/10 pb-6',
+  newspaperTitle: 'text-4xl sm:text-6xl font-black text-zinc-950 dark:text-white tracking-tighter drop-shadow-sm',
+  newspaperCard: 'border border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-[16px] shadow-sm backdrop-blur-sm',
 };
 
 const allInTheme: MinigameTheme = {
