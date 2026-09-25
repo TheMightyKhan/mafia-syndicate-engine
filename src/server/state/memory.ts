@@ -62,6 +62,7 @@ export class InMemoryLobbyStore {
       latestNewspaper: null,
       privateInvestigations: {},
       winnerResult: null,
+      stateVersion: 0,
     };
 
     this.lobbies.set(lobbyId, initialLobby);
@@ -263,11 +264,11 @@ export class InMemoryLobbyStore {
     return Math.floor(Math.random() * 5) + 3; // 3, 4, 5, 6, 7
   }
 
-  /** Update lobby with an updater function */
+  /** Update lobby with an updater function — increments stateVersion for optimistic locking */
   public updateLobby(lobbyId: string, updater: (lobby: LobbyState) => LobbyState): LobbyState | null {
     const lobby = this.lobbies.get(lobbyId);
     if (!lobby) return null;
-    const updated = updater(lobby);
+    const updated = { ...updater(lobby), stateVersion: (lobby.stateVersion ?? 0) + 1 };
     this.lobbies.set(lobbyId, updated);
     return updated;
   }

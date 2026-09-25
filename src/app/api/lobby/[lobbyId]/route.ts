@@ -336,71 +336,107 @@ function getOrCreateLobby(lobbyId: string, initialHostUser?: { userId: string; u
 }
 
 export async function GET(request: Request, context: RouteContext) {
+  try {
   const { lobbyId } = context.params;
-  const url = new URL(request.url);
-  const userId = url.searchParams.get('userId') || 'anon';
 
-  let lobby = inMemoryLobbyStore.getLobby(lobbyId);
-  if (!lobby) {
-    lobby = getOrCreateLobby(lobbyId, userId && userId !== 'anon' ? { userId, username: 'Oyunçu', tier: 'TIER_1' } : undefined);
+  // Validate lobbyId format — must be alphanumeric + hyphens, 4-80 chars
+  if (!/^[a-zA-Z0-9_-]{4,80}$/.test(lobbyId)) {
+    return NextResponse.json({ error: 'INVALID_LOBBY_ID' }, { status: 400 });
   }
 
-  // Sync remaining countdown seconds based on authoritative phaseEndsAt
-  lobby = inMemoryLobbyStore.syncCountdown(lobbyId) || lobby;
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
-  // Auto-advance phase when authoritative timer runs out
-  if (
-    lobby.phase !== 'LOBBY' &&
-    lobby.phase !== 'ENDED' &&
-    lobby.phaseEndsAt &&
-    Date.now() >= lobby.phaseEndsAt
-  ) {
-    lobby = await progressLobbyPhase(lobbyId);
-  } else if (lobby.phase === 'NIGHT_BUFFER') {
-    // Ensure bots have acted
-    await botTakeoverController.executeAllBotActions(lobbyId);
-    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+  try {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId') || 'anon';
 
-    // Check if all living active night actors have submitted actions: auto-advance early!
-    const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
-    const activeNightActors = alivePlayers.filter(p => {
-      const f = p.allInIdentity?.layer1Faction;
-      const off = p.allInIdentity?.layer2Office;
-      return (
-        f === 'MAFIA' ||
-        f === 'YAKUZA' ||
-        f === 'VOID_CULT' ||
-        f === 'NEUTRAL_KILLER' ||
-        off === 'CITY_SURGEON' ||
-        off === 'CITY_INVESTIGATOR' ||
-        off === 'CHIEF_FIRE_MARSHAL' ||
-        off === 'PRISON_WARDEN'
-      );
-    });
-
-    const actedSet = new Set(lobby.bufferedNightActions.map(a => a.actorPlayerId));
-    const allActed = activeNightActors.length > 0 && activeNightActors.every(a => actedSet.has(a.userId));
-
-    if (allActed) {
-      lobby = await progressLobbyPhase(lobbyId);
+    let lobby = inMemoryLobbyStore.getLobby(lobbyId);
+    if (!lobby) {
+      lobby = getOrCreateLobby(lobbyId, userId && userId !== 'anon' ? { userId, username: 'Oyunçu', tier: 'TIER_1' } : undefined);
     }
-  } else if (lobby.phase === 'DAY_VOTING') {
-    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-  }
 
-  const scrubbed = buildScrubbedLobbyView(lobby, userId);
-  const safeLobby = sanitizeLobbyForViewer(lobby, userId);
+    // Sync remaining countdown seconds based on authoritative phaseEndsAt
+    lobby = inMemoryLobbyStore.syncCountdown(lobbyId) || lobby;
 
-  return NextResponse.json({
-    success: true,
-    lobby: scrubbed,
-    rawLobby: safeLobby,
-    timestamp: Date.now(),
-  });
+    // Auto-advance phase when authoritative timer runs out
+    if (
+      lobby.phase !== 'LOBBY' &&
+      lobby.phase !== 'ENDED' &&
+      lobby.phaseEndsAt &&
+      Date.now() >= lobby.phaseEndsAt
+    ) {
+      lobby = await progressLobbyPhase(lobbyId);
+    } else if (lobby.phase === 'NIGHT_BUFFER') {
+      // Ensure bots have acted
+      await botTakeoverController.executeAllBotActions(lobbyId);
+      lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+      // Check if all living active night actors have submitted actions: auto-advance early!
+      const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
+      const activeNightActors = alivePlayers.filter(p => {
+        const f = p.allInIdentity?.layer1Faction;
+        const off = p.allInIdentity?.layer2Office;
+        return (
+          f === 'MAFIA' ||
+          f === 'YAKUZA' ||
+          f === 'VOID_CULT' ||
+          f === 'NEUTRAL_KILLER' ||
+          off === 'CITY_SURGEON' ||
+          off === 'CITY_INVESTIGATOR' ||
+          off === 'CHIEF_FIRE_MARSHAL' ||
+          off === 'PRISON_WARDEN'
+        );
+      });
+
+      const actedSet = new Set(lobby.bufferedNightActions.map(a => a.actorPlayerId));
+      const allActed = activeNightActors.length > 0 && activeNightActors.every(a => actedSet.has(a.userId));
+
+      if (allActed) {
+        lobby = await progressLobbyPhase(lobbyId);
+      }
+    } else if (lobby.phase === 'DAY_VOTING') {
+      lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+    }
+
+    const scrubbed = buildScrubbedLobbyView(lobby, userId);
+    const safeLobby = sanitizeLobbyForViewer(lobby, userId);
+
+    return NextResponse.json(
+      {
+        success: true,
+        lobby: scrubbed,
+        rawLobby: safeLobby,
+        timestamp: Date.now(),
+      },
+      { headers: corsHeaders }
+    );
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`[lobby/GET] lobbyId=${lobbyId} error:`, msg);
+    return NextResponse.json(
+      { error: 'INTERNAL_SERVER_ERROR', detail: msg },
+      { status: 500, headers: corsHeaders }
+    );
+  }  } catch (error) { return NextResponse.json({ error: "INTERNAL_ERROR" }, { status: 500 }); }
 }
 
 export async function POST(request: Request, context: RouteContext) {
   const { lobbyId } = context.params;
+
+  // Validate lobbyId format — must be alphanumeric + hyphens, 4-80 chars
+  if (!/^[a-zA-Z0-9_-]{4,80}$/.test(lobbyId)) {
+    return NextResponse.json({ error: 'INVALID_LOBBY_ID' }, { status: 400 });
+  }
+
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
   try {
     const body = await request.json();
@@ -642,12 +678,16 @@ export async function POST(request: Request, context: RouteContext) {
     const scrubbed = buildScrubbedLobbyView(lobby, userId);
     const safeLobby = sanitizeLobbyForViewer(lobby, userId);
 
-    return NextResponse.json({
-      success: true,
-      lobby: scrubbed,
-      rawLobby: safeLobby,
-    });
-  } catch {
-    return NextResponse.json({ success: false, error: 'ACTION_FAILED' }, { status: 400 });
+    return NextResponse.json(
+      { success: true, lobby: scrubbed, rawLobby: safeLobby },
+      { headers: corsHeaders }
+    );
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`[lobby/POST] lobbyId=${lobbyId} error:`, msg);
+    return NextResponse.json(
+      { success: false, error: 'ACTION_FAILED', detail: msg },
+      { status: 500, headers: corsHeaders }
+    );
   }
 }

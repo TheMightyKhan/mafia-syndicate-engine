@@ -51,12 +51,16 @@ export async function POST(request: Request) {
     const username = String(body.username || 'Anonim Qonaq');
     const tier = String(body.tier || 'TIER_1');
 
-    map.set(userId, {
-      id: userId,
-      username,
-      tier,
-      lastSeen: Date.now(),
-    });
+    // 5-second deduplication: skip write if this user was seen in the last 5s
+    const existing = map.get(userId);
+    if (!existing || Date.now() - existing.lastSeen >= 5_000) {
+      map.set(userId, {
+        id: userId,
+        username,
+        tier,
+        lastSeen: Date.now(),
+      });
+    }
 
     const active = cleanStaleSessions(map);
     return NextResponse.json({
@@ -64,7 +68,9 @@ export async function POST(request: Request) {
       onlineCount: Math.max(1, active.length),
       users: active.slice(0, 15),
     });
-  } catch {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[presence/POST] error:', msg);
     return NextResponse.json({ success: false, error: 'INVALID_PAYLOAD' }, { status: 400 });
   }
 }

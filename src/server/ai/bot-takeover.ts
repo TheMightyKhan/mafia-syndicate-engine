@@ -64,22 +64,30 @@ export async function generateGeminiContentWithFallback(
     for (const model of modelsToTry) {
       try {
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [{ text: `${systemInstruction}\n\n${prompt}` }],
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20_000);
+        let res: Response;
+        try {
+          res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [
+                {
+                  role: 'user',
+                  parts: [{ text: `${systemInstruction}\n\n${prompt}` }],
+                },
+              ],
+              generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 2048,
               },
-            ],
-            generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 2048,
-            },
-          }),
-        });
+            }),
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -99,9 +107,9 @@ export async function generateGeminiContentWithFallback(
           _activeKeyIndex = (_activeKeyIndex + keyAttempt) % keys.length;
           return text;
         }
-      } catch (err: any) {
-        const errMsg = String(err?.message || '');
-        const isTemporary = /high demand|unavailable|unsupported|not found|overloaded/i.test(errMsg);
+      } catch (err: unknown) {
+        const errMsg = String(err instanceof Error ? err.message : '');
+        const isTemporary = /high demand|unavailable|unsupported|not found|overloaded|aborted/i.test(errMsg);
         if (isTemporary) continue;
         break;
       }
@@ -628,16 +636,22 @@ export class BotTakeoverController {
 
     const botPlayers = Object.values(lobby.players).filter(p => p.isAlive && p.isAiBotControlled);
     for (const bot of botPlayers) {
-      if (lobby.phase === 'NIGHT_BUFFER') {
-        const alreadyActed = lobby.bufferedNightActions.some(a => a.actorPlayerId === bot.userId);
-        if (!alreadyActed) {
-          await this.submitBotNightAction(bot.userId, lobbyId);
+      try {
+        if (lobby.phase === 'NIGHT_BUFFER') {
+          const alreadyActed = lobby.bufferedNightActions.some(a => a.actorPlayerId === bot.userId);
+          if (!alreadyActed) {
+            await this.submitBotNightAction(bot.userId, lobbyId);
+          }
+        } else if (lobby.phase === 'DAY_VOTING') {
+          const alreadyVoted = Boolean(lobby.liveVotes[bot.userId]);
+          if (!alreadyVoted) {
+            await this.submitBotDayVote(bot.userId, lobbyId);
+          }
         }
-      } else if (lobby.phase === 'DAY_VOTING') {
-        const alreadyVoted = Boolean(lobby.liveVotes[bot.userId]);
-        if (!alreadyVoted) {
-          await this.submitBotDayVote(bot.userId, lobbyId);
-        }
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Unknown error';
+        console.error(`[BotTakeover] executeAllBotActions: bot=${bot.userId} lobbyId=${lobbyId} failed:`, msg);
+        // Individual bot failure is non-fatal — continue with remaining bots
       }
     }
   }
