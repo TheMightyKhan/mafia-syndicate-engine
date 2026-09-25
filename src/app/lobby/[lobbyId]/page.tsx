@@ -376,6 +376,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       isAlive: p.isAlive,
     }));
 
+  const [isRoleRevealed, setIsRoleRevealed] = useState<boolean>(false);
   const [isNewspaperOpen, setIsNewspaperOpen] = useState<boolean>(false);
 
   // Auto-progression countdown timer
@@ -818,7 +819,17 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             let badgeShadow = 'shadow-emerald-600/30';
             let RoleIcon = Shield;
 
-            if (isMafia) {
+            if (!isRoleRevealed) {
+              containerBg = 'bg-zinc-100 dark:bg-zinc-900';
+              borderColor = 'border-zinc-300 dark:border-zinc-700';
+              shadowColor = 'shadow-none';
+              iconBg = 'bg-zinc-300 dark:bg-zinc-800';
+              iconShadow = 'shadow-none';
+              textTop = 'text-zinc-500 dark:text-zinc-400';
+              badgeBg = 'bg-zinc-500';
+              badgeShadow = 'shadow-none';
+              RoleIcon = Eye;
+            } else if (isMafia) {
               containerBg = 'bg-gradient-to-r from-red-500/15 via-red-600/10 to-red-500/15';
               borderColor = 'border-red-500/40';
               shadowColor = 'shadow-[0_0_25px_rgba(239,68,68,0.25)]';
@@ -841,23 +852,27 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             }
 
             return (
-              <div className={`p-5 rounded-2xl border ${borderColor} ${containerBg} ${shadowColor} flex items-center justify-between gap-4 transition-colors duration-500`}>
+              <div 
+                onClick={() => setIsRoleRevealed(!isRoleRevealed)}
+                className={`p-5 rounded-2xl border ${borderColor} ${containerBg} ${shadowColor} flex items-center justify-between gap-4 transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:translate-y-0`}
+                title="Rolunuzu görmək/gizlətmək üçün klikləyin"
+              >
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl ${iconBg} text-white flex items-center justify-center shadow-lg ${iconShadow}`}>
-                    <RoleIcon className="w-6 h-6" strokeWidth={2.5} />
+                  <div className={`w-12 h-12 rounded-xl ${iconBg} text-white flex items-center justify-center shadow-lg ${iconShadow} transition-colors duration-300`}>
+                    <RoleIcon className={`w-6 h-6 ${!isRoleRevealed ? 'opacity-50' : ''}`} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <span className={`text-[11px] font-extrabold uppercase tracking-[0.2em] block ${textTop}`}>
-                      SİZİN GİZLİ KİMLİYİNİZ
+                    <span className={`text-[11px] font-extrabold uppercase tracking-[0.2em] block ${textTop} transition-colors duration-300`}>
+                      ${isRoleRevealed ? 'SİZİN GİZLİ KİMLİYİNİZ' : 'MƏXFİ DOSYE (Gizlidir)'}
                     </span>
-                    <div className="text-2xl font-black text-zinc-950 dark:text-white tracking-tight mt-0.5">
+                    <div className={`text-2xl font-black tracking-tight mt-0.5 transition-colors duration-300 ${!isRoleRevealed ? 'text-zinc-400 dark:text-zinc-600 select-none blur-[4px]' : 'text-zinc-950 dark:text-white'}`}>
                       {roleStr || `${currentUsername} (Vətəndaş)`}
                     </div>
                   </div>
                 </div>
 
-                <div className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-md ${badgeBg} ${badgeShadow} hidden sm:block`}>
-                  MƏXFİ TƏYİNAT
+                <div className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-md ${badgeBg} ${badgeShadow} hidden sm:flex items-center gap-2 transition-colors duration-300`}>
+                  {isRoleRevealed ? 'GİZLƏT' : 'GÖSTƏR'}
                 </div>
               </div>
             );
