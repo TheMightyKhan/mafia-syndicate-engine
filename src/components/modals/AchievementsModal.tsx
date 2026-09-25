@@ -344,7 +344,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                       isSelected ? activeClass : inactiveClass
                     }`}
                   >
-                    <span>{tier.emoji}</span>
+                    <span dangerouslySetInnerHTML={{ __html: tier.emoji }} />
                     <span>{tier.label}</span>
                     <span className="opacity-75 font-mono text-[10px]">({tier.count})</span>
                   </button>
@@ -422,7 +422,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                         <div
                           className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${theme.badgeBg} ${theme.badgeText} ${theme.badgeBorder}`}
                         >
-                          <span>{theme.emoji}</span>
+                          <span dangerouslySetInnerHTML={{ __html: theme.emoji }} />
                           <span>{theme.label}</span>
                         </div>
                       </div>

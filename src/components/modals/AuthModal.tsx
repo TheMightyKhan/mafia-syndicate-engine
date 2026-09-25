@@ -140,7 +140,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     if (matched.pin && String(matched.pin).trim() !== '') {
       if (!loginPin.trim() || loginPin.trim() !== String(matched.pin).trim()) {
-        setErrorMsg('<span className="inline-block align-middle mr-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block opacity-80"><circle cx="12" cy="12" r="10"/></svg></span> Daxil edilmiş PIN kod və ya şifrə yanlışdır!');
+        setErrorMsg('Daxil edilmiş PIN kod və ya şifrə yanlışdır!');
         return;
       }
     }
@@ -407,7 +407,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="p-3 rounded-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{errorMsg}</span>
+                  <span dangerouslySetInnerHTML={{ __html: errorMsg }}></span>
                 </div>
                 {errorMsg.includes('qeydiyyat tapılmadı') && (
                   <button
