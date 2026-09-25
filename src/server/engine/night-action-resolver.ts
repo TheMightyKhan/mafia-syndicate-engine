@@ -209,7 +209,7 @@ function applyKills(
   let killsThisNight = 0;
 
   // Collect all kill attempts
-  const attempts: KillAttempt[] = [];
+  let rawAttempts: KillAttempt[] = [];
   for (const action of actions) {
     if (action.priority !== 4) continue;
     if (action.actionType !== 'KILL') continue;
@@ -222,7 +222,74 @@ function applyKills(
     const killerFaction = getFaction(actor);
     const pierceProtection = hasTrait(actor, 'SILENCER_ATTACHMENT');
 
-    attempts.push({ actorId: action.actorPlayerId, effectiveTargetId: effectiveTarget, killerFaction, pierceProtection });
+    rawAttempts.push({ actorId: action.actorPlayerId, effectiveTargetId: effectiveTarget, killerFaction, pierceProtection });
+  }
+
+  // --- SYNDICATE CONSENSUS LOGIC (Probability-based Kill) ---
+  const attempts: KillAttempt[] = [];
+  
+  for (const faction of ['MAFIA', 'YAKUZA'] as CoreFaction[]) {
+    const factionAttempts = rawAttempts.filter(a => a.killerFaction === faction);
+    if (factionAttempts.length === 0) continue;
+    
+    const aliveSyndicateMembers = Object.values(players).filter(p => p.isAlive && getFaction(p) === faction);
+    const n = aliveSyndicateMembers.length;
+    
+    // Find if there's a Godfather/Don who voted
+    let godfatherTarget = null;
+    let godfatherActor = null;
+    let pierce = false;
+    
+    for (const att of factionAttempts) {
+      const p = players[att.actorId];
+      if (p && (p.displayRole.formatted?.toLowerCase().includes('don') || p.displayRole.formatted?.toLowerCase().includes('godfather'))) {
+        godfatherTarget = att.effectiveTargetId;
+        godfatherActor = att.actorId;
+      }
+      if (att.pierceProtection) pierce = true;
+    }
+    
+    // Determine Consensus Target
+    let consensusTarget = godfatherTarget;
+    if (!consensusTarget) {
+      const targetCounts: Record<string, number> = {};
+      for (const att of factionAttempts) {
+        targetCounts[att.effectiveTargetId] = (targetCounts[att.effectiveTargetId] || 0) + 1;
+      }
+      // Max votes
+      consensusTarget = Object.keys(targetCounts).reduce((a, b) => targetCounts[a] > targetCounts[b] ? a : b);
+    }
+    
+    // Calculate consensus ratio
+    let votesForConsensus = factionAttempts.filter(a => a.effectiveTargetId === consensusTarget).length;
+    const ratio = n > 0 ? (votesForConsensus / n) : 1;
+    
+    // Probability threshold
+    let probability = 1.0;
+    if (ratio < 0.5) probability = 0.3;
+    else if (ratio < 0.8) probability = 0.7;
+    else if (ratio < 1.0) probability = 0.9;
+    
+    // Roll the dice!
+    if (Math.random() <= probability) {
+      // The kill goes through! Combine into a single attempt to prevent crossfire anomalies
+      const leadActor = godfatherActor || factionAttempts.find(a => a.effectiveTargetId === consensusTarget)?.actorId || factionAttempts[0].actorId;
+      attempts.push({
+        actorId: leadActor,
+        effectiveTargetId: consensusTarget,
+        killerFaction: faction,
+        pierceProtection: pierce
+      });
+    } else {
+      console.log(`[${faction} CONSENSUS FAIL] Ratio: ${ratio}, Rolled against ${probability}. Kill fizzled!`);
+    }
+  }
+  
+  // Add all other non-syndicate kills (Neutral Killers, Void Cult, etc.)
+  for (const att of rawAttempts) {
+    if (att.killerFaction !== 'MAFIA' && att.killerFaction !== 'YAKUZA') {
+      attempts.push(att);
+    }
   }
 
   // Group attempts by effective target (crossfire resolution)
