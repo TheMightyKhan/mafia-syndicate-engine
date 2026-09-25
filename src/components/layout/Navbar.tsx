@@ -104,6 +104,24 @@ export const Navbar: React.FC = () => {
       if (ecoRaw) {
         const ecoSess = JSON.parse(ecoRaw);
         if (ecoSess && (ecoSess.fullName || ecoSess.username)) {
+          // Check if user is registered in tdv_registered_users_v1
+          const regRaw = localStorage.getItem('tdv_registered_users_v1');
+          if (regRaw) {
+            try {
+              const regList = JSON.parse(regRaw);
+              const exists = Array.isArray(regList) && regList.some((u: any) =>
+                u.username?.toLowerCase() === (ecoSess.username || '').toLowerCase()
+              );
+              if (!exists) {
+                console.warn('[SSO] Ghost session detected in Mafia, clearing...');
+                localStorage.removeItem('tdv_ecosystem_session_v1');
+                localStorage.removeItem('tdv_mafia_user');
+                setCurrentUser(null);
+                return;
+              }
+            } catch(e) {}
+          }
+
           setCurrentUser({
             username: ecoSess.fullName || ecoSess.username,
             tier: 'TIER_1',
