@@ -25,6 +25,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local environment files
+.env*
+env.js
 .env*.local
 .env
 .env.production

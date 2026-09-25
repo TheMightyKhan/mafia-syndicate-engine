@@ -17,7 +17,6 @@
  * Enterprise Mafia / Social Deduction Platform - Phase 3
  */
 
-import { GoogleGenAI } from '@google/genai';
 import {
   GamePhase,
   LobbyState,
@@ -29,23 +28,87 @@ import {
 import { CoreFaction, AllInPlayerIdentity } from '../../types/roles';
 import { inMemoryLobbyStore } from '../state/memory';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// ─── Constants & AI Configuration ─────────────────────────────────────────────
 
 const BOT_TAKEOVER_TIMEOUT_MS = 75_000;
-const GEMINI_MODEL = 'gemini-2.5-flash';
+export const GEMINI_MODEL_PRIMARY = 'gemini-3.8-flash';
+export const GEMINI_MODEL_SECONDARY = 'gemini-3.7-flash';
+export const GEMINI_MODEL_FALLBACK = 'gemini-2.5-flash';
 
-// ─── GenAI client (lazy-init so API key is read at first use) ─────────────────
+// ─── GenAI Key Pool & Resilient Generation ────────────────────────────────────
 
-let _genaiClient: any = null;
+function getEnvKeyPool(): string[] {
+  const env = (globalThis as Record<string, unknown>)['process'] as { env?: Record<string, string | undefined> } | undefined;
+  const rawPool = env?.env?.['GEMINI_API_KEYS'] || env?.env?.['GEMINI_API_KEY'] || '';
+  return rawPool.split(',').map(k => k.trim()).filter(Boolean);
+}
 
-function getGenAIClient(): any {
-  if (!_genaiClient) {
-    // Access API key via globalThis to avoid requiring @types/node
-    const env = (globalThis as Record<string, unknown>)['process'] as { env?: Record<string, string | undefined> } | undefined;
-    const apiKey = env?.env?.['GEMINI_API_KEY'];
-    _genaiClient = new GoogleGenAI({ apiKey });
+let _activeKeyIndex = 0;
+
+/**
+ * Generate Gemini content with automatic key rotation and 3.8 -> 3.7 -> 2.5 model fallback.
+ */
+export async function generateGeminiContentWithFallback(
+  systemInstruction: string,
+  prompt: string
+): Promise<string | null> {
+  const keys = getEnvKeyPool();
+  if (keys.length === 0) return null;
+
+  const modelsToTry = [GEMINI_MODEL_PRIMARY, GEMINI_MODEL_SECONDARY, GEMINI_MODEL_FALLBACK];
+
+  for (let keyAttempt = 0; keyAttempt < keys.length; keyAttempt++) {
+    const key = keys[(_activeKeyIndex + keyAttempt) % keys.length];
+    if (!key) continue;
+
+    for (const model of modelsToTry) {
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `${systemInstruction}\n\n${prompt}` }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 2048,
+            },
+          }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData?.error?.message || `HTTP ${res.status}`;
+          const isTemporary = res.status === 503 || res.status === 404 || /high demand|unavailable|unsupported|not found|overloaded|resource has been exhausted/i.test(errMsg);
+          if (isTemporary) {
+            // Model unavailable or overloaded: try secondary/fallback model
+            continue;
+          }
+          // Quota exhausted (429) or forbidden: try next key in pool
+          break;
+        }
+
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+        if (text) {
+          _activeKeyIndex = (_activeKeyIndex + keyAttempt) % keys.length;
+          return text;
+        }
+      } catch (err: any) {
+        const errMsg = String(err?.message || '');
+        const isTemporary = /high demand|unavailable|unsupported|not found|overloaded/i.test(errMsg);
+        if (isTemporary) continue;
+        break;
+      }
+    }
   }
-  return _genaiClient;
+
+  return null;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -423,23 +486,13 @@ export class BotTakeoverController {
     const botSession = this.activeBots.get(playerId);
     if (!botSession) return null;
 
-    const env = (globalThis as Record<string, unknown>)['process'] as { env?: Record<string, string | undefined> } | undefined;
-    const apiKey = env?.env?.['GEMINI_API_KEY'];
+    try {
+      const rawOutput = await generateGeminiContentWithFallback(
+        buildSystemInstruction(player, lobby),
+        buildNightActionPrompt(player, lobby)
+      );
 
-    if (apiKey) {
-      try {
-        const client = getGenAIClient();
-        const systemInstruction = buildSystemInstruction(player, lobby);
-        const prompt = buildNightActionPrompt(player, lobby);
-
-        const response = await client.models.generateContent({
-          model: GEMINI_MODEL,
-          contents: [
-            { role: 'user', parts: [{ text: `${systemInstruction}\n\n${prompt}` }] },
-          ],
-        });
-
-        const rawOutput = response.text ?? '';
+      if (rawOutput) {
         const suggestedTarget = parseJsonField(rawOutput, 'targetPlayerId');
         const rawActionType = parseJsonField(rawOutput, 'actionType') as NightActionType | null;
 
@@ -475,9 +528,9 @@ export class BotTakeoverController {
           botSession.actionLog.push(record);
           return record;
         }
-      } catch {
-        // Fallback to deterministic heuristic on API failure
       }
+    } catch {
+      // Fallback to deterministic heuristic on API failure
     }
 
     return this.submitFallbackNightAction(playerId, lobbyId, botSession);
@@ -502,31 +555,23 @@ export class BotTakeoverController {
     const botSession = this.activeBots.get(playerId);
     if (!botSession) return null;
 
-    const env = (globalThis as Record<string, unknown>)['process'] as { env?: Record<string, string | undefined> } | undefined;
-    const apiKey = env?.env?.['GEMINI_API_KEY'];
-
     let candidateUserId: string | null = null;
     let interactionId = 'STRATEGIC_HEURISTIC';
 
-    if (apiKey) {
-      try {
-        const client = getGenAIClient();
-        const systemInstruction = buildSystemInstruction(player, lobby);
-        const prompt = buildDayVotePrompt(player, lobby);
+    try {
+      const rawOutput = await generateGeminiContentWithFallback(
+        buildSystemInstruction(player, lobby),
+        buildDayVotePrompt(player, lobby)
+      );
 
-        const response = await client.models.generateContent({
-          model: GEMINI_MODEL,
-          contents: [
-            { role: 'user', parts: [{ text: `${systemInstruction}\n\n${prompt}` }] },
-          ],
-        });
-
-        const rawOutput = response.text ?? '';
+      if (rawOutput) {
         candidateUserId = parseJsonField(rawOutput, 'candidateUserId');
-        interactionId = 'GEMINI_AI';
-      } catch {
-        // Fallback
+        if (candidateUserId) {
+          interactionId = 'GEMINI_AI';
+        }
       }
+    } catch {
+      // Fallback
     }
 
     // Determine target from alive non-self suspects
@@ -614,34 +659,24 @@ export class BotTakeoverController {
     const botSession = this.activeBots.get(playerId);
     if (!botSession) return null;
 
-    const env = (globalThis as Record<string, unknown>)['process'] as { env?: Record<string, string | undefined> } | undefined;
-    const apiKey = env?.env?.['GEMINI_API_KEY'];
-
     let message = 'Şübhəli hərəkətləri diqqətlə izləyirəm, ədalətli səs verməliyik.';
     let interactionId = 'STRATEGIC_HEURISTIC';
 
-    if (apiKey) {
-      try {
-        const client = getGenAIClient();
-        const systemInstruction = buildSystemInstruction(player, lobby);
-        const prompt = buildDayChatPrompt(player, lobby);
+    try {
+      const rawOutput = await generateGeminiContentWithFallback(
+        buildSystemInstruction(player, lobby),
+        buildDayChatPrompt(player, lobby)
+      );
 
-        const response = await client.models.generateContent({
-          model: GEMINI_MODEL,
-          contents: [
-            { role: 'user', parts: [{ text: `${systemInstruction}\n\n${prompt}` }] },
-          ],
-        });
-
-        const rawOutput = response.text ?? '';
+      if (rawOutput) {
         const parsed = parseJsonField(rawOutput, 'message');
         if (parsed) {
           message = parsed;
           interactionId = 'GEMINI_AI';
         }
-      } catch {
-        // Fallback
       }
+    } catch {
+      // Fallback
     }
 
     const record: ChatRecord = {
