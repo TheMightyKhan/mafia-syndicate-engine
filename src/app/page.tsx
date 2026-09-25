@@ -205,6 +205,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── TDV UNIFIED SSO ECOSYSTEM ACCESS BANNER ─────────────────── */}
+      <section className="rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-900/15 via-zinc-900/50 to-purple-950/20 p-5 sm:p-6 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-purple-600/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 flex items-center justify-center shrink-0 text-2xl shadow-inner">
+            🛡️
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-extrabold text-zinc-950 dark:text-white">
+                TDV Vahid Giriş & Ekosistem Profili
+              </h3>
+              <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 text-[10px] font-black uppercase tracking-wider">
+                SSO v1
+              </span>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1 max-w-xl">
+              1 vahid hesabla TDV Mafia, TDV Games, TDV Hub və Lisey Futbol Turnirinə dərhal qoşulun. Qeydiyyatınız bütün portallarda avtomatik tanınır.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 sm:flex-none border-purple-500/30 text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 cursor-pointer"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('open-tdv-auth', { detail: { tab: 'login' } }));
+              }
+            }}
+          >
+            Daxil Ol
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            className="flex-1 sm:flex-none bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white font-bold cursor-pointer"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('open-tdv-auth', { detail: { tab: 'register' } }));
+              }
+            }}
+          >
+            Vahid Qeydiyyat
+          </Button>
+        </div>
+      </section>
+
       {/* ─── LIVE ACTIVE ROOMS SECTION ───────────────────────────────── */}
       <section className="flex flex-col gap-4">
         <div className="border-l-4 border-red-600 pl-3">

@@ -33,6 +33,7 @@ import { isSoundMuted, toggleSound, subscribeSound, playCard } from '../../utils
 
 export const Navbar: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
+  const [authInitialTab, setAuthInitialTab] = useState<'login' | 'register'>('login');
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState<boolean>(false);
@@ -45,6 +46,18 @@ export const Navbar: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserSessionState | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Listen for open-tdv-auth custom events
+  useEffect(() => {
+    const handleOpenAuth = (e: Event) => {
+      const customEvent = e as CustomEvent<{ tab?: 'login' | 'register' }>;
+      const tab = customEvent.detail?.tab || 'login';
+      setAuthInitialTab(tab);
+      setIsAuthOpen(true);
+    };
+    window.addEventListener('open-tdv-auth', handleOpenAuth);
+    return () => window.removeEventListener('open-tdv-auth', handleOpenAuth);
+  }, []);
 
   // Initialize sound mute state & subscribe to changes
   useEffect(() => {
@@ -170,6 +183,12 @@ export const Navbar: React.FC = () => {
     try {
       localStorage.removeItem('tdv_mafia_user');
       localStorage.removeItem('tdv_ecosystem_session_v1');
+      const BROKER_URL = 'https://tdv-community-hubs.vercel.app/sso-broker.html';
+      let iframe = document.getElementById('tdv_sso_broker_bridge') as HTMLIFrameElement;
+      const registeredList = JSON.parse(localStorage.getItem('tdv_registered_users_v1') || '[]');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'TDV_SSO_SET', session: null, users: registeredList }, '*');
+      }
     } catch {
       // Storage unavailable
     }
@@ -515,14 +534,29 @@ export const Navbar: React.FC = () => {
               </Badge>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setIsAuthOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-150 cursor-pointer"
-            >
-              <UserIcon className="w-4 h-4 text-zinc-500" />
-              <span>Daxil Ol</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthInitialTab('login');
+                  setIsAuthOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-150 cursor-pointer"
+              >
+                <UserIcon className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Daxil Ol</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthInitialTab('register');
+                  setIsAuthOpen(true);
+                }}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-purple-700 dark:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 transition-all duration-150 cursor-pointer"
+              >
+                <span>Qeydiyyat</span>
+              </button>
+            </div>
           )}
         </div>
       </nav>
@@ -530,6 +564,7 @@ export const Navbar: React.FC = () => {
       {/* Global Modals */}
       <AuthModal
         isOpen={isAuthOpen}
+        initialTab={authInitialTab}
         currentUser={currentUser}
         onClose={() => setIsAuthOpen(false)}
         onLogin={handleLogin}

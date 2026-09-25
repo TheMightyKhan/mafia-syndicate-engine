@@ -28,6 +28,7 @@ export interface UserSessionState {
 export interface AuthModalProps {
   readonly isOpen: boolean;
   readonly currentUser: UserSessionState | null;
+  readonly initialTab?: 'login' | 'register';
   readonly onClose: () => void;
   readonly onLogin: (user: UserSessionState) => void;
   readonly onLogout?: () => void;
@@ -39,14 +40,43 @@ const TIER_TITLES: Record<PlayerTier, string> = {
   TIER_3: 'Don (Consigliere) — Elit Usta',
 };
 
+function dispatchSSOBrokerState(session: any, users: any) {
+  try {
+    const BROKER_URL = 'https://tdv-community-hubs.vercel.app/sso-broker.html';
+    let iframe = document.getElementById('tdv_sso_broker_bridge') as HTMLIFrameElement;
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'tdv_sso_broker_bridge';
+      iframe.src = BROKER_URL;
+      iframe.style.display = 'none';
+      iframe.setAttribute('aria-hidden', 'true');
+      iframe.onload = function() {
+        try {
+          iframe.contentWindow?.postMessage({ type: 'TDV_SSO_SET', session, users }, '*');
+        } catch (err) {}
+      };
+      document.body.appendChild(iframe);
+    } else {
+      iframe.contentWindow?.postMessage({ type: 'TDV_SSO_SET', session, users }, '*');
+    }
+  } catch (e) {}
+}
+
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   currentUser,
+  initialTab = 'login',
   onClose,
   onLogin,
   onLogout,
 }) => {
-  const [tab, setTab] = useState<'login' | 'register'>('login');
+  const [tab, setTab] = useState<'login' | 'register'>(initialTab);
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setTab(initialTab);
+    }
+  }, [initialTab, isOpen]);
 
   // Login inputs
   const [usernameInput, setUsernameInput] = useState<string>('');
@@ -147,6 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     };
     try {
       localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify(ecoSession));
+      dispatchSSOBrokerState(ecoSession, registeredList);
     } catch {}
 
     setSuccessMsg('Uğurla daxil oldunuz! Masaya qoşulur...');
@@ -224,6 +255,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
       };
       localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify(ecoSession));
+      dispatchSSOBrokerState(ecoSession, regUsers);
     } catch {}
 
     const user: UserSessionState = {
