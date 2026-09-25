@@ -218,6 +218,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   const isNightPhase = phase === 'NIGHT_BUFFER';
   const isVotingPhase = phase === 'DAY_VOTING';
+  const hasCastVote = Boolean(lobbyState.liveVotes[currentUserId]);
+  const canSeeVotes = !isAlive || hasCastVote || !isVotingPhase;
   const isDayDiscussion =
     phase === 'DAY_CENTRAL_ASSEMBLY' ||
     phase === 'DAY_REGIONAL_CAUCUS';
@@ -425,6 +427,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           selectedCandidateId={selectedPlayerId}
           districtFinalists={districtFinalists}
           voteCounts={voteCounts}
+          canSeeVotes={canSeeVotes}
           onCastVote={onCastVote}
           onRetractVote={onRetractVote}
         />
@@ -481,7 +484,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               }
               isCurrentTurn={lobbyState.speakerQueue[0] === player.userId}
               hasVoteOnTarget={lobbyState.liveVotes[currentUserId] === player.userId}
-              voteCount={voteCounts[player.userId] ?? 0}
+              voteCount={canSeeVotes ? (voteCounts[player.userId] ?? 0) : 0}
               isSpeaking={speakingIds?.has(player.userId) ?? false}
               isViewerMafia={isMafia}
               isGameOver={lobbyState.phase === 'ENDED'}

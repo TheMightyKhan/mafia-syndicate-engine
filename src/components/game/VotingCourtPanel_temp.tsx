@@ -141,19 +141,13 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
       
       {/* Dynamic Top Suspects Leaderboard */}
-      {!canSeeVotes && !isTreacheryBlind && (
-        <div className="p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex flex-col items-center justify-center text-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
-            <Scale className="w-6 h-6 text-zinc-400" />
-          </div>
-          <div>
-            <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Sürü Psixologiyası Əngəllənib (Gizli Səsvermə)</h4>
-            <p className="text-xs text-zinc-500 font-medium max-w-sm mt-1">Səsvermənin gedişatını və cari məhkəmə liderlərini görmək üçün əvvəlcə öz müstəqil qərarınızı verməlisiniz.</p>
-          </div>
+      {!canSeeVotes && !isTreacheryBlind ? (
+        <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm flex flex-col items-center justify-center text-center gap-2">
+          <Scale className="w-8 h-8 text-zinc-400 mb-1" />
+          <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Sürü Psixologiyası Əngəllənib</h4>
+          <p className="text-xs text-zinc-500 font-medium">Səsvermənin gedişatını və məhkəmə liderlərini görmək üçün əvvəlcə öz müstəqil qərarınızı verməlisiniz (Kiməsə səs verin).</p>
         </div>
-      )}
-
-      {canSeeVotes && topSuspects.length > 0 && !isTreacheryBlind && (
+      ) : topSuspects.length > 0 && !isTreacheryBlind && (
         <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm">
           <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
             <Scale className="w-3 h-3 text-red-500" />
