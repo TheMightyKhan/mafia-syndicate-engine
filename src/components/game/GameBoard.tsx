@@ -411,10 +411,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* ─── ALL-IN DISTRICT TABS ───────────────────────────────────── */}
       {isAllIn && (
-        <div className="flex items-center gap-2 pb-2 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">
-          <Button
-            variant={activeDistrictTab === 'ALL' ? 'primary' : 'outline'}
-            size="sm"
+        <div className="flex items-center gap-2 pb-3 overflow-x-auto border-b-2 border-purple-500/30">
+          <Button variant={activeDistrictTab === 'ALL' ? 'primary' : 'outline'} size="sm" className={isAllIn ? (activeDistrictTab === 'ALL' ? 'ring-2 ring-purple-500 bg-purple-500/20 text-purple-200 font-mono tracking-wider' : 'bg-black/50 text-purple-400 border-purple-500/30 font-mono tracking-wider hover:bg-purple-500/10') : ''}
             onClick={() => setActiveDistrictTab('ALL')}
           >
             Bütün Kvartallar ({allPlayers.length})
@@ -422,10 +420,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           {(['ELITE', 'COMMERCIAL', 'INDUSTRIAL'] as AllInDistrict[]).map((dist) => {
             const count = allPlayers.filter((p) => p.currentDistrict === dist).length;
             return (
-              <Button
-                key={dist}
-                variant={activeDistrictTab === dist ? 'primary' : 'outline'}
-                size="sm"
+              <Button key={dist} variant={activeDistrictTab === dist ? 'primary' : 'outline'} size="sm" className={isAllIn ? (activeDistrictTab === dist ? 'ring-2 ring-purple-500 bg-purple-500/20 text-purple-200 font-mono tracking-wider' : 'bg-black/50 text-purple-400 border-purple-500/30 font-mono tracking-wider hover:bg-purple-500/10') : ''}
                 onClick={() => setActiveDistrictTab(dist)}
               >
                 {AZ_DISTRICTS[dist]} ({count})
@@ -449,7 +444,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4'}`}>
           {displayedPlayers.map((player) => (
             <PlayerCard
               key={player.userId}

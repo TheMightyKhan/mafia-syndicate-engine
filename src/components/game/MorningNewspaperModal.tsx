@@ -17,6 +17,7 @@ export interface MorningNewspaperModalProps {
   readonly playerNames?: Record<string, string>;
   readonly privateInvestigations?: readonly InvestigationResult[];
   readonly onClose: () => void;
+  readonly isAllIn?: boolean;
 }
 
 export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
@@ -28,6 +29,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
   playerNames = {},
   privateInvestigations = [],
   onClose,
+  isAllIn = false,
 }) => {
   if (!isOpen || !newspaper) return null;
 
@@ -43,11 +45,11 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-4xl rounded-[20px] ring-1 ring-white/10 p-6 sm:p-10 border border-zinc-300 dark:border-zinc-700 bg-[#f4f1ea] dark:bg-[#1a1918] text-zinc-900 dark:text-zinc-200 shadow-2xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto font-serif relative"
+        className={`w-full max-w-4xl p-6 sm:p-10 shadow-2xl flex flex-col gap-6 max-h-[90vh] overflow-y-auto relative ${isAllIn ? 'bg-zinc-950/95 border-2 border-cyan-500/50 ring-4 ring-cyan-500/20 text-cyan-50 font-mono rounded-[8px]' : 'rounded-[20px] ring-1 ring-white/10 border border-zinc-300 dark:border-zinc-700 bg-[#f4f1ea] dark:bg-[#1a1918] text-zinc-900 dark:text-zinc-200 font-serif'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Newspaper Masthead */}
-        <div className="border-y border-zinc-500/30 py-6 text-center mb-4 flex flex-col gap-2">
+        <div className={`py-6 text-center mb-4 flex flex-col gap-2 ${isAllIn ? 'border-y-2 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'border-y border-zinc-500/30'}`}>
           <div className="text-[11px] tracking-widest uppercase text-stone-600 dark:text-stone-400 font-sans font-bold">
             TDV MAFIA • Səhər Xüsusi Buraxılışı
           </div>
