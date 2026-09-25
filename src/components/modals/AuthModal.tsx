@@ -50,6 +50,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   // Login inputs
   const [usernameInput, setUsernameInput] = useState<string>('');
+  const [loginPin, setLoginPin] = useState<string>('');
   const [selectedTier, setSelectedTier] = useState<PlayerTier>('TIER_1');
 
   // Register inputs
@@ -65,19 +66,94 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
+  const DEFAULT_SEEDED = [
+    { username: 'orxan', fullName: 'Orxan Əliyev', pin: '1000', tier: 'TIER_1' as PlayerTier, roleTitle: 'Əsgər', grade: 10, schoolClass: '10A' },
+    { username: 'murad', fullName: 'Murad Məmmədov', pin: '1100', tier: 'TIER_2' as PlayerTier, roleTitle: 'Kapo', grade: 11, schoolClass: '11B' },
+    { username: 'elvin_coach', fullName: 'Elvin Müəllim', pin: '2026', tier: 'TIER_3' as PlayerTier, roleTitle: 'Don', grade: 0, schoolClass: 'Məşqçi' },
+    { username: 'admin', fullName: 'TDV İnzibatçı', pin: 'admin2026', tier: 'TIER_3' as PlayerTier, roleTitle: 'Don', grade: 0, schoolClass: 'Rəhbərlik' },
+  ];
+
+  const getRegisteredList = () => {
+    try {
+      const raw = localStorage.getItem('tdv_registered_users_v1');
+      if (raw) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) return list;
+      }
+    } catch {}
+    try {
+      localStorage.setItem('tdv_registered_users_v1', JSON.stringify(DEFAULT_SEEDED));
+    } catch {}
+    return DEFAULT_SEEDED;
+  };
+
   const handleLoginSubmit = () => {
-    if (!usernameInput.trim()) return;
+    setErrorMsg('');
+    setSuccessMsg('');
+    const cleanUser = usernameInput.trim();
+    if (!cleanUser) {
+      setErrorMsg('Zəhmət olmasa istifadəçi adınızı və ya ləqəbinizi daxil edin.');
+      return;
+    }
+
+    const registeredList = getRegisteredList();
+    const matched = registeredList.find(
+      (u: any) =>
+        (u.username && u.username.toLowerCase() === cleanUser.toLowerCase()) ||
+        (u.fullName && u.fullName.toLowerCase() === cleanUser.toLowerCase())
+    );
+
+    if (!matched) {
+      setErrorMsg(`⚠️ '${cleanUser}' istifadəçi adı ilə qeydiyyat tapılmadı! Yalnız qeydiyyatdan keçmiş istifadəçilər daxil ola bilər.`);
+      return;
+    }
+
+    if (matched.pin && String(matched.pin).trim() !== '') {
+      if (!loginPin.trim() || loginPin.trim() !== String(matched.pin).trim()) {
+        setErrorMsg('❌ Daxil edilmiş PIN kod və ya şifrə yanlışdır!');
+        return;
+      }
+    }
+
+    const effectiveTier = (matched.tier as PlayerTier) || selectedTier;
+    const effectiveTitle = matched.roleTitle || (effectiveTier === 'TIER_3' ? 'Don' : effectiveTier === 'TIER_2' ? 'Kapo' : 'Əsgər');
 
     const user: UserSessionState = {
-      username: usernameInput.trim(),
-      tier: selectedTier,
-      roleTitle: selectedTier === 'TIER_3' ? 'Don' : selectedTier === 'TIER_2' ? 'Kapo' : 'Əsgər',
-      gamesPlayed: 14,
-      winRate: 68.4,
+      username: matched.username || cleanUser,
+      tier: effectiveTier,
+      roleTitle: effectiveTitle,
+      gamesPlayed: matched.gamesPlayed || 14,
+      winRate: matched.winRate || 68.4,
     };
 
-    onLogin(user);
-    onClose();
+    // Save active ecosystem session for cross-portal sync
+    const ecoSession = {
+      userId: matched.userId || 'tdv-usr-' + Date.now().toString(36),
+      username: matched.username || cleanUser,
+      fullName: matched.fullName || matched.username || cleanUser,
+      grade: matched.grade || 10,
+      schoolClass: matched.schoolClass || '10A',
+      role: matched.role || 'player',
+      avatar: matched.avatar || '🎭',
+      ecosystem: {
+        eschool: { active: true, grade: matched.grade || 10 },
+        sports: { team: matched.schoolClass || '10A', role: 'player' },
+        games: { nickname: matched.username || cleanUser },
+        mafia: { tier: effectiveTier, roleTitle: effectiveTitle }
+      },
+      token: 'tdv_token_' + Math.random().toString(36).substring(2) + Date.now().toString(36),
+      createdAt: Date.now(),
+      expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+    };
+    try {
+      localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify(ecoSession));
+    } catch {}
+
+    setSuccessMsg('Uğurla daxil oldunuz! Masaya qoşulur...');
+    setTimeout(() => {
+      onLogin(user);
+      onClose();
+    }, 350);
   };
 
   const handleRegisterSubmit = () => {
@@ -92,12 +168,64 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrorMsg('Zəhmət olmasa oyunçu ləqəbi / istifadəçi adı daxil edin.');
       return;
     }
+    if (!regPin.trim()) {
+      setErrorMsg('Zəhmət olmasa 4 rəqəmli PIN kod və ya şifrə təyin edin.');
+      return;
+    }
     if (regPin && regConfirmPin && regPin !== regConfirmPin) {
       setErrorMsg('Daxil edilən şifrələr bir-birinə uyğun gəlmir.');
       return;
     }
 
+    const regUsers = getRegisteredList();
+    const alreadyTaken = regUsers.some(
+      (u: any) => u.username && u.username.toLowerCase() === regUsername.trim().toLowerCase()
+    );
+    if (alreadyTaken) {
+      setErrorMsg(`⚠️ '${regUsername.trim()}' ləqəbi artıq qeydiyyatdan keçib! Zəhmət olmasa başqa ləqəb seçin.`);
+      return;
+    }
+
     const roleTitle = regTier === 'TIER_3' ? 'Don' : regTier === 'TIER_2' ? 'Kapo' : 'Əsgər';
+    const newUser = {
+      userId: 'tdv-usr-' + Date.now().toString(36),
+      fullName: regFullName.trim(),
+      username: regUsername.trim(),
+      roleTitle: roleTitle,
+      tier: regTier,
+      grade: regGrade,
+      schoolClass: regGrade > 0 ? `${regGrade}A` : 'Müəllim',
+      pin: regPin.trim(),
+      avatar: '🎭',
+      createdAt: Date.now(),
+      gamesPlayed: 0,
+      winRate: 100,
+    };
+    regUsers.push(newUser);
+
+    try {
+      localStorage.setItem('tdv_registered_users_v1', JSON.stringify(regUsers));
+      const ecoSession = {
+        userId: newUser.userId,
+        username: newUser.username,
+        fullName: newUser.fullName,
+        grade: newUser.grade,
+        schoolClass: newUser.schoolClass,
+        role: 'player',
+        avatar: '🎭',
+        ecosystem: {
+          eschool: { active: true, grade: newUser.grade },
+          sports: { team: newUser.schoolClass, role: 'player' },
+          games: { nickname: newUser.username },
+          mafia: { tier: regTier, roleTitle: roleTitle }
+        },
+        token: 'tdv_token_' + Math.random().toString(36).substring(2) + Date.now().toString(36),
+        createdAt: Date.now(),
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('tdv_ecosystem_session_v1', JSON.stringify(ecoSession));
+    } catch {}
+
     const user: UserSessionState = {
       username: regUsername.trim(),
       tier: regTier,
@@ -106,24 +234,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       winRate: 100,
     };
 
-    try {
-      const regUsersRaw = localStorage.getItem('tdv_registered_users_v1');
-      const regUsers = regUsersRaw ? JSON.parse(regUsersRaw) : [];
-      regUsers.push({
-        fullName: regFullName.trim(),
-        username: regUsername.trim(),
-        roleTitle: roleTitle,
-        tier: regTier,
-        grade: regGrade,
-        schoolClass: regGrade > 0 ? `${regGrade}A` : 'Müəllim',
-        pin: regPin,
-        avatar: '🎭',
-        createdAt: Date.now(),
-      });
-      localStorage.setItem('tdv_registered_users_v1', JSON.stringify(regUsers));
-    } catch {}
-
-    setSuccessMsg('Hesabınız uğurla yaradıldı! Masaya qoşulur...');
+    setSuccessMsg('Vahid profiliniz yaradıldı! Masaya qoşulur...');
     setTimeout(() => {
       onLogin(user);
       onClose();
@@ -265,9 +376,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             {/* Error / Success Notifications */}
             {errorMsg && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{errorMsg}</span>
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-medium flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
+                {errorMsg.includes('qeydiyyat tapılmadı') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRegUsername(usernameInput.trim());
+                      setRegFullName(usernameInput.trim());
+                      setTab('register');
+                      setErrorMsg('');
+                    }}
+                    className="self-start text-[11px] font-bold text-red-600 dark:text-red-400 underline hover:opacity-80 transition-opacity"
+                  >
+                    ➡️ &apos;{usernameInput.trim()}&apos; kimi indi qeydiyyatdan keçin
+                  </button>
+                )}
               </div>
             )}
             {successMsg && (
@@ -286,12 +413,49 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <input
                     type="text"
-                    placeholder="Məs: Don Corleone, Xəfiyyə..."
+                    placeholder="Məs: orxan, murad, elvin_coach..."
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                     autoFocus
                     className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                    PIN Kod / Şifrə *
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Məs: 1000"
+                    value={loginPin}
+                    onChange={(e) => setLoginPin(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all font-mono"
+                  />
+                </div>
+
+                {/* Quick seed selection pills */}
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+                    Sürətli Test Girişi:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DEFAULT_SEEDED.map((s) => (
+                      <button
+                        key={s.username}
+                        type="button"
+                        onClick={() => {
+                          setUsernameInput(s.username);
+                          setLoginPin(s.pin);
+                          setSelectedTier(s.tier);
+                          setErrorMsg('');
+                        }}
+                        className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 border border-zinc-200 dark:border-zinc-700 transition-colors"
+                      >
+                        {s.username} ({s.pin})
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>

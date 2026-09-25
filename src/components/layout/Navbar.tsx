@@ -166,6 +166,21 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  const getEcoLink = (url: string) => {
+    try {
+      const raw = localStorage.getItem('tdv_ecosystem_session_v1');
+      if (raw) {
+        const sess = JSON.parse(raw);
+        if (sess && (sess.fullName || sess.username)) {
+          const ticket = btoa(unescape(encodeURIComponent(JSON.stringify(sess))));
+          const separator = url.includes('?') ? '&' : '?';
+          return `${url}${separator}sso_ticket=${encodeURIComponent(ticket)}`;
+        }
+      }
+    } catch {}
+    return url;
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full transition-colors duration-200">
       {/* ─── MAIN AAA NAVBAR ─────────────────────────────────────────── */}
@@ -318,7 +333,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Hub */}
                 <a
-                  href="https://tdv-community-hubs.vercel.app/"
+                  href={getEcoLink("https://tdv-community-hubs.vercel.app/")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
@@ -341,7 +356,7 @@ export const Navbar: React.FC = () => {
 
                 {/* E-School */}
                 <a
-                  href="https://tdv-e-school.vercel.app/"
+                  href={getEcoLink("https://tdv-e-school.vercel.app/")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
@@ -364,7 +379,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Sports */}
                 <a
-                  href="https://school-minifootball-tournament.vercel.app/"
+                  href={getEcoLink("https://school-minifootball-tournament.vercel.app/")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
@@ -387,7 +402,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Games */}
                 <a
-                  href="https://tdv-games.vercel.app/"
+                  href={getEcoLink("https://tdv-games.vercel.app/")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/70 transition-colors group"
