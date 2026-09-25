@@ -181,23 +181,23 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   let canActAtNight = false;
 
   if (isMafia) {
-    primaryActionLabel = '🎯 ' + AZ_UI.strike;
+    primaryActionLabel = AZ_UI.strike;
     primaryActionType = 'KILL';
     canActAtNight = true;
   } else if (isDoctor) {
-    primaryActionLabel = '💉 ' + AZ_UI.protect;
+    primaryActionLabel = AZ_UI.protect;
     primaryActionType = 'PROTECT';
     canActAtNight = true;
   } else if (isSheriff) {
-    primaryActionLabel = '🔍 ' + AZ_UI.investigate;
+    primaryActionLabel = AZ_UI.investigate;
     primaryActionType = 'INVESTIGATE';
     canActAtNight = true;
   } else if (isDisrupter) {
-    primaryActionLabel = '⛔ ' + AZ_UI.disrupt;
+    primaryActionLabel = AZ_UI.disrupt;
     primaryActionType = 'BLOCK';
     canActAtNight = true;
   } else if (isMisdirector) {
-    primaryActionLabel = '🔀 ' + AZ_UI.misdirect;
+    primaryActionLabel = AZ_UI.misdirect;
     primaryActionType = 'MISDIRECT';
     canActAtNight = true;
   }
@@ -347,7 +347,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-sm text-blue-700 dark:text-blue-300">
-                ⌛ {AZ_UI.doomsdayClock}: {earth.doomsdayClockHours} / 12 Saat
+                {AZ_UI.doomsdayClock}: {earth.doomsdayClockHours} / 12 Saat
               </span>
               <Badge tone={earth.doomsdayClockHours >= 10 ? 'red' : 'blue'}>
                 {earth.doomsdayClockHours >= 12 ? 'PLANETAR MƏHV' : 'QORT AKTİV'}
@@ -360,7 +360,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
           {!earth.worldFrozenUsed && onTriggerKlaatuFreeze && (
             <Button variant="warning" size="sm" onClick={onTriggerKlaatuFreeze}>
-              ❄️ {AZ_UI.freezeWorld}
+              {AZ_UI.freezeWorld}
             </Button>
           )}
         </div>
@@ -371,7 +371,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-between gap-3">
           <div>
             <span className="font-bold text-sm text-amber-800 dark:text-amber-300">
-              💼 {AZ_UI.briefcaseLocation}: {valkyrie.briefcaseLocationPlayerId}
+              {AZ_UI.briefcaseLocation}: {valkyrie.briefcaseLocationPlayerId}
             </span>
             <div className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
               {AZ_UI.fuseCountdown}: {valkyrie.fuseTimerDaysRemaining} gün qalır.
@@ -517,7 +517,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             </span>
             <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
               {isNightPhase && !canActAtNight
-                ? '🌙 Siz Məsum Vətəndaşsınız. Şəhər yatır... Səhəri gözləyin.'
+                ? 'Siz Məsum Vətəndaşsınız. Şəhər yatır... Səhəri gözləyin.'
                 : selectedPlayerId
                 ? `Seçilmiş Hədəf: ${
                     lobbyState.players[selectedPlayerId]?.username ?? selectedPlayerId
@@ -573,7 +573,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             }}
             className="shrink-0"
           >
-            ⚖️ Səs Ver
+            Səs Ver
           </Button>
         ) : null}
       </div>

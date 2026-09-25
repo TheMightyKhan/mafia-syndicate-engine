@@ -144,7 +144,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
                   </strong>
                 </div>
                 <Badge tone={inv.revealedFaction === 'MAFIA' ? 'red' : 'emerald'}>
-                  {inv.revealedFaction === 'MAFIA' ? '🚨 MAFİYA ŞÜBHƏLİSİ' : '🛡️ MƏSUM VƏTƏNDAŞ'}
+                  {inv.revealedFaction === 'MAFIA' ? 'MAFİYA ŞÜBHƏLİSİ' : 'MƏSUM VƏTƏNDAŞ'}
                 </Badge>
               </div>
             ))}
