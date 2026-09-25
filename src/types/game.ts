@@ -94,5 +94,5 @@ export interface LobbyState {
   /** Declared winner outcome when phase reaches ENDED */
   readonly winnerResult?: WinConditionResult | null;
   /** Monotonically incremented on every mutation — used for optimistic concurrency control */
-  readonly stateVersion: number;
+  readonly stateVersion?: number;
 }
