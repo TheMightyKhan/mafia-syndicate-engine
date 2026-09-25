@@ -10,6 +10,7 @@ import {
   Users,
   Shield,
   Target,
+  Skull,
   Eye,
   Clock,
   Sparkles,
@@ -919,57 +920,62 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
       {/* ─── GAME OVER / VICTORY MODAL ───────────────────────────────── */}
       {isGameOver && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="w-full max-w-lg rounded-3xl border border-purple-500/40 bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-5">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-amber-500 flex items-center justify-center text-4xl shadow-xl shadow-purple-500/30">
-              {isTownVictory ? '🏆' : isMafiaVictory ? '🕶️' : '💀'}
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn transition-colors duration-1000 ${isTownVictory ? 'bg-emerald-950/80' : isMafiaVictory ? 'bg-red-950/80' : 'bg-black/85'} backdrop-blur-xl`}>
+          <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80 backdrop-blur-3xl text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8`}>
+            <div className="relative">
+              {isTownVictory && <div className="absolute inset-0 bg-emerald-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
+              {isMafiaVictory && <div className="absolute inset-0 bg-red-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
+              {!isTownVictory && !isMafiaVictory && <div className="absolute inset-0 bg-purple-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
+              
+              <div className={`relative z-10 w-32 h-32 rounded-[40px] flex items-center justify-center shadow-2xl ${isTownVictory ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 shadow-emerald-500/40' : isMafiaVictory ? 'bg-gradient-to-tr from-red-600 to-orange-500 shadow-red-500/40' : 'bg-gradient-to-tr from-purple-600 to-amber-500 shadow-purple-500/40'}`}>
+                {isTownVictory ? <Shield className="w-16 h-16 text-white" /> : isMafiaVictory ? <Target className="w-16 h-16 text-white" /> : <Skull className="w-16 h-16 text-white" />}
+              </div>
             </div>
 
             <div>
-              <span className="text-xs font-black uppercase tracking-widest text-purple-600 dark:text-purple-400">
-                Oyun Nəticəsi
+              <span className={`text-sm font-black uppercase tracking-[0.3em] ${isTownVictory ? 'text-emerald-400' : isMafiaVictory ? 'text-red-400' : 'text-purple-400'}`}>
+                YEKUN NƏTİCƏ
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-1">
+              <h2 className="text-4xl sm:text-5xl font-black mt-3 tracking-tight drop-shadow-md">
                 {isTownVictory
-                  ? 'Şəhər (Dinc Vətəndaşlar) Qalib Gəldi!'
+                  ? 'ŞƏHƏR QALİB GƏLDİ!'
                   : isMafiaVictory
-                  ? 'Mafiya Şəhəri Ələ Keçirdi!'
-                  : 'Oyun Başa Çatdı!'}
+                  ? 'MAFİYA ŞƏHƏRİ ƏLƏ KEÇİRDİ!'
+                  : 'OYUN BAŞA ÇATDI!'}
               </h2>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 max-w-sm">
+              <p className="text-base text-zinc-600 dark:text-zinc-300 mt-4 max-w-lg mx-auto font-medium leading-relaxed opacity-80">
                 {lobbyState.winnerResult?.reason ||
                   'Bütün rəqiblər aradan qaldırıldı və qələbə şərti tam təmin olundu.'}
               </p>
             </div>
 
-            {/* Winners list if available */}
             {winnerNames.length > 0 && (
-              <div className="w-full p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-left">
-                <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
-                  Qalib Heyət:
+              <div className={`w-full p-6 rounded-[20px] bg-black/20 border ${isTownVictory ? 'border-emerald-500/20' : isMafiaVictory ? 'border-red-500/20' : 'border-purple-500/20'} text-left backdrop-blur-md`}>
+                <div className={`text-xs font-black uppercase tracking-[0.2em] mb-4 ${isTownVictory ? 'text-emerald-500' : isMafiaVictory ? 'text-red-500' : 'text-purple-500'}`}>
+                  QALİB HEYƏT:
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {winnerNames.map((name, i) => (
-                    <Badge key={i} tone="purple">
+                    <div key={i} className={`px-4 py-2 rounded-xl text-sm font-bold shadow-md ${isTownVictory ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : isMafiaVictory ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'}`}>
                       {name}
-                    </Badge>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-3 w-full mt-2">
+            <div className="w-full mt-4">
               <Button
                 variant="primary"
                 size="lg"
-                className="w-full"
+                className={`w-full h-14 text-lg font-black tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] active:scale-95 ${isTownVictory ? 'bg-emerald-600 hover:bg-emerald-500 ring-emerald-500/30 border-none' : isMafiaVictory ? 'bg-red-600 hover:bg-red-500 ring-red-500/30 border-none' : ''}`}
                 onClick={() => {
                   playCard();
                   dispatchAction({ action: 'RESTART_GAME' });
                 }}
-                icon={<RotateCcw className="w-4 h-4" />}
+                icon={<RotateCcw className="w-5 h-5 mr-2" />}
               >
-                Yenidən Başla (Lobbiyə Qayıt)
+                YENİDƏN BAŞLA
               </Button>
             </div>
           </div>
