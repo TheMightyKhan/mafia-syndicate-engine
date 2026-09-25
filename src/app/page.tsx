@@ -275,7 +275,7 @@ export default function HomePage() {
             {activeRooms.map((room) => (
               <div
                 key={room.lobbyId}
-                className="flex flex-col justify-between gap-4 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 hover:-translate-y-0.5"
+                className="flex flex-col justify-between gap-4 p-5 rounded-[24px] border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900/60 shadow-sm hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 hover:-translate-y-0.5 group backdrop-blur-sm"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -292,7 +292,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800/80">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 tabular-nums">
                     <Users className="w-3.5 h-3.5" />
                     {room.playerCount} / {room.maxPlayers} Oyunçu
                   </span>

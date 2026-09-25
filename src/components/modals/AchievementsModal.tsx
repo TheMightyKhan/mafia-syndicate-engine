@@ -214,11 +214,11 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-zinc-950/70 backdrop-blur-md animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-5xl rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl flex flex-col h-[92vh] max-h-[880px] overflow-hidden transition-all duration-200"
+        className="w-full max-w-5xl rounded-[20px] ring-1 ring-white/10 shadow-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl flex flex-col h-[92vh] max-h-[880px] overflow-hidden transition-all duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ─── FIXED TOP HEADER ──────────────────────────────────────── */}
@@ -262,14 +262,9 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Bağla"
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shrink-0 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <button type="button" onClick={onClose} className="w-8 h-8 rounded-[8px] flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shrink-0 cursor-pointer">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
             </div>
           </div>
 

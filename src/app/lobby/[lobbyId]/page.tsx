@@ -472,7 +472,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 transition-colors duration-200">
       {/* ─── LOBBY HEADER BAR ───────────────────────────────────────── */}
-      <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-200">
+      <div className="p-6 rounded-[24px] border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-200">
         <div>
           <div className="flex items-center gap-2.5">
             <span
@@ -607,7 +607,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       {isLobbyPhase ? (
         <div className="flex flex-col gap-6">
           {/* Table Configuration & Rules Summary Card */}
-          <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4">
+          <div className="p-5 sm:p-6 rounded-[24px] border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-sm flex flex-col gap-4">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-red-500" />
@@ -712,7 +712,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           </div>
 
           {/* Lobby Footer Action Box */}
-          <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="p-6 rounded-[24px] border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
             <div>
               <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
                 {isHost ? 'Siz bu masanın rəhbərisiniz (Host)' : 'Masa Rəhbərinin oyunu başlatması gözlənilir'}
