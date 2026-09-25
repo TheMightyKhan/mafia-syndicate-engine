@@ -132,7 +132,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_doctor_double_save',
-    title: 'Qızıl Əllər',
+    title: "Həyat Ağacı (The Tree of Life)",
     description: 'Həkim olaraq eyni oyunda 2 fərqli raundda qətl hədəflərini uğurla qoru və ölümdən xilas et.',
     category: 'TOWN',
     tier: 'GOLD',
@@ -152,7 +152,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'town_unanimous_conviction',
-    title: 'Yekdil Hökm',
+    title: "Kütlələrin Üsyanı (The Revolt of the Masses)",
     description: 'Məhkəmə mərhələsində masadakı bütün canlı şəhərlilərin eyni Mafiya namizədinə 100% səs verməsi.',
     category: 'TOWN',
     tier: 'SILVER',
@@ -166,7 +166,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'mafia_godfather_pass_sheriff',
-    title: 'Təmiz Əllər',
+    title: "Şeytanın Vəkili (The Devil's Advocate)",
     description: "Don olaraq Şərif tərəfindən araşdırıldıqda sistemdə 'Məsum Vətəndaş' olaraq qeydə alın.",
     category: 'MAFIA',
     tier: 'GOLD',
@@ -186,7 +186,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_consort_block_doctor',
-    title: 'Görünməz Adam (The Invisible Man)',
+    title: "Ölümcül Cazibə (Fatal Attraction)",
     description: 'İllüziyaçı olaraq Həkimi gecə blokla və Mafiyanın seçdiyi hədəfin müdafiəsiz qalmasını təmin et.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -226,7 +226,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_framer_deception',
-    title: 'Qraf Monte-Kristo (The Count of Monte Cristo)',
+    title: "Dreyfus İşi (The Dreyfus Affair)",
     description: "Şər Atan kimi günahsız vətəndaşı çərçivəyə salaraq Şərifin onu 'Mafioz' görməsinə nail ol.",
     category: 'MAFIA',
     tier: 'SILVER',
@@ -246,7 +246,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_bypass_protective_shield',
-    title: 'Zirehdən Yan Keçmə',
+    title: "Axillesin Dabanı (Achilles' Heel)",
     description: 'Masada Həkim və Cangüdən olduğu halda onların qorumadığı vətəndaşı seçərək qətl törət.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -256,7 +256,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_clean_sweep',
-    title: 'Sözsüz Razılaşma (The Covenant)',
+    title: "Kosa Nostra (Cosa Nostra)",
     description: 'Mafiya ailəsinin heç bir üzvü öldürülmədən və edam edilmədən oyunu tam qələbə ilə bitir.',
     category: 'MAFIA',
     tier: 'LEGENDARY',
@@ -266,7 +266,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_tactical_sacrifice',
-    title: 'Şahmat Novellası (The Royal Game)',
+    title: "Brutun Xəncəri (The Dagger of Brutus)",
     description: 'Özünü gizlətmək üçün məhkəmədə şübhə altına düşmüş digər mafiozun edamına səs verərək etimad qazan.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -276,7 +276,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_triple_night_kills',
-    title: 'Gecə Qətliamı',
+    title: "Varfolomey Gecəsi (St. Bartholomew's Day Massacre)",
     description: 'All-In və ya böyük rejimdə tək gecədə təyin olunmuş 3 qətl limitinin hamısını uğurla tamamla.',
     category: 'MAFIA',
     tier: 'PLATINUM',
@@ -286,7 +286,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_parity_domination',
-    title: 'Paritet Nəzarəti',
+    title: "Şah Mat (Checkmate)",
     description: 'Masadakı canlı Mafiya sayını vətəndaş sayına çatdıraraq (50%-ə qarşı 50%) oyunu dərhal bitir.',
     category: 'MAFIA',
     tier: 'GOLD',
@@ -296,7 +296,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_enforcer_ascend',
-    title: 'Taxt Varisi',
+    title: "Kral Öldü, Yaşasın Kral!",
     description: 'Sıravi Mafioz kimi Don öldükdən sonra ailənin yeni rəhbəri olaraq oyunu qələbəyə daşı.',
     category: 'MAFIA',
     tier: 'SILVER',
@@ -306,7 +306,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'mafia_secret_night_orders',
-    title: 'Gecə Konsensusu',
+    title: "Gecəyarısı Şurası (The Midnight Council)",
     description: 'Mafiya komandası ilə gecə bufferi bitməmiş bütün qətl əmrlərini yekdilliklə təsdiqlə.',
     category: 'MAFIA',
     tier: 'BRONZE',
@@ -320,7 +320,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   // ─────────────────────────────────────────────────────────────────────────────
   {
     id: 'neutral_jester_early_execution',
-    title: 'Faust',
+    title: "Axmaqların Gəmisi (Ship of Fools)",
     description: 'Dəli (Jester) olaraq ilk 2 raund ərzində şəhər məhkəməsi tərəfindən asılaraq təkbaşına qalib gəl.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
@@ -330,7 +330,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_jester_curse_delivered',
-    title: 'İlahi Komediya (Divine Comedy)',
+    title: "Hamletin Kabusu (Hamlet's Ghost)",
     description: "Dəli kimi edam edildikdən sonra sənə 'Edam' səs vermiş oyunçulardan birini gecə məzara apar.",
     category: 'NEUTRAL',
     tier: 'GOLD',
@@ -340,7 +340,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_sk_deflect_mafia',
-    title: 'Polad Sinə',
+    title: "Ölümsüz (The Immortal)",
     description: 'Seriyalı Qatil olaraq gecə Mafiyanın hücumuna tuş gəl və daxili zireh sayəsində sağ qal.',
     category: 'NEUTRAL',
     tier: 'SILVER',
@@ -350,7 +350,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_sk_triple_kill_streak',
-    title: 'Qanlı Seriya',
+    title: "Dorian Qreyin Portreti (The Picture of Dorian Gray)",
     description: 'Seriyalı Qatil kimi ardıcıl 3 gecə fasiləsiz olaraq hədəflərini məhv et.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
@@ -380,7 +380,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_amnesiac_become_town',
-    title: 'Zülmət Ürəyi (Heart of Darkness)',
+    title: "İtirilmiş Zamanın Axtarışında (In Search of Lost Time)",
     description: 'Kimlik Axtaran kimi ölmüş Şəhər İttifaqı rolunu (Şərif, Həkim və s.) mənimsəyərək Şəhərlə qalib gəl.',
     category: 'NEUTRAL',
     tier: 'SILVER',
@@ -390,7 +390,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_amnesiac_become_mafia',
-    title: 'Qaranlıq İrs',
+    title: "Doktor Cekil və Mister Hayd",
     description: 'Kimlik Axtaran kimi ölmüş Mafiozun rolunu mənimsəyərək Mafiya Ailəsi ilə qalib gəl.',
     category: 'NEUTRAL',
     tier: 'GOLD',
@@ -400,7 +400,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_witch_redirect_killer',
-    title: 'Kukla Cadusu',
+    title: "Makbetin Cadugərləri (The Witches of Macbeth)",
     description: 'Cadugər kimi Seriyalı Qatilin hücumunu Mafiya üzvünə yönləndirərək cinayətkarı məhv et.',
     category: 'NEUTRAL',
     tier: 'PLATINUM',
@@ -430,7 +430,7 @@ export const ACHIEVEMENTS_REGISTRY: readonly Achievement[] = [
   },
   {
     id: 'neutral_survivor_five_rounds',
-    title: 'Canlı Şahid',
+    title: "Robinzon Kruzo (Robinson Crusoe)",
     description: 'Heç bir qətl və ya edam hücumuna tuş gəlmədən ən azı 5 raund həyatda qal.',
     category: 'NEUTRAL',
     tier: 'SILVER',
