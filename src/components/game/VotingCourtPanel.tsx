@@ -145,27 +145,32 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
 
         <div className="flex items-center gap-2 flex-wrap">
           {currentVotedCandidateId && (
-            <Button variant="secondary" size="md" onClick={onRetractVote} disabled={!isAlive}>
+            <button
+              className="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-black uppercase tracking-widest rounded-xl shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
+              onClick={onRetractVote} disabled={!isAlive}
+            >
               {AZ_UI.retractVote}
-            </Button>
+            </button>
           )}
 
           {!isWrath && onSkipVote && (
-            <Button variant="outline" size="md" onClick={onSkipVote} disabled={!isAlive}>
+            <button
+              className="px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white border-2 border-zinc-300 dark:border-zinc-700 font-black uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
+              onClick={onSkipVote} disabled={!isAlive}
+            >
               {AZ_UI.skipOrAbstain}
-            </Button>
+            </button>
           )}
 
-          <Button
-            variant="danger"
-            size="md"
+          <button
+            className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest rounded-xl shadow-[0_4px_14px_0_rgba(220,38,38,0.39)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none"
             disabled={
               !isAlive || !selectedCandidateId || currentVotedCandidateId === selectedCandidateId
             }
             onClick={() => selectedCandidateId && onCastVote(selectedCandidateId)}
           >
             {AZ_UI.vote}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

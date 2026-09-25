@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Crown, Bot, Check, Clock, Mic, Shield, Sparkles } from 'lucide-react';
+import { Crown, Bot, Check, Clock, Mic, Shield, Sparkles, Target, Gavel } from 'lucide-react';
 import { PlayerSession } from '../../types/game';
 import { ScrubbedPlayerView } from '../../types/engine';
 import { AllInDistrict, CivicOfficeType } from '../../types/roles';
@@ -73,7 +73,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       : 'Açıq Rol'
     : !isAlive
     ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
-      ? `✝️ ${player.displayRole.localizedRoleName || player.displayRole.originalRoleName}`
+      ? player.displayRole.localizedRoleName || player.displayRole.originalRoleName
       : '✝️ Ələnmiş İştirakçı'
     : isViewerMafia && isFullSession(player) && player.allInIdentity?.layer1Faction === 'MAFIA'
     ? '🕶️ Mafiya Ortağı'
@@ -118,15 +118,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         onSelect ? 'cursor-pointer hover:-translate-y-1 hover:' : 'cursor-default'
       } ${containerClasses}`}
     >
-      {/* Radiant Glow ambient accent if self */}
-      {isSelf && (
-        <div className="absolute -top-12 -right-12 w-24 h-24 bg-purple-500/20 rounded-full blur-xl pointer-events-none" />
-      )}
+      
 
       {/* Eliminated Stamp */}
       {!isLobbyPhase && !isAlive && (
         <div className="absolute top-3 right-[-10px] rotate-12 bg-red-600 text-white px-5 py-0.5 text-[10px] font-black tracking-widest uppercase border border-red-400 shadow-lg z-10 pointer-events-none">
-          {AZ_UI.eliminated}
+          <div className="flex items-center gap-1"><Gavel className="w-3 h-3"/> {AZ_UI.eliminated}</div>
         </div>
       )}
 
