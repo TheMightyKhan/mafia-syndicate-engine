@@ -216,36 +216,34 @@ function parseJsonField<K extends string>(
 function deriveNightActionCapability(identity: AllInPlayerIdentity | undefined): {
   actionType: NightActionType;
   priority: NightActionPriority;
+  canAct: boolean;
 } {
-  if (!identity) return { actionType: 'INVESTIGATE', priority: 6 };
+  if (!identity) return { actionType: 'INVESTIGATE', priority: 6, canAct: false };
 
   const { layer1Faction, layer2Office } = identity;
 
   // Mafia faction → KILL
-  if (layer1Faction === 'MAFIA' || layer1Faction === 'YAKUZA' || layer1Faction === 'NEUTRAL_KILLER') {
-    return { actionType: 'KILL', priority: 4 };
-  }
-  if (layer1Faction === 'VOID_CULT') {
-    return { actionType: 'KILL', priority: 4 };
+  if (layer1Faction === 'MAFIA' || layer1Faction === 'YAKUZA' || layer1Faction === 'NEUTRAL_KILLER' || layer1Faction === 'VOID_CULT') {
+    return { actionType: 'KILL', priority: 4, canAct: true };
   }
 
   // Office-based Town roles
   switch (layer2Office) {
-    case 'CITY_SURGEON':       return { actionType: 'PROTECT',     priority: 3 };
-    case 'CITY_INVESTIGATOR':  return { actionType: 'INVESTIGATE',  priority: 6 };
-    case 'CHIEF_FIRE_MARSHAL': return { actionType: 'BLOCK',        priority: 1 };
-    case 'POLICE_COMMISSIONER':return { actionType: 'INVESTIGATE',  priority: 6 };
-    case 'PRISON_WARDEN':      return { actionType: 'BLOCK',        priority: 1 };
-    case 'BLACK_MARKET_BROKER':return { actionType: 'MISDIRECT',    priority: 2 };
-    case 'CORONER':            return { actionType: 'INVESTIGATE',  priority: 6 };
-    default:                   return { actionType: 'INVESTIGATE',  priority: 6 };
+    case 'CITY_SURGEON':        return { actionType: 'PROTECT',     priority: 3, canAct: true };
+    case 'CITY_INVESTIGATOR':   return { actionType: 'INVESTIGATE', priority: 6, canAct: true };
+    case 'CHIEF_FIRE_MARSHAL':  return { actionType: 'BLOCK',       priority: 1, canAct: true };
+    case 'POLICE_COMMISSIONER': return { actionType: 'INVESTIGATE', priority: 6, canAct: true };
+    case 'PRISON_WARDEN':       return { actionType: 'BLOCK',       priority: 1, canAct: true };
+    case 'BLACK_MARKET_BROKER': return { actionType: 'MISDIRECT',   priority: 2, canAct: true };
+    case 'CORONER':             return { actionType: 'INVESTIGATE', priority: 6, canAct: true };
+    default:                    return { actionType: 'INVESTIGATE', priority: 6, canAct: false };
   }
 }
 
 /**
  * Selects the highest-value target for a given faction.
- * For PROTECT: largest-threat-adjacent ally. For KILL: highest-suspicion player.
- * Falls back deterministically to first alive non-self player.
+ * For PROTECT: non-mafia town player or self. For KILL: non-mafia victim (never friendly fire!).
+ * For INVESTIGATE: random non-self living suspect.
  */
 function selectStrategicTarget(
   player: PlayerSession,
@@ -264,11 +262,25 @@ function selectStrategicTarget(
     if (aiTarget) return aiTarget.userId;
   }
 
-  // Fallback: for protective roles, target a same-faction ally; for others, target first alive
+  if (actionType === 'KILL') {
+    // Mafia/Killer must NEVER kill a fellow Mafia member! Target living non-mafia players
+    const nonMafia = alivePlayers.filter(p => p.allInIdentity?.layer1Faction !== 'MAFIA');
+    const pool = nonMafia.length > 0 ? nonMafia : alivePlayers;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    return picked?.userId ?? null;
+  }
+
   if (actionType === 'PROTECT') {
-    const faction = player.allInIdentity?.layer1Faction;
-    const ally = alivePlayers.find(p => p.allInIdentity?.layer1Faction === faction);
-    return ally?.userId ?? alivePlayers[0]?.userId ?? null;
+    // Doctor protects an alive town player or ally
+    const townAllies = alivePlayers.filter(p => p.allInIdentity?.layer1Faction === 'TOWN');
+    const pool = townAllies.length > 0 ? townAllies : alivePlayers;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    return picked?.userId ?? null;
+  }
+
+  if (actionType === 'INVESTIGATE') {
+    const picked = alivePlayers[Math.floor(Math.random() * alivePlayers.length)];
+    return picked?.userId ?? null;
   }
 
   return alivePlayers[0]?.userId ?? null;
@@ -431,7 +443,8 @@ export class BotTakeoverController {
         const suggestedTarget = parseJsonField(rawOutput, 'targetPlayerId');
         const rawActionType = parseJsonField(rawOutput, 'actionType') as NightActionType | null;
 
-        const { actionType: capabilityType, priority } = deriveNightActionCapability(player.allInIdentity);
+        const { actionType: capabilityType, priority, canAct } = deriveNightActionCapability(player.allInIdentity);
+        if (!canAct) return null;
         const validActionTypes: NightActionType[] = ['KILL', 'PROTECT', 'INVESTIGATE', 'BLOCK', 'MISDIRECT', 'FRAME'];
         const resolvedActionType: NightActionType =
           rawActionType && validActionTypes.includes(rawActionType) ? rawActionType : capabilityType;
@@ -525,10 +538,16 @@ export class BotTakeoverController {
       const myFaction = player.allInIdentity?.layer1Faction;
       if (myFaction === 'MAFIA') {
         // Mafia bots vote for town players
-        target = alivePlayers.find(p => p.allInIdentity?.layer1Faction !== 'MAFIA') || alivePlayers[0];
+        const townTargets = alivePlayers.filter(p => p.allInIdentity?.layer1Faction !== 'MAFIA');
+        target = townTargets[Math.floor(Math.random() * townTargets.length)] || alivePlayers[0];
       } else {
-        // Town bots suspect mafia or vote first alive
-        target = alivePlayers.find(p => p.allInIdentity?.layer1Faction === 'MAFIA') || alivePlayers[0];
+        // Town bots vote among non-self suspects (with 35% chance to hone in on real mafia, 65% human-like suspicion)
+        const suspects = alivePlayers.filter(p => p.allInIdentity?.layer1Faction === 'MAFIA');
+        if (suspects.length > 0 && Math.random() < 0.35) {
+          target = suspects[0];
+        } else {
+          target = alivePlayers[Math.floor(Math.random() * alivePlayers.length)];
+        }
       }
     }
 
@@ -701,7 +720,8 @@ export class BotTakeoverController {
     const player = lobby.players[playerId];
     if (!player) return null;
 
-    const { actionType, priority } = deriveNightActionCapability(player.allInIdentity);
+    const { actionType, priority, canAct } = deriveNightActionCapability(player.allInIdentity);
+    if (!canAct) return null;
     const targetPlayerId = selectStrategicTarget(player, lobby, actionType, null);
     if (!targetPlayerId) return null;
 

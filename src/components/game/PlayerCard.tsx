@@ -20,6 +20,8 @@ export interface PlayerCardProps {
   readonly voteCount?: number;
   readonly isReady?: boolean;
   readonly isSpeaking?: boolean;
+  readonly isViewerMafia?: boolean;
+  readonly isGameOver?: boolean;
   readonly onSelect?: (player: PlayerSession | ScrubbedPlayerView) => void;
 }
 
@@ -44,6 +46,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   voteCount = 0,
   isReady = false,
   isSpeaking = false,
+  isViewerMafia = false,
+  isGameOver = false,
   onSelect,
 }) => {
   const isAlive = player.isAlive;
@@ -63,16 +67,20 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     ? isFullSession(player)
       ? `Siz: ${player.displayRole.formatted}`
       : `Siz: ${player.ownRoleDisplay ?? 'Gizli Rol'}`
+    : isGameOver
+    ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
+      ? player.displayRole.localizedRoleName || player.displayRole.originalRoleName
+      : 'Açıq Rol'
     : !isAlive
     ? isFullSession(player) && player.displayRole?.originalRoleName !== 'Secret' && player.displayRole?.originalRoleName !== 'Pending'
       ? `✝️ ${player.displayRole.localizedRoleName || player.displayRole.originalRoleName}`
       : '✝️ Ələnmiş İştirakçı'
-    : isFullSession(player) && player.allInIdentity?.layer1Faction === 'MAFIA'
+    : isViewerMafia && isFullSession(player) && player.allInIdentity?.layer1Faction === 'MAFIA'
     ? '🕶️ Mafiya Ortağı'
     : 'Məlum deyil (Gizli Rol)';
 
   const district = !isLobbyPhase ? player.currentDistrict : null;
-  const officeRaw = !isLobbyPhase && (isSelf || !isAlive)
+  const officeRaw = !isLobbyPhase && (isSelf || !isAlive || isGameOver)
     ? isFullSession(player)
       ? player.allInIdentity?.layer2Office
       : (player.ownOffice as CivicOfficeType | null)

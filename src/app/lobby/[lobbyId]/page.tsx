@@ -139,18 +139,28 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     let resolvedTier = 'TIER_1';
 
     try {
-      const saved = localStorage.getItem('tdv_mafia_user');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.username) {
-          resolvedName = parsed.username;
-          resolvedId = `usr-${parsed.username.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-          resolvedTier = parsed.tier || 'TIER_1';
+      const ecoRaw = localStorage.getItem('tdv_ecosystem_session_v1');
+      if (ecoRaw) {
+        const parsedEco = JSON.parse(ecoRaw);
+        if (parsedEco?.username || parsedEco?.fullName) {
+          resolvedName = parsedEco.fullName || parsedEco.username;
+          resolvedId = `usr-${(parsedEco.username || parsedEco.fullName).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+          resolvedTier = parsedEco.tier || 'TIER_1';
         }
       } else {
-        const guestId = `usr-guest-${Math.random().toString(36).substring(2, 7)}`;
-        resolvedId = guestId;
-        resolvedName = `Qonaq_${guestId.substring(10)}`;
+        const saved = localStorage.getItem('tdv_mafia_user');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed?.username) {
+            resolvedName = parsed.username;
+            resolvedId = `usr-${parsed.username.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+            resolvedTier = parsed.tier || 'TIER_1';
+          }
+        } else {
+          const guestId = `usr-guest-${Math.random().toString(36).substring(2, 7)}`;
+          resolvedId = guestId;
+          resolvedName = `Qonaq_${guestId.substring(10)}`;
+        }
       }
     } catch {
       // Ignore
@@ -337,7 +347,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   };
 
   const isHost =
-    lobbyState.hostUserId === currentUserId || Object.keys(lobbyState.players).length <= 1;
+    lobbyState.hostUserId === currentUserId ||
+    (lobbyState.players[currentUserId]?.isHost ?? false) ||
+    Object.keys(lobbyState.players).length <= 1;
   const isLobbyPhase = lobbyState.phase === 'LOBBY';
   const playersList = Object.values(lobbyState.players);
   const totalPlayersCount = playersList.length;
@@ -382,7 +394,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         const phaseKey = `${prev.phase}-${prev.roundNumber}`;
         if (remaining === 0 && autoProgressTriggeredRef.current !== phaseKey) {
           const isUserHost =
-            prev.hostUserId === currentUserId || Object.keys(prev.players).length <= 1;
+            prev.hostUserId === currentUserId ||
+            (prev.players[currentUserId]?.isHost ?? false) ||
+            Object.keys(prev.players).length <= 1;
           if (isUserHost) {
             autoProgressTriggeredRef.current = phaseKey;
             dispatchAction({ action: 'PROGRESS_PHASE' });

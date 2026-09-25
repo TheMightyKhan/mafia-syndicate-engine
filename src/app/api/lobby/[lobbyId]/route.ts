@@ -112,7 +112,7 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
       allInIdentity: {
         layer1Faction: assigned.faction,
         layer2Office: assigned.office,
-        layer3Trait: 'BULLETPROOF_VEST',
+        layer3Trait: 'PHANTOM_STEP',
         district: (['ELITE', 'COMMERCIAL', 'INDUSTRIAL'] as const)[i % 3],
       },
     };
@@ -134,7 +134,10 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
  */
 function sanitizeLobbyForViewer(lobby: LobbyState, viewerUserId: string): LobbyState {
   const viewerSession = lobby.players[viewerUserId];
-  const isViewerMafia = viewerSession?.allInIdentity?.layer1Faction === 'MAFIA';
+  const isViewerMafia =
+    viewerSession?.allInIdentity?.layer1Faction === 'MAFIA' ||
+    viewerSession?.displayRole?.originalRoleName?.toLowerCase().includes('mafia') ||
+    viewerSession?.displayRole?.localizedRoleName?.toLowerCase().includes('mafiya');
   const isLobbyPhase = lobby.phase === 'LOBBY';
   const isEnded = lobby.phase === 'ENDED';
 
@@ -150,8 +153,20 @@ function sanitizeLobbyForViewer(lobby: LobbyState, viewerUserId: string): LobbyS
         displayRole: formatRoleDisplay(p.username, 'Pending', 'Gözləmədə'),
         allInIdentity: undefined,
       };
-    } else if (isEnded || isSelf || isTeammateMafia || isRevealedDead) {
+    } else if (isEnded || isSelf) {
       sanitizedPlayers[id] = p;
+    } else if (isRevealedDead) {
+      sanitizedPlayers[id] = {
+        ...p,
+        displayRole: p.displayRole,
+        allInIdentity: p.allInIdentity,
+      };
+    } else if (isTeammateMafia) {
+      sanitizedPlayers[id] = {
+        ...p,
+        displayRole: p.displayRole,
+        allInIdentity: p.allInIdentity,
+      };
     } else {
       sanitizedPlayers[id] = {
         ...p,
@@ -199,13 +214,14 @@ async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
       groupedInvestigations[inv.investigatorPlayerId].push(inv);
     }
 
-    // 4. Update lobby state
+    // 4. Update lobby state and increment round
     inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({
       ...l,
       players: resolution.updatedPlayers,
       lastLynchedUserId: null,
       bufferedNightActions: [],
       latestNewspaper: resolution.newspaper,
+      roundNumber: l.roundNumber + 1,
       privateInvestigations: {
         ...(l.privateInvestigations || {}),
         ...groupedInvestigations,
@@ -218,7 +234,7 @@ async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
       inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, winnerResult: win }));
       inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
     } else {
-      inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 75);
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 60);
       await botTakeoverController.executeAllBotActions(lobbyId);
     }
     return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
@@ -255,13 +271,13 @@ async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
       inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, winnerResult: win }));
       inMemoryLobbyStore.transitionPhase(lobbyId, 'ENDED', 0);
     } else {
-      inMemoryLobbyStore.transitionPhase(lobbyId, 'NIGHT_BUFFER', 60);
+      inMemoryLobbyStore.transitionPhase(lobbyId, 'NIGHT_BUFFER', 45);
       await botTakeoverController.executeAllBotActions(lobbyId);
     }
     return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
   } else if (lobby.phase === 'DAY_REGIONAL_CAUCUS' || lobby.phase === 'DAY_CENTRAL_ASSEMBLY') {
-    inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 75);
+    inMemoryLobbyStore.transitionPhase(lobbyId, 'DAY_VOTING', 60);
     await botTakeoverController.executeAllBotActions(lobbyId);
     return inMemoryLobbyStore.getLobby(lobbyId) || lobby;
   }
@@ -273,27 +289,48 @@ function getOrCreateLobby(lobbyId: string, initialHostUser?: { userId: string; u
   let lobby = inMemoryLobbyStore.getLobby(lobbyId);
   if (!lobby) {
     const mode = deriveModeFromLobbyId(lobbyId);
-    const hostId = initialHostUser?.userId || 'usr-host-initial';
-    const hostName = initialHostUser?.username || 'Host';
+    const hostId = initialHostUser?.userId || '';
+    const hostName = initialHostUser?.username || '';
     const hostTier = initialHostUser?.tier || 'TIER_1';
 
-    const hostSession: PlayerSession = {
-      socketId: `sock-${hostId}`,
-      userId: hostId,
-      username: hostName,
-      tier: hostTier,
-      adminRole: mode === 'ALL_IN' ? 'THE_ARCHITECT' : 'NONE',
-      isHost: true,
-      isAlive: true,
-      hasHostWaiver: true,
-      hasAdminWaiver: true,
-      displayRole: formatRoleDisplay(hostName, 'Pending', 'Gözləmədə'),
-      currentDistrict: 'ELITE',
-      disconnectedAt: null,
-      isAiBotControlled: false,
-    };
-
-    lobby = inMemoryLobbyStore.createLobby(lobbyId, hostId, hostSession, mode);
+    if (hostId) {
+      const hostSession: PlayerSession = {
+        socketId: `sock-${hostId}`,
+        userId: hostId,
+        username: hostName,
+        tier: hostTier,
+        adminRole: mode === 'ALL_IN' ? 'THE_ARCHITECT' : 'NONE',
+        isHost: true,
+        isAlive: true,
+        hasHostWaiver: true,
+        hasAdminWaiver: true,
+        displayRole: formatRoleDisplay(hostName, 'Pending', 'Gözləmədə'),
+        currentDistrict: 'ELITE',
+        disconnectedAt: null,
+        isAiBotControlled: false,
+      };
+      lobby = inMemoryLobbyStore.createLobby(lobbyId, hostId, hostSession, mode);
+    } else {
+      // Empty lobby waiting for first player to join
+      const dummyHost: PlayerSession = {
+        socketId: 'sock-empty',
+        userId: 'temp-init',
+        username: 'Init',
+        tier: 'TIER_1',
+        adminRole: 'NONE',
+        isHost: false,
+        isAlive: true,
+        hasHostWaiver: true,
+        hasAdminWaiver: false,
+        displayRole: formatRoleDisplay('Init', 'Pending', 'Gözləmədə'),
+        currentDistrict: 'COMMERCIAL',
+        disconnectedAt: null,
+        isAiBotControlled: false,
+      };
+      lobby = inMemoryLobbyStore.createLobby(lobbyId, '', dummyHost, mode);
+      inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, players: {} }));
+      lobby = inMemoryLobbyStore.getLobby(lobbyId)!;
+    }
   }
   return lobby;
 }
@@ -303,7 +340,10 @@ export async function GET(request: Request, context: RouteContext) {
   const url = new URL(request.url);
   const userId = url.searchParams.get('userId') || 'anon';
 
-  let lobby = getOrCreateLobby(lobbyId);
+  let lobby = inMemoryLobbyStore.getLobby(lobbyId);
+  if (!lobby) {
+    lobby = getOrCreateLobby(lobbyId, userId && userId !== 'anon' ? { userId, username: 'Oyunçu', tier: 'TIER_1' } : undefined);
+  }
 
   // Sync remaining countdown seconds based on authoritative phaseEndsAt
   lobby = inMemoryLobbyStore.syncCountdown(lobbyId) || lobby;
@@ -316,8 +356,35 @@ export async function GET(request: Request, context: RouteContext) {
     Date.now() >= lobby.phaseEndsAt
   ) {
     lobby = await progressLobbyPhase(lobbyId);
-  } else if (lobby.phase === 'NIGHT_BUFFER' || lobby.phase === 'DAY_VOTING') {
+  } else if (lobby.phase === 'NIGHT_BUFFER') {
+    // Ensure bots have acted
     await botTakeoverController.executeAllBotActions(lobbyId);
+    lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+    // Check if all living active night actors have submitted actions: auto-advance early!
+    const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
+    const activeNightActors = alivePlayers.filter(p => {
+      const f = p.allInIdentity?.layer1Faction;
+      const off = p.allInIdentity?.layer2Office;
+      return (
+        f === 'MAFIA' ||
+        f === 'YAKUZA' ||
+        f === 'VOID_CULT' ||
+        f === 'NEUTRAL_KILLER' ||
+        off === 'CITY_SURGEON' ||
+        off === 'CITY_INVESTIGATOR' ||
+        off === 'CHIEF_FIRE_MARSHAL' ||
+        off === 'PRISON_WARDEN'
+      );
+    });
+
+    const actedSet = new Set(lobby.bufferedNightActions.map(a => a.actorPlayerId));
+    const allActed = activeNightActors.length > 0 && activeNightActors.every(a => actedSet.has(a.userId));
+
+    if (allActed) {
+      lobby = await progressLobbyPhase(lobbyId);
+    }
+  } else if (lobby.phase === 'DAY_VOTING') {
     lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
   }
 
@@ -348,8 +415,18 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     if (action === 'JOIN') {
+      const realPlayers = Object.values(lobby.players).filter(p => !p.userId.startsWith('temp-') && !p.userId.startsWith('usr-host-initial'));
+      const isFirstRealPlayer = realPlayers.length === 0 || lobby.hostUserId === '' || lobby.hostUserId === 'usr-host-initial' || lobby.hostUserId === userId;
+
+      if (isFirstRealPlayer && lobby.hostUserId !== userId) {
+        inMemoryLobbyStore.removePlayer(lobbyId, 'usr-host-initial');
+        inMemoryLobbyStore.removePlayer(lobbyId, 'temp-init');
+        inMemoryLobbyStore.updateLobby(lobbyId, (l) => ({ ...l, hostUserId: userId }));
+        lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+      }
+
       if (!lobby.players[userId]) {
-        const isHost = Object.keys(lobby.players).length === 0;
+        const isHost = isFirstRealPlayer || lobby.hostUserId === userId;
         const newPlayer: PlayerSession = {
           socketId: `sock-${userId}`,
           userId,
@@ -493,6 +570,12 @@ export async function POST(request: Request, context: RouteContext) {
       inMemoryLobbyStore.castVote(lobbyId, userId, candidateId);
       await botTakeoverController.executeAllBotActions(lobbyId);
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
+      const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
+      const votedCount = Object.keys(lobby.liveVotes).length;
+      if (votedCount >= alivePlayers.length && alivePlayers.length > 0) {
+        lobby = await progressLobbyPhase(lobbyId);
+      }
 
     } else if (action === 'RETRACT_VOTE') {
       inMemoryLobbyStore.retractVote(lobbyId, userId);

@@ -133,33 +133,57 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   const office = currentUser?.allInIdentity?.layer2Office;
   const faction = currentUser?.allInIdentity?.layer1Faction ?? 'TOWN';
+  const roleName = currentUser?.displayRole?.originalRoleName?.toLowerCase() || '';
+  const localizedRole = currentUser?.displayRole?.localizedRoleName?.toLowerCase() || '';
+
+  const isMafia =
+    faction === 'MAFIA' ||
+    faction === 'YAKUZA' ||
+    faction === 'VOID_CULT' ||
+    faction === 'NEUTRAL_KILLER' ||
+    roleName.includes('killer') ||
+    roleName.includes('mafia') ||
+    localizedRole.includes('mafiya');
+
+  const isDoctor =
+    office === 'CITY_SURGEON' ||
+    roleName.includes('doctor') ||
+    localizedRole.includes('həkim');
+
+  const isSheriff =
+    office === 'CITY_INVESTIGATOR' ||
+    office === 'POLICE_COMMISSIONER' ||
+    roleName.includes('investigator') ||
+    roleName.includes('sheriff') ||
+    localizedRole.includes('şərif');
+
+  const isDisrupter =
+    office === 'CHIEF_FIRE_MARSHAL' ||
+    office === 'PRISON_WARDEN';
+
+  const isMisdirector = office === 'BLACK_MARKET_BROKER';
 
   let primaryActionLabel: string = AZ_UI.investigate;
   let primaryActionType: NightActionType = 'INVESTIGATE';
   let canActAtNight = false;
 
-  if (
-    faction === 'MAFIA' ||
-    faction === 'YAKUZA' ||
-    faction === 'VOID_CULT' ||
-    faction === 'NEUTRAL_KILLER'
-  ) {
+  if (isMafia) {
     primaryActionLabel = '🎯 ' + AZ_UI.strike;
     primaryActionType = 'KILL';
     canActAtNight = true;
-  } else if (office === 'CITY_SURGEON') {
+  } else if (isDoctor) {
     primaryActionLabel = '💉 ' + AZ_UI.protect;
     primaryActionType = 'PROTECT';
     canActAtNight = true;
-  } else if (office === 'CITY_INVESTIGATOR' || office === 'POLICE_COMMISSIONER') {
+  } else if (isSheriff) {
     primaryActionLabel = '🔍 ' + AZ_UI.investigate;
     primaryActionType = 'INVESTIGATE';
     canActAtNight = true;
-  } else if (office === 'CHIEF_FIRE_MARSHAL' || office === 'PRISON_WARDEN') {
+  } else if (isDisrupter) {
     primaryActionLabel = '⛔ ' + AZ_UI.disrupt;
     primaryActionType = 'BLOCK';
     canActAtNight = true;
-  } else if (office === 'BLACK_MARKET_BROKER') {
+  } else if (isMisdirector) {
     primaryActionLabel = '🔀 ' + AZ_UI.misdirect;
     primaryActionType = 'MISDIRECT';
     canActAtNight = true;
@@ -442,6 +466,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               hasVoteOnTarget={lobbyState.liveVotes[currentUserId] === player.userId}
               voteCount={voteCounts[player.userId] ?? 0}
               isSpeaking={speakingIds?.has(player.userId) ?? false}
+              isViewerMafia={isMafia}
+              isGameOver={lobbyState.phase === 'ENDED'}
               onSelect={handleCardClick}
             />
           ))}
