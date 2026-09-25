@@ -68,6 +68,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [activeDistrictTab, setActiveDistrictTab] = useState<AllInDistrict | 'ALL'>('ALL');
   const [soundMuted, setSoundMuted] = useState<boolean>(false);
+  const [showRoleReveal, setShowRoleReveal] = useState<boolean>(true);
+  
+  useEffect(() => {
+    if (showRoleReveal) {
+      const timer = setTimeout(() => setShowRoleReveal(false), 4500);
+      return () => clearTimeout(timer);
+    }
+  }, [showRoleReveal]);
 
   const currentUser = lobbyState.players[currentUserId];
   const isAlive = currentUser?.isAlive ?? false;
