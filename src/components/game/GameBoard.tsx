@@ -472,7 +472,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       </div>
 
       {/* ─── STICKY BOTTOM ACTION BAR ───────────────────────────────── */}
-      <div className="sticky bottom-4 z-40 p-4 sm:p-5 rounded-[20px] border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-200">
+      <div className="sticky bottom-0 sm:bottom-4 z-50 p-4 sm:p-5 rounded-t-[24px] sm:rounded-[24px] border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-[0_12px_40px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 w-full mb-0 sm:mb-4 border-b-0 sm:border-b">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
             isNightPhase
@@ -491,7 +491,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             </span>
             <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
               {isNightPhase && !canActAtNight
-                ? '🌙 Siz Məsum Vətəndaşsınız. Şəhər yatır, səhərin açılmasını gözləyin.'
+                ? '🌙 Siz Məsum Vətəndaşsınız. Şəhər yatır... Səhəri gözləyin.'
                 : selectedPlayerId
                 ? `Seçilmiş Hədəf: ${
                     lobbyState.players[selectedPlayerId]?.username ?? selectedPlayerId
