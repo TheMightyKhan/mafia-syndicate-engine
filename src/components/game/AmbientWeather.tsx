@@ -7,7 +7,7 @@ interface AmbientWeatherProps {
   readonly phase: GamePhase;
 }
 
-export const AmbientWeather: React.FC<AmbientWeatherProps> = ({ phase }) => {
+const AmbientWeatherComponent: React.FC<AmbientWeatherProps> = ({ phase }) => {
   const isNight = phase === 'NIGHT_BUFFER';
   const isVoting = phase === 'DAY_VOTING';
   const isDay = phase === 'DAY_CENTRAL_ASSEMBLY' || phase === 'DAY_REGIONAL_CAUCUS';
@@ -37,7 +37,7 @@ export const AmbientWeather: React.FC<AmbientWeatherProps> = ({ phase }) => {
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden mix-blend-screen transition-opacity duration-1000">
       {/* ─── NIGHT: FOG & LIGHTNING ─── */}
       <div className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${isNight ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 animate-drift" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-transparent to-transparent opacity-30 animate-drift" />
         <div className="absolute inset-0 bg-gradient-to-t from-blue-950/20 to-transparent" />
         
         {/* Lightning Flash */}
@@ -68,3 +68,5 @@ export const AmbientWeather: React.FC<AmbientWeatherProps> = ({ phase }) => {
     </div>
   );
 };
+
+export const AmbientWeather = React.memo(AmbientWeatherComponent);

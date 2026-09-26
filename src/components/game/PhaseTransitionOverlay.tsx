@@ -7,7 +7,7 @@ interface PhaseTransitionOverlayProps {
   phase: GamePhase;
 }
 
-export const PhaseTransitionOverlay: React.FC<PhaseTransitionOverlayProps> = ({ phase }) => {
+const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = ({ phase }) => {
   const [show, setShow] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<GamePhase | null>(null);
 
@@ -85,3 +85,5 @@ export const PhaseTransitionOverlay: React.FC<PhaseTransitionOverlayProps> = ({ 
     </div>
   );
 };
+
+export const PhaseTransitionOverlay = React.memo(PhaseTransitionOverlayComponent);

@@ -977,8 +977,8 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
       {/* ─── GAME OVER / VICTORY MODAL ───────────────────────────────── */}
       {isGameOver && (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn transition-colors duration-1000 ${isTownVictory ? 'bg-emerald-950/80' : isMafiaVictory ? 'bg-red-950/80' : 'bg-black/85'} backdrop-blur-xl`}>
-          <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80 backdrop-blur-3xl text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8`}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn transition-colors duration-1000 ${isTownVictory ? 'bg-emerald-950/80' : isMafiaVictory ? 'bg-red-950/80' : 'bg-black/85'} backdrop-blur-sm`}>
+          <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80  text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8`}>
             <div className="relative">
               {isTownVictory && <div className="absolute inset-0 bg-emerald-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
               {isMafiaVictory && <div className="absolute inset-0 bg-red-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}

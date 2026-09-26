@@ -25,7 +25,7 @@ export interface MorningNewspaperModalProps {
   readonly lastWills?: Record<string, string>;
 }
 
-export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
+const MorningNewspaperModalComponent: React.FC<MorningNewspaperModalProps> = ({
   isOpen,
   newspaper,
   roundNumber,
@@ -224,3 +224,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
     </div>
   );
 };
+
+export const MorningNewspaperModal = React.memo(MorningNewspaperModalComponent, (prev, next) => {
+  return prev.isOpen === next.isOpen && prev.lastLynchedPlayerName === next.lastLynchedPlayerName && prev.newspaper?.roundNumber === next.newspaper?.roundNumber;
+});

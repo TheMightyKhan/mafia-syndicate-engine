@@ -11,7 +11,7 @@ interface GameIntroOverlayProps {
   readonly roleFaction: 'MAFIA' | 'TOWN' | 'NEUTRAL';
 }
 
-export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ phase, roleName, roleFaction }) => {
+const GameIntroOverlayComponent: React.FC<GameIntroOverlayProps> = ({ phase, roleName, roleFaction }) => {
   const [show, setShow] = useState(false);
   const [hasShown, setHasShown] = useState(false);
 
@@ -70,3 +70,5 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ phase, roleN
     </div>
   );
 };
+
+export const GameIntroOverlay = React.memo(GameIntroOverlayComponent);
