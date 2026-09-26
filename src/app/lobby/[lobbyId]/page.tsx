@@ -42,6 +42,7 @@ import { AmbientWeather } from '../../../components/game/AmbientWeather';
 import { GameIntroOverlay } from '../../../components/game/GameIntroOverlay';
 import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
 import { LastWillModal } from '../../../components/ui/LastWillModal';
+import { GraveyardModal } from '../../../components/modals/GraveyardModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { PlayerProfileCard } from '../../../components/ui/PlayerProfileCard';

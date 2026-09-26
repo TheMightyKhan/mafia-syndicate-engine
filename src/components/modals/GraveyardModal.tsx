@@ -1,0 +1,87 @@
+'use client';
+
+import React from 'react';
+import { Skull, X, Ghost } from 'lucide-react';
+import { PlayerSession } from '../../types/game';
+import { Badge } from '../ui/Badge';
+
+interface GraveyardModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  players: Record<string, PlayerSession>;
+}
+
+export const GraveyardModal: React.FC<GraveyardModalProps> = ({ isOpen, onClose, players }) => {
+  if (!isOpen) return null;
+
+  const deadPlayers = Object.values(players).filter(p => !p.isAlive && !p.userId.startsWith('temp-'));
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] bg-zinc-950/90 flex items-center justify-center p-4 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg bg-zinc-900 border border-zinc-700/50 rounded-[20px] overflow-hidden shadow-2xl relative flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/50 hover:bg-zinc-800 p-2 rounded-full transition-colors z-10"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="p-8 text-center bg-zinc-950/50 border-b border-zinc-800/50 relative overflow-hidden">
+          <Ghost className="w-48 h-48 text-zinc-800/30 absolute -top-10 -right-10 transform rotate-12" />
+          <div className="relative z-10">
+            <h2 className="text-3xl font-black tracking-tight text-white flex items-center justify-center gap-3">
+              <Skull className="w-8 h-8 text-red-500" />
+              Qəbiristanlıq
+            </h2>
+            <p className="text-sm text-zinc-400 font-medium mt-2">
+              Ölülər danışmır, ancaq sirləri qalır.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-6 max-h-[50vh] overflow-y-auto">
+          {deadPlayers.length === 0 ? (
+            <div className="py-12 flex flex-col items-center justify-center text-center opacity-50">
+              <Ghost className="w-12 h-12 text-zinc-500 mb-3" />
+              <p className="text-sm text-zinc-400 font-bold uppercase tracking-wider">Hələlik heç kim ölməyib</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {deadPlayers.map((p) => {
+                const roleName =
+                  p.displayRole?.originalRoleName !== 'Secret' && p.displayRole?.originalRoleName !== 'Pending'
+                    ? p.displayRole?.localizedRoleName || p.displayRole?.originalRoleName
+                    : 'Bilinməyən Rol';
+
+                return (
+                  <div key={p.userId} className="flex items-center justify-between bg-zinc-950/50 border border-zinc-800/50 rounded-xl p-4 hover:border-red-500/30 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-zinc-900 border-2 border-zinc-800 flex items-center justify-center text-zinc-500 font-black group-hover:border-red-500/50 transition-colors">
+                        {p.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="font-bold text-zinc-300 line-through decoration-red-500/50">{p.username}</span>
+                        <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">{roleName}</span>
+                      </div>
+                    </div>
+                    {p.lastWill && (
+                      <Badge tone="purple" className="shrink-0">
+                        Vəsiyyəti Var
+                      </Badge>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
