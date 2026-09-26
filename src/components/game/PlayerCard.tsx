@@ -26,6 +26,7 @@ export interface PlayerCardProps {
   readonly onSelect?: (player: PlayerSession | ScrubbedPlayerView) => void;
   readonly onKick?: () => void;
   readonly targetIntent?: 'KILL' | 'PROTECT' | 'INVESTIGATE' | 'BLOCK' | 'MISDIRECT';
+  readonly isCompact?: boolean;
 }
 
 function isFullSession(p: PlayerSession | ScrubbedPlayerView): p is PlayerSession {
@@ -55,6 +56,7 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   onSelect,
   targetIntent,
   onKick,
+  isCompact = false,
 }) => {
   const isAlive = player.isAlive;
   const isHost = player.isHost;
@@ -120,7 +122,7 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`group relative p-4 rounded-[20px] p-2 border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
+      className={`group relative rounded-[20px] ${isCompact ? "p-2 min-h-[60px]" : "p-4 min-h-[120px]"} border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
         onSelect ? 'cursor-pointer hover:-translate-y-1 hover:' : 'cursor-default'
       } ${containerClasses}`}
     >

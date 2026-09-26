@@ -411,6 +411,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [isShowcaseOpen, setIsShowcaseOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
+  const [isCompactView, setIsCompactView] = useState<boolean>(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
@@ -537,6 +538,13 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 transition-colors duration-200">
+      {/* Global Phase Timer Bar */}
+      {lobbyState.phase !== 'LOBBY' && lobbyState.phase !== 'ENDED' && lobbyState.phaseDurationSeconds > 0 && (
+        <div 
+          className="fixed top-0 left-0 h-1.5 bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-1000 ease-linear z-[200] shadow-[0_0_15px_rgba(16,185,129,0.6)]" 
+          style={{ width: `${Math.max(0, Math.min(100, (lobbyState.phaseTimeRemaining / Math.max(1, lobbyState.phaseDurationSeconds)) * 100))}%` }} 
+        />
+      )}
       {/* ─── LOBBY HEADER BAR ───────────────────────────────────────── */}
       <div className="p-6 rounded-[24px] border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-200">
         <div>
@@ -766,7 +774,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {playersList.map((p) => (
-                <PlayerCard
+                <PlayerCard isCompact={isCompactView}
                   key={p.userId}
                   player={p}
                   isLobbyPhase={true}
