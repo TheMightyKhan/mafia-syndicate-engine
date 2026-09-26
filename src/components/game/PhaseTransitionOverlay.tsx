@@ -28,10 +28,16 @@ const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = (
       } else if (phase.includes('DAY')) {
         playDay();
       }
-      const timer = setTimeout(() => setShow(false), 3000); // Hide after 3 seconds
-      return () => clearTimeout(timer);
+      
     }
   }, [phase, currentPhase]);
+
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => setShow(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
 
   if (!show) return null;
 
