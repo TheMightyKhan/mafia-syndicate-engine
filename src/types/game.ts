@@ -93,6 +93,7 @@ export interface LobbyState {
   readonly globalNightKillCap: number;
   /** Latest morning newspaper generated after night resolution */
   readonly latestNewspaper?: MorningNewspaper | null;
+  readonly pastNewspapers?: readonly MorningNewspaper[];
   /** Private investigation intel keyed by investigator user ID */
   readonly privateInvestigations?: Readonly<Record<string, readonly InvestigationResult[]>>;
   /** Declared winner outcome when phase reaches ENDED */

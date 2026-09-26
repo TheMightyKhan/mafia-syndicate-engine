@@ -258,7 +258,16 @@ async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
       bufferedNightActions: [],
       mafiaMutinyActive: resolution.mutinyActive,
       mutineerIds: resolution.mutineerIds,
-      latestNewspaper: resolution.newspaper,
+      latestNewspaper: {
+        ...resolution.newspaper,
+        roundNumber: l.roundNumber,
+        headline: resolution.newspaper.publicDeaths.length > 0 ? 'Qanlı Gecə!' : 'Sükut',
+      },
+      pastNewspapers: [...(l.pastNewspapers || []), {
+        ...resolution.newspaper,
+        roundNumber: l.roundNumber,
+        headline: resolution.newspaper.publicDeaths.length > 0 ? 'Qanlı Gecə!' : 'Sükut',
+      }],
       roundNumber: l.roundNumber + 1,
       privateInvestigations: {
         ...(l.privateInvestigations || {}),

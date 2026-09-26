@@ -35,6 +35,7 @@ import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
 import { AchievementShowcaseModal } from '../../../components/modals/AchievementShowcaseModal';
 import { ProfileModal } from '../../../components/modals/ProfileModal';
+import { ArchiveModal } from '../../../components/modals/ArchiveModal';
 import { AmbientWeather } from '../../../components/game/AmbientWeather';
 import { GameIntroOverlay } from '../../../components/game/GameIntroOverlay';
 import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
@@ -393,6 +394,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
   const [isShowcaseOpen, setIsShowcaseOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
     dispatchAction({ action: 'SUBMIT_LAST_WILL', text });
