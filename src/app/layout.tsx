@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import './globals.css';
 import { Navbar } from '../components/layout/Navbar';
 import { ThemeProvider } from '../context/ThemeContext';
+import { RippleEffect } from '../components/ui/RippleEffect';
 
 export const metadata = {
   title: 'TDV MAFIA | Elit Onlayn Mafiya Platforması',
@@ -59,6 +60,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-[100dvh] max-w-[100vw] overflow-x-clip bg-zinc-50 dark:bg-zinc-950 dark:bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] dark:from-purple-900/10 dark:via-zinc-950 dark:to-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans selection:bg-purple-600 selection:text-white">
         <ThemeProvider>
+          <RippleEffect />
           <div className="flex flex-col min-h-[100dvh] max-w-[100vw] overflow-x-clip pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
             <Navbar />
             <main className="flex-1 min-w-0 max-w-[100vw] overflow-x-clip">
