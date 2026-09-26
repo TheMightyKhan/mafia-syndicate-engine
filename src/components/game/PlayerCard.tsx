@@ -63,6 +63,7 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   const isAlive = player.isAlive;
   const isHost = player.isHost;
   const isBot = isFullSession(player) ? player.isAiBotControlled : false;
+  const isAfk = !isBot && isFullSession(player) && player.lastSeenAt && (Date.now() - player.lastSeenAt > 15000);
 
   let roleTitle = player.username;
   let roleSubtitle = isLobbyPhase

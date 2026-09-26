@@ -364,6 +364,20 @@ export async function GET(request: Request, context: RouteContext) {
     const userId = url.searchParams.get('userId') || 'anon';
 
     let lobby = inMemoryLobbyStore.getLobby(lobbyId);
+    if (lobby && lobby.players[userId]) {
+       // Update lastSeenAt for the requesting user
+       inMemoryLobbyStore.updateLobby(lobbyId, (l) => {
+         if (!l.players[userId]) return l;
+         return {
+           ...l,
+           players: {
+             ...l.players,
+             [userId]: { ...l.players[userId], lastSeenAt: Date.now() }
+           }
+         };
+       });
+       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+    }
     if (!lobby) {
       lobby = getOrCreateLobby(lobbyId, userId && userId !== 'anon' ? { userId, username: 'Oyunçu', tier: 'TIER_1' } : undefined);
     }

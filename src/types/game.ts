@@ -29,7 +29,8 @@ export interface PlayerSession {
   readonly displayRole: FormattedRoleDisplay;
   readonly allInIdentity?: AllInPlayerIdentity;
   readonly currentDistrict?: AllInDistrict;
-  readonly disconnectedAt: number | null; // Unix timestamp in ms or null
+  readonly disconnectedAt: number | null;
+  readonly lastSeenAt?: number; // Unix timestamp in ms or null
   readonly isAiBotControlled: boolean;
   readonly lastWill?: string;
 }
