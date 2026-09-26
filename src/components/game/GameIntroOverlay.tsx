@@ -42,7 +42,10 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ phase, roleN
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+    <div 
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black transition-opacity duration-1000 cursor-pointer"
+      onClick={() => setShow(false)}
+    >
       
       {/* Background vignette */}
       <div className={`absolute inset-0 bg-gradient-to-br ${factionColors[roleFaction]} opacity-40 mix-blend-overlay`} />
@@ -53,6 +56,9 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ phase, roleN
         <h1 className={`text-6xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-[0_0_30px_currentColor]`}>
           {roleName}
         </h1>
+        <span className="mt-8 text-xs text-white/50 uppercase tracking-[0.2em] animate-pulse">
+          Keçmək üçün toxunun
+        </span>
       </div>
       
       <style dangerouslySetInnerHTML={{__html: `

@@ -38,26 +38,26 @@ export const PhaseTransitionOverlay: React.FC<PhaseTransitionOverlayProps> = ({ 
   let Icon = Sun;
   let title = 'Yeni Gün';
   let subtitle = '';
-  let bgClass = 'bg-amber-500/10 backdrop-blur-[20px]';
+  let bgClass = 'bg-amber-500/10 backdrop-blur-md';
   let textClass = 'text-amber-500';
 
   if (phase.includes('DAY_DISCUSSION') || phase.includes('DAY_CENTRAL_ASSEMBLY')) {
     Icon = Sun;
     title = 'Səhər Açılır';
     subtitle = 'Şəhər oyanır. Hadisələri müzakirə etmək vaxtıdır.';
-    bgClass = 'bg-amber-500/10 backdrop-blur-[20px]';
+    bgClass = 'bg-amber-500/10 backdrop-blur-md';
     textClass = 'text-amber-500';
   } else if (phase.includes('DAY_VOTING')) {
     Icon = Scale;
     title = 'Məhkəmə Başlayır';
     subtitle = 'Günahkarları mühakimə etmək üçün son şansınızdır.';
-    bgClass = 'bg-zinc-500/20 backdrop-blur-[20px]';
+    bgClass = 'bg-zinc-500/20 backdrop-blur-md';
     textClass = 'text-zinc-200';
   } else if (phase.includes('NIGHT_ACTION') || phase.includes('NIGHT_BUFFER')) {
     Icon = Moon;
     title = 'Gecə Çökür';
     subtitle = 'Məsumlar yatır, cinayətkarlar və müdafiəçilər hərəkətə keçir.';
-    bgClass = 'bg-blue-950/40 backdrop-blur-[24px]';
+    bgClass = 'bg-blue-950/40 backdrop-blur-md';
     textClass = 'text-blue-400';
   }
 
