@@ -67,6 +67,8 @@ export interface MorningNewspaper {
   readonly heresyClue: string | null;
   /** Night jitter delay that was applied before resolver ran (ms) */
   readonly jitterAppliedMs: number;
+  /** Last Will messages written by dead players (keyed by userId). Populated from localStorage on the client. */
+  readonly lastWills?: Readonly<Record<string, string>>;
 }
 
 export interface NightResolutionOutput {

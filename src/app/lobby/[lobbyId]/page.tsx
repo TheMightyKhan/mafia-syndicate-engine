@@ -31,6 +31,7 @@ import { PhaseTransitionOverlay } from '../../../components/game/PhaseTransition
 import { ExecutionOverlay } from '../../../components/game/ExecutionOverlay';
 import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
+import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
@@ -984,6 +985,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           </div>
         </div>
       )}
+
+      {/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
+      <AchievementToastSystem />
 
       {/* ─── FLOATING TOAST NOTIFICATION ─────────────────────────────── */}
       {toast && (
