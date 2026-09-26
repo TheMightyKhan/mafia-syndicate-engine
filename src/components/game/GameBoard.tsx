@@ -526,9 +526,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
 
         <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : theme.gridContainer}`}>
-          {displayedPlayers.filter(p => p.isAlive).map((player) => (
+          {displayedPlayers.filter(p => p.isAlive).map((player, index) => (
             <PlayerCard
               key={player.userId}
+              style={{ animationDelay: `${index * 30}ms` }}
               player={player}
               isSelf={player.userId === currentUserId}
               isSelected={selectedPlayerId === player.userId}
@@ -569,7 +570,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             </div>
             
             <div className={`grid ${isAllIn ? 'grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2' : theme.gridContainer} opacity-60 hover:opacity-100 transition-opacity duration-500`}>
-              {displayedPlayers.filter(p => !p.isAlive).map((player) => (
+              {displayedPlayers.filter(p => !p.isAlive).map((player, index) => (
                 <PlayerCard
                   key={player.userId}
                   player={player}

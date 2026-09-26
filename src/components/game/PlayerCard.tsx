@@ -27,6 +27,7 @@ export interface PlayerCardProps {
   readonly onKick?: () => void;
   readonly targetIntent?: 'KILL' | 'PROTECT' | 'INVESTIGATE' | 'BLOCK' | 'MISDIRECT';
   readonly isCompact?: boolean;
+  readonly style?: React.CSSProperties;
 }
 
 function isFullSession(p: PlayerSession | ScrubbedPlayerView): p is PlayerSession {
@@ -57,6 +58,7 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   targetIntent,
   onKick,
   isCompact = false,
+  style,
 }) => {
   const isAlive = player.isAlive;
   const isHost = player.isHost;
