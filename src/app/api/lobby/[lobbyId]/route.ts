@@ -393,11 +393,12 @@ export async function GET(request: Request, context: RouteContext) {
       Date.now() >= lobby.phaseEndsAt
     ) {
       lobby = await progressLobbyPhase(lobbyId);
-    } else if (lobby.phase === 'NIGHT_BUFFER') {
-      // Ensure bots have acted
+    } else if (lobby.phase !== 'LOBBY' && lobby.phase !== 'ENDED') {
       await botTakeoverController.executeAllBotActions(lobbyId);
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
-
+    }
+    
+    if (lobby.phase === 'NIGHT_BUFFER') {
       // Check if all living active night actors have submitted actions: auto-advance early!
       const alivePlayers = Object.values(lobby.players).filter(p => p.isAlive);
       const activeNightActors = alivePlayers.filter(p => {
