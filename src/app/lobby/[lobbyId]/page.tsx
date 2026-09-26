@@ -45,6 +45,7 @@ import { LastWillModal } from '../../../components/ui/LastWillModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
+import { ChatBox } from '../../../components/game/ChatBox';
 import { formatRoleDisplay } from '../../../types/roles';
 import { GamePhase, LobbyState, NightActionType, PlayerSession } from '../../../types/game';
 import { MorningNewspaper } from '../../../types/engine';
@@ -102,6 +103,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
     return {
       lobbyId,
+      chatMessages: [],
       hostUserId: 'usr-host-initial',
       mode,
       phase: 'LOBBY',

@@ -62,7 +62,19 @@ export interface AdminMasterUnlockState {
 
 import type { MorningNewspaper, InvestigationResult, WinConditionResult } from './engine';
 
+export type ChatChannel = 'LOBBY' | 'MAFIA' | 'DEAD';
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  content: string;
+  channel: ChatChannel;
+  timestamp: number;
+}
+
 export interface LobbyState {
+  chatMessages: ChatMessage[];
   readonly lobbyId: string;
   readonly hostUserId: string;
   readonly mode: GameMode;

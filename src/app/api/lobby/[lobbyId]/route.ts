@@ -678,6 +678,21 @@ export async function POST(request: Request, context: RouteContext) {
     } else if (action === 'PROGRESS_PHASE' || action === 'OVERRIDE_PHASE') {
       lobby = await progressLobbyPhase(lobbyId);
 
+    } else if (action === 'SEND_MESSAGE') {
+      const content = String(body.content || '').trim().slice(0, 300);
+      const channel = String(body.channel || 'LOBBY') as any;
+      if (content) {
+        inMemoryLobbyStore.addChatMessage(lobbyId, {
+          id: Math.random().toString(36).substring(2, 9),
+          senderId: userId,
+          senderName: String(body.username || 'Anon'),
+          content,
+          channel,
+          timestamp: Date.now()
+        });
+      }
+      lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
+
     } else if (action === 'SUBMIT_LAST_WILL') {
       const text = String(body.text || '');
       inMemoryLobbyStore.updateLobby(lobbyId, (l) => {

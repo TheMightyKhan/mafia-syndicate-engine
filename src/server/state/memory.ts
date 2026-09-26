@@ -14,11 +14,26 @@ import {
 import { GameMode } from '../../types/packs';
 import { PACKS_CONFIG } from '../../config/packs.config';
 
+import { ChatMessage } from '../../types/game';
+
 export class InMemoryLobbyStore {
   private lobbies: Map<string, LobbyState> = new Map();
   private waivers: Map<string, WaiverRecord[]> = new Map(); // lobbyId -> waivers
 
   /** Retrieve current lobby state or null */
+  
+  public addChatMessage(lobbyId: string, message: ChatMessage): LobbyState | null {
+    const lobby = this.lobbies.get(lobbyId);
+    if (!lobby) return null;
+    
+    // Keep only last 100 messages to prevent memory leak
+    const newMessages = [...lobby.chatMessages, message].slice(-100);
+    
+    const updated = { ...lobby, chatMessages: newMessages };
+    this.lobbies.set(lobbyId, updated);
+    return updated;
+  }
+
   public getLobby(lobbyId: string): LobbyState | null {
     return this.lobbies.get(lobbyId) || null;
   }
@@ -55,6 +70,7 @@ export class InMemoryLobbyStore {
       liveVotes: {},
       speakerQueue: [],
       bufferedNightActions: [],
+      chatMessages: [],
       minigameSubStates: {},
       roundNumber: 0,
       lastLynchedUserId: null,
