@@ -543,6 +543,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               isCurrentTurn={lobbyState.speakerQueue[0] === player.userId}
               hasVoteOnTarget={lobbyState.liveVotes[currentUserId] === player.userId}
               voteCount={canSeeVotes ? (voteCounts[player.userId] ?? 0) : 0}
+              voterUsernames={canSeeVotes ? Object.entries(lobbyState.liveVotes || {}).filter(([voterId, targetId]) => targetId === player.userId).map(([voterId]) => lobbyState.players[voterId]?.username || voterId) : []}
               isSpeaking={speakingIds?.has(player.userId) ?? false}
               isViewerMafia={isMafia}
               isGameOver={lobbyState.phase === 'ENDED'}

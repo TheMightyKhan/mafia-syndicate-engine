@@ -2,21 +2,16 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Link as LinkIcon,
-  Check,
-  Play,
-  Bot,
-  Zap,
-  Users,
-  Shield,
-  Target,
-  Skull,
-  Eye,
   Clock,
+  Skull,
+  Newspaper,
+  Shield,
+  Zap,
+  Flame,
+  AlertTriangle,
+  Building,
+  Target,
   Sparkles,
-  ChevronDown,
-  ChevronUp,
-  Sliders,
   Volume2,
   VolumeX,
   Trophy,
@@ -24,6 +19,10 @@ import {
   X,
   ScrollText,
   Send,
+  PenTool,
+  Check,
+  Link as LinkIcon,
+  Bot, Play, Sliders, ChevronUp, ChevronDown, Eye
 } from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
@@ -35,6 +34,8 @@ import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
 import { AmbientWeather } from '../../../components/game/AmbientWeather';
+import { GameIntroOverlay } from '../../../components/game/GameIntroOverlay';
+import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
 import { LastWillModal } from '../../../components/ui/LastWillModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
@@ -387,6 +388,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
 
   
   const [isLastWillOpen, setIsLastWillOpen] = useState<boolean>(false);
+  const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
     dispatchAction({ action: 'SUBMIT_LAST_WILL', text });
@@ -480,6 +482,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   );
   const lastLynchedName = lobbyState.lastLynchedUserId
     ? lobbyState.players[lobbyState.lastLynchedUserId]?.username || lobbyState.lastLynchedUserId
+    : null;
+  const lastLynchedRole = lobbyState.lastLynchedUserId
+    ? lobbyState.players[lobbyState.lastLynchedUserId]?.displayRole?.localizedRoleName || lobbyState.players[lobbyState.lastLynchedUserId]?.displayRole?.originalRoleName
     : null;
   const myPrivateInvestigations = lobbyState.privateInvestigations?.[currentUserId] || [];
 
@@ -900,7 +905,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           })()}
 
           <PhaseTransitionOverlay phase={lobbyState.phase} />
-          <ExecutionOverlay lynchedPlayerName={lastLynchedName} />
+          <ExecutionOverlay lynchedPlayerName={lastLynchedName} lynchedRole={lastLynchedRole} />
 
           {/* Interactive Game Board */}
           <GameBoard
@@ -1005,7 +1010,27 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       )}
 
       <AmbientWeather phase={lobbyState.phase} />
-      {/* ─── CHATS ─────────────────────────────────────────────────── */}
+      
+      {/* ─── DETECTIVE NOTEBOOK ────────────────────────────────────── */}
+      {!isGameOver && lobbyState.phase !== 'LOBBY' && (
+        <>
+          <button
+            onClick={() => setIsNotebookOpen(true)}
+            title="Detektiv Qeydləri"
+            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-indigo-900/90 text-indigo-100 shadow-[0_0_20px_rgba(49,46,129,0.5)] backdrop-blur-md flex items-center justify-center hover:bg-indigo-800 hover:scale-105 active:scale-95 transition-all border border-indigo-500/30"
+          >
+            <PenTool className="w-6 h-6" />
+          </button>
+          
+          <DetectiveNotebook
+            isOpen={isNotebookOpen}
+            onClose={() => setIsNotebookOpen(false)}
+            userId={currentUserId}
+          />
+        </>
+      )}
+
+{/* ─── CHATS ─────────────────────────────────────────────────── */}
       {!isGameOver && myPlayerSession && !myPlayerSession.isAlive && lobbyState.phase !== 'LOBBY' && (
         <GhostChat
           currentUserId={currentUserId}
@@ -1036,7 +1061,16 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       )}
 
       
-      {/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
+      
+      {/* ─── CINEMATIC GAME INTRO ──────────────────────────────────── */}
+      {myPlayerSession && (
+        <GameIntroOverlay 
+          phase={lobbyState.phase} 
+          roleName={myPlayerSession.displayRole?.localizedRoleName || myPlayerSession.displayRole?.originalRoleName || 'Vətəndaş'}
+          roleFaction={myFaction === 'MAFIA' ? 'MAFIA' : myFaction === 'NEUTRAL' ? 'NEUTRAL' : 'TOWN'}
+        />
+      )}
+{/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
       <AchievementToastSystem />
 
       {/* ─── FLOATING TOAST NOTIFICATION ─────────────────────────────── */}

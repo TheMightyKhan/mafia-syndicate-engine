@@ -18,6 +18,7 @@ export interface PlayerCardProps {
   readonly isSelected?: boolean;
   readonly isAccused?: boolean;
   readonly voteCount?: number;
+  readonly voterUsernames?: readonly string[];
   readonly isReady?: boolean;
   readonly isSpeaking?: boolean;
   readonly isViewerMafia?: boolean;
@@ -45,6 +46,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   isSelected = false,
   isAccused = false,
   voteCount = 0,
+  voterUsernames = [],
   isReady = false,
   isSpeaking = false,
   isViewerMafia = false,

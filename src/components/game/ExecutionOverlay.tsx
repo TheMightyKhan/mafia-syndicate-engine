@@ -4,9 +4,10 @@ import { playElimination } from '../../utils/sfx';
 
 interface ExecutionOverlayProps {
   lynchedPlayerName: string | null;
+  lynchedRole?: string | null;
 }
 
-export const ExecutionOverlay: React.FC<ExecutionOverlayProps> = ({ lynchedPlayerName }) => {
+export const ExecutionOverlay: React.FC<ExecutionOverlayProps> = ({ lynchedPlayerName, lynchedRole }) => {
   const [show, setShow] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
 
