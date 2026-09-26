@@ -395,3 +395,38 @@ export function playTick(): void {
   osc.start(now);
   osc.stop(now + 0.1);
 }
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHAT MESSAGE PING
+// ─────────────────────────────────────────────────────────────────────────────
+export function playMessagePing(): void {
+  if (isSoundMuted()) return;
+  try {
+    const played = playAudioFile('/sounds/chat_ping.wav', 0.5);
+    if (played) return;
+  } catch {}
+
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
+    
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    
+    osc.start(now);
+    osc.stop(now + 0.15);
+  } catch {
+    // Ignore
+  }
+}

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, MessageSquare } from 'lucide-react';
+import { playMessagePing } from '../../utils/sfx';
 import { ChatMessage, ChatChannel } from '../../types/game';
 
 interface ChatBoxProps {
@@ -16,6 +17,25 @@ export const ChatBox = React.memo(({ messages, currentUserId, onSendMessage, ava
   const [activeChannel, setActiveChannel] = useState<ChatChannel>(availableChannels[0]?.id || 'LOBBY');
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLengthRef = useRef(messages.length);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (messages.length > prevMessagesLengthRef.current) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.senderId !== currentUserId) {
+        playMessagePing();
+        if (!isOpen) {
+          setUnreadCount(prev => prev + 1);
+        }
+      }
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages, currentUserId, isOpen]);
+
+  useEffect(() => {
+    if (isOpen) setUnreadCount(0);
+  }, [isOpen]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -48,6 +68,11 @@ export const ChatBox = React.memo(({ messages, currentUserId, onSendMessage, ava
         className="fixed top-[50%] right-0 z-40 bg-zinc-900/90 hover:bg-zinc-800 text-white p-3 rounded-l-xl shadow-[-5px_0_15px_rgba(0,0,0,0.5)] border-y border-l border-zinc-700  transition-transform flex items-center justify-center group"
       >
         <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        {unreadCount > 0 && (
+          <span className="absolute -top-2 -left-2 bg-red-500 text-white text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-zinc-900 animate-bounce">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
+        )}
       </button>
     );
   }
