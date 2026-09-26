@@ -148,11 +148,17 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
          </div>
       )}
       
-      {/* Cinematic Death Watermark */}
+      {/* Cinematic Death Watermark & Blood Overlay */}
       {!isAlive && !isLobbyPhase && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center overflow-hidden pointer-events-none rounded-[12px]">
-          <div className="absolute inset-0 bg-red-950/10 backdrop-grayscale-[30%]"></div>
-          <div className="transform -rotate-[15deg] bg-red-600/90 text-white font-black text-[10px] tracking-[0.4em] uppercase px-12 py-1.5 shadow-[0_0_20px_rgba(220,38,38,0.6)] whitespace-nowrap backdrop-blur-sm border-y border-red-400/50">
+        <div className="absolute inset-0 z-20 flex items-center justify-center overflow-hidden pointer-events-none rounded-[12px] group-hover:scale-[1.02] transition-transform duration-300">
+          <div className="absolute inset-0 bg-red-950/20 backdrop-grayscale-[40%] transition-all"></div>
+          
+          {/* Blood splatters (CSS only) */}
+          <div className="absolute top-2 left-2 w-12 h-12 bg-red-600/30 rounded-full blur-md filter mix-blend-multiply"></div>
+          <div className="absolute bottom-4 right-1 w-16 h-8 bg-red-800/40 rounded-full blur-lg filter mix-blend-multiply rotate-45"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-1 bg-red-600 shadow-[0_0_10px_red] -rotate-[25deg] opacity-70"></div>
+          
+          <div className="transform -rotate-[15deg] bg-red-700/90 text-red-50 font-black text-[10px] tracking-[0.4em] uppercase px-14 py-2 shadow-[0_0_30px_rgba(220,38,38,0.8)] whitespace-nowrap backdrop-blur-md border-y border-red-400/80 z-10 animate-pulse">
             MƏHV EDİLİB
           </div>
         </div>

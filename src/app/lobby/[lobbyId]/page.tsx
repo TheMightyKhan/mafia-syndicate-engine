@@ -34,6 +34,7 @@ import { ExecutionOverlay } from '../../../components/game/ExecutionOverlay';
 import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
+import { AmbientWeather } from '../../../components/game/AmbientWeather';
 import { LastWillModal } from '../../../components/ui/LastWillModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
@@ -1003,6 +1004,38 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         </div>
       )}
 
+      <AmbientWeather phase={lobbyState.phase} />
+      {/* ─── CHATS ─────────────────────────────────────────────────── */}
+      {!isGameOver && myPlayerSession && !myPlayerSession.isAlive && lobbyState.phase !== 'LOBBY' && (
+        <GhostChat
+          currentUserId={currentUserId}
+          currentUsername={currentUsername}
+          isAlive={myPlayerSession.isAlive}
+          lobbyId={lobbyId}
+          phase={lobbyState.phase}
+          deadPlayerNames={Object.values(lobbyState.players)
+            .filter(p => !p.isAlive)
+            .map(p => ({ userId: p.userId, username: p.username }))}
+        />
+      )}
+
+      {!isGameOver && myPlayerSession && myPlayerSession.isAlive && myFaction === 'MAFIA' && lobbyState.phase !== 'LOBBY' && (
+        <FactionChat
+          currentUserId={currentUserId}
+          currentUsername={currentUsername}
+          faction="MAFIA"
+          lobbyId={lobbyId}
+          phase={lobbyState.phase}
+          factionMates={Object.values(lobbyState.players)
+            .filter(p => p.isAlive && (
+              p.displayRole?.formatted?.toLowerCase().includes('mafiya') ||
+              p.displayRole?.formatted?.toLowerCase().includes('mafia')
+            ))
+            .map(p => ({ userId: p.userId, username: p.username }))}
+        />
+      )}
+
+      
       {/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
       <AchievementToastSystem />
 
