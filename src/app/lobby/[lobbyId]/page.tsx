@@ -312,7 +312,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const handleStartGame = () => {
     if (totalPlayersCount < 3) {
       showToast(
-        'Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ 5 Botla Doldur" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!',
+        'Mafiya oyununa başlamaq üçün ən azı 3-4 oyunçu lazımdır. "⚡ İştirakçıya Tamamla" düyməsinə klikləyərək AI botları masaya əlavə edə bilərsiniz!',
         'warning'
       );
       return;

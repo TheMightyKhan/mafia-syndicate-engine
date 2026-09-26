@@ -530,7 +530,7 @@ export async function POST(request: Request, context: RouteContext) {
       lobby = inMemoryLobbyStore.getLobby(lobbyId) || lobby;
 
     } else if (action === 'FILL_BOTS') {
-      const targetCount = Math.max(4, Math.min(10, Number(body.targetCount) || 5));
+      const targetCount = Math.max(4, Math.min(45, Number(body.targetCount) || 5));
       let currentCount = Object.keys(lobby.players).length;
       const existingNames = new Set(Object.values(lobby.players).map(p => p.username));
       for (const name of BOT_NAME_POOL) {
