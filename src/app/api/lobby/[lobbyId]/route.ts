@@ -58,72 +58,35 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
   // Deck generation based on player count and mode
   const isInferno = lobby.mode === 'DANTES_INFERNO';
   const roleDeck: Array<{ nickname: string; base: string; az: string; faction: CoreFaction; office: any }> = [];
-  
-  // 1. Qatil (Həmişə 1 ədəd olur)
-  roleDeck.push({
-    nickname: isInferno ? 'Malebranche İblisi' : 'Qatil (Don)',
-    base: 'Killer',
-    az: 'Mafiya',
-    faction: 'MAFIA',
-    office: 'PUBLIC_DEFENDER',
-  });
 
-  // 2. Şərif (Həmişə 1 ədəd olur, əgər 3-dən çox oyunçu varsa)
-  if (count > 2) {
-    roleDeck.push({
-      nickname: isInferno ? 'Vergili' : 'Şərif',
-      base: 'Investigator',
-      az: 'Şərif',
-      faction: 'TOWN',
-      office: 'CITY_INVESTIGATOR',
-    });
+  const addM1 = () => roleDeck.push({ nickname: isInferno ? 'Malebranche' : 'Qatil (Don)', base: 'Killer', az: 'Mafiya (Qatil)', faction: 'MAFIA', office: 'PUBLIC_DEFENDER' });
+  const addM2 = () => roleDeck.push({ nickname: isInferno ? 'Yalançı Ruh' : 'Şərr Atan (Framer)', base: 'Framer', az: 'Şərr Atan', faction: 'MAFIA', office: 'MEDIA_MANIPULATOR' });
+  const addM3 = () => roleDeck.push({ nickname: isInferno ? 'Zülmət Elçisi' : 'Mafiya Üzvü', base: 'Killer', az: 'Mafiya Üzvü', faction: 'MAFIA', office: 'PUBLIC_DEFENDER' });
+
+  const addT1 = () => roleDeck.push({ nickname: isInferno ? 'Mərhəmət Mələyi' : 'Həkim', base: 'Doctor', az: 'Həkim', faction: 'TOWN', office: 'CITY_SURGEON' });
+  const addT2 = () => roleDeck.push({ nickname: isInferno ? 'Vergili' : 'Şərif', base: 'Investigator', az: 'Şərif', faction: 'TOWN', office: 'CITY_INVESTIGATOR' });
+  const addT3 = () => roleDeck.push({ nickname: isInferno ? 'Sirena' : 'Gözbağlayıcı', base: 'Blocker', az: 'Gözbağlayıcı', faction: 'TOWN', office: 'CITY_NIGHTLIFE' });
+
+  const addN1 = () => roleDeck.push({ nickname: isInferno ? 'Kafirlərin Lideri' : 'Dəli (Jester)', base: 'Jester', az: 'Dəli', faction: 'NEUTRAL_EVIL', office: 'PUBLIC_DEFENDER' });
+
+  if (count <= 4) {
+    addM1();
+    if (count >= 4) addT1();
+  } else if (count === 5) {
+    addM1(); addT1(); addT2();
+  } else if (count === 6) {
+    addM1(); addN1(); addT1(); addT2();
+  } else if (count === 7) {
+    addM1(); addM2(); addT1(); addT2();
+  } else if (count === 8) {
+    addM1(); addM2(); addT1(); addT2(); addT3();
+  } else if (count === 9) {
+    addM1(); addM2(); addN1(); addT1(); addT2(); addT3();
+  } else if (count >= 10) {
+    addM1(); addM2(); addM3(); addT1(); addT2(); addT3();
+    if (count >= 11) addN1();
   }
 
-  // 3. Həkim (4-dən çox oyunçu)
-  if (count > 3) {
-    roleDeck.push({
-      nickname: isInferno ? 'Mərhəmət Mələyi' : 'Həkim',
-      base: 'Doctor',
-      az: 'Həkim',
-      faction: 'TOWN',
-      office: 'CITY_SURGEON',
-    });
-  }
-
-  // 4. Şantajçı / Framer (5-dən çox oyunçu - İkinci Mafiya)
-  if (count >= 5) {
-    roleDeck.push({
-      nickname: isInferno ? 'Yalançı Ruh' : 'Şərr Atan (Framer)',
-      base: 'Framer',
-      az: 'Şərr Atan',
-      faction: 'MAFIA',
-      office: 'MEDIA_MANIPULATOR',
-    });
-  }
-
-  // 5. Gözbağlayıcı / Escort (6-dan çox oyunçu)
-  if (count >= 6) {
-    roleDeck.push({
-      nickname: isInferno ? 'Sirena' : 'Gözbağlayıcı',
-      base: 'Blocker',
-      az: 'Gözbağlayıcı',
-      faction: 'TOWN',
-      office: 'CITY_NIGHTLIFE',
-    });
-  }
-
-  // 6. Neytral Dəli (7-dən çox oyunçu)
-  if (count >= 7) {
-    roleDeck.push({
-      nickname: isInferno ? 'Kafirlərin Lideri' : 'Dəli (Jester)',
-      base: 'Jester',
-      az: 'Dəli',
-      faction: 'NEUTRAL_EVIL',
-      office: 'PUBLIC_DEFENDER',
-    });
-  }
-
-  // Qalan hamısı Məsum Vətəndaş
   while (roleDeck.length < count) {
     roleDeck.push({
       nickname: isInferno ? 'Günahkar Ruh' : 'Vətəndaş',
@@ -133,7 +96,6 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
       office: 'PUBLIC_DEFENDER',
     });
   }
-
 
   // Shuffle deck
   roleDeck.sort(() => Math.random() - 0.5);
