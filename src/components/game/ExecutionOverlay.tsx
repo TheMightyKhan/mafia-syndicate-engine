@@ -7,7 +7,7 @@ interface ExecutionOverlayProps {
   lynchedRole?: string | null;
 }
 
-export const ExecutionOverlay: React.FC<ExecutionOverlayProps> = ({ lynchedPlayerName, lynchedRole }) => {
+const ExecutionOverlayComponent: React.FC<ExecutionOverlayProps> = ({ lynchedPlayerName, lynchedRole }) => {
   const [show, setShow] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState<string | null>(null);
 
@@ -16,18 +16,20 @@ export const ExecutionOverlay: React.FC<ExecutionOverlayProps> = ({ lynchedPlaye
       setCurrentPlayer(lynchedPlayerName);
       setShow(true);
       playElimination();
-      
-      const timer = setTimeout(() => {
-        setShow(false);
-      }, 4000);
-      return () => clearTimeout(timer);
     }
   }, [lynchedPlayerName, currentPlayer]);
+
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => setShow(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-red-950/80 backdrop-blur-[24px] backdrop-grayscale-[50%] transition-opacity duration-500 pointer-events-none">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-red-950/80 backdrop-blur-sm backdrop-grayscale transition-opacity duration-500 pointer-events-none">
       <div className="flex flex-col items-center gap-6 animate-[executeDrop_0.5s_cubic-bezier(0.25,1,0.5,1)_forwards]">
         <div className="relative">
           <Gavel className="w-32 h-32 text-red-500 drop-shadow-[0_0_30px_rgba(239,68,68,0.8)] z-10 relative animate-[gavelSmash_0.5s_ease-in_forwards]" strokeWidth={1} />
@@ -62,3 +64,5 @@ export const ExecutionOverlay: React.FC<ExecutionOverlayProps> = ({ lynchedPlaye
     </div>
   );
 };
+
+export const ExecutionOverlay = React.memo(ExecutionOverlayComponent);

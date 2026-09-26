@@ -220,7 +220,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const isNightPhase = phase === 'NIGHT_BUFFER';
   const isVotingPhase = phase === 'DAY_VOTING';
   const hasCastVote = Boolean(lobbyState.liveVotes[currentUserId]);
-  const canSeeVotes = !isAlive || hasCastVote || !isVotingPhase;
+  const canSeeVotes = true;
   const isDayDiscussion =
     phase === 'DAY_CENTRAL_ASSEMBLY' ||
     phase === 'DAY_REGIONAL_CAUCUS';
