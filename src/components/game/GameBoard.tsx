@@ -455,6 +455,62 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       )}
 
+      {/* ─── SPEAKER QUEUE BANNER ──────────────────────────────────── */}
+      {isDayDiscussion && lobbyState.speakerQueue.length > 0 && (
+        <div className="rounded-[16px] border border-amber-500/30 bg-amber-950/20 px-4 py-3 flex items-center gap-3 overflow-hidden">
+          {/* Now Speaking */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="relative">
+              <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.7)]">
+                <span className="text-black font-black text-sm">
+                  {(lobbyState.players[lobbyState.speakerQueue[0]] as PlayerSession)?.username?.charAt(0)?.toUpperCase() ?? '?'}
+                </span>
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-zinc-900 animate-pulse" />
+            </div>
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-amber-500">İNDİ DANIŞIR</div>
+              <div className="text-sm font-black text-amber-200 leading-tight">
+                {(lobbyState.players[lobbyState.speakerQueue[0]] as PlayerSession)?.username ?? '—'}
+                {lobbyState.speakerQueue[0] === currentUserId && (
+                  <span className="ml-1.5 text-[9px] bg-amber-500 text-black px-1.5 py-0.5 rounded-full font-black">SƏN</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Queue divider */}
+          {lobbyState.speakerQueue.length > 1 && (
+            <>
+              <div className="h-8 w-px bg-amber-700/30 mx-1 shrink-0" />
+              {/* Next up */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-[9px] font-black text-amber-600 uppercase tracking-wider shrink-0">Növbə:</span>
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  {lobbyState.speakerQueue.slice(1, 5).map((uid, i) => {
+                    const p = lobbyState.players[uid] as PlayerSession | undefined;
+                    return (
+                      <div
+                        key={uid}
+                        className="flex items-center gap-1 bg-zinc-900/60 border border-amber-700/20 rounded-lg px-2 py-0.5 shrink-0"
+                        style={{ opacity: 1 - i * 0.2 }}
+                      >
+                        <span className="w-4 h-4 rounded-full bg-zinc-700 flex items-center justify-center text-[9px] font-black text-zinc-300">
+                          {i + 2}
+                        </span>
+                        <span className="text-xs font-bold text-zinc-400 truncate max-w-[60px]">
+                          {p?.username ?? uid}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {/* ─── ACTIVE PLAYERS GRID ────────────────────────────────────── */}
       <div>
         <div className="flex items-center justify-between mb-3">

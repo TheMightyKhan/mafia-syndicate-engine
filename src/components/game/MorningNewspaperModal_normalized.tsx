@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { Newspaper, X, Skull, AlertTriangle, Flame, Clock, Search, Mail } from 'lucide-react';
@@ -21,8 +21,6 @@ export interface MorningNewspaperModalProps {
   readonly isAllIn?: boolean;
   readonly hasMutinyOccurred?: boolean;
   readonly packId?: string;
-  /** Last Will messages from dead players (keyed by userId), read from localStorage */
-  readonly lastWills?: Record<string, string>;
 }
 
 export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
@@ -37,7 +35,6 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
   isAllIn = false,
   packId = '',
   hasMutinyOccurred = false,
-  lastWills = {},
 }) => {
   if (!isOpen || !newspaper) return null;
 
@@ -61,14 +58,14 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
         {/* Newspaper Masthead */}
         <div className={`py-6 text-center mb-4 flex flex-col gap-2 ${isAllIn ? 'border-y-2 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : theme.newspaperMasthead}`}>
           <div className="text-[11px] tracking-widest uppercase text-stone-600 dark:text-stone-400 font-sans font-bold">
-            TDV MAFIA • Səhər Xüsusi Buraxılışı
+            TDV MAFIA â€¢ SÉ™hÉ™r XÃ¼susi BuraxÄ±lÄ±ÅŸÄ±
           </div>
           <h1 className="text-5xl sm:text-6xl font-black uppercase tracking-tighter my-2 text-zinc-900 dark:text-zinc-100 font-serif">
             {AZ_UI.morningBulletin}
           </h1>
           <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-500/20 pt-3 mt-2 font-mono uppercase tabular-nums font-bold tracking-widest">
             <span>Raund #{roundNumber}</span>
-            <span>Gecə Əməliyyatlarının Nəticələri</span>
+            <span>GecÉ™ ÆmÉ™liyyatlarÄ±nÄ±n NÉ™ticÉ™lÉ™ri</span>
             <span>Jitter: {(newspaper.jitterAppliedMs / 1000).toFixed(1)}s</span>
           </div>
         </div>
@@ -77,10 +74,10 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
         {lastLynchedPlayerName && (
           <div className="p-4 rounded-[8px] border border-rose-300 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/20 font-sans">
             <div className="text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-1">
-              Məhkəmə İttihamı Nəticəsi
+              MÉ™hkÉ™mÉ™ Ä°ttihamÄ± NÉ™ticÉ™si
             </div>
             <div className="text-sm text-stone-800 dark:text-stone-200">
-              Vətəndaşların səs çoxluğu ilə ittiham olunan{' '}
+              VÉ™tÉ™ndaÅŸlarÄ±n sÉ™s Ã§oxluÄŸu ilÉ™ ittiham olunan{' '}
               <strong className="text-rose-600 dark:text-rose-400">{lastLynchedPlayerName}</strong>{' '}
               edam edildi.
             </div>
@@ -98,50 +95,34 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
 
           {newspaper.publicDeaths.length === 0 ? (
             <p className="text-sm italic text-stone-600 dark:text-stone-400 py-2">
-              {AZ_UI.newspaperNoDeaths} Şəhər bu gecə sakit qaldı.
+              {AZ_UI.newspaperNoDeaths} ÅÉ™hÉ™r bu gecÉ™ sakit qaldÄ±.
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {newspaper.publicDeaths.map((death) => {
-                const lastWill = lastWills[death.victimPlayerId] ?? newspaper.lastWills?.[death.victimPlayerId];
-                return (
-                  <div
-                    key={death.victimPlayerId}
-                    className="p-3.5 rounded-[8px] border-l-4 border-l-rose-600 border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-950/50 flex flex-col gap-1"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                        Qurban: {playerNames[death.victimPlayerId] ?? death.victimPlayerId}
-                      </span>
-                      <Badge tone="red">{AZ_DEATH_CAUSES[death.cause] ?? death.cause}</Badge>
-                    </div>
-
-                    {death.isCleaned ? (
-                      <div className="text-xs text-rose-600 dark:text-rose-400 italic bg-rose-500/10 p-1.5 rounded">
-                        {AZ_UI.cleanedBodyDescription}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-stone-600 dark:text-stone-400">
-                        Ölüm Səbəbi: {AZ_DEATH_CAUSES[death.cause] ?? death.cause}
-                        {death.killerFaction && ` (${death.killerFaction})`}
-                      </div>
-                    )}
-
-                    {/* Son Vasiyət — Last Will */}
-                    {lastWill && (
-                      <div className="mt-2 p-2.5 rounded-md border border-amber-300/60 dark:border-amber-700/50 bg-amber-50/80 dark:bg-amber-950/30 flex flex-col gap-1">
-                        <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-amber-700 dark:text-amber-400">
-                          <Mail className="w-3 h-3 shrink-0" />
-                          Son Vasiyət
-                        </div>
-                        <p className="text-xs italic text-amber-900 dark:text-amber-200 leading-relaxed">
-                          &ldquo;{lastWill}&rdquo;
-                        </p>
-                      </div>
-                    )}
+              {newspaper.publicDeaths.map((death) => (
+                <div
+                  key={death.victimPlayerId}
+                  className="p-3.5 rounded-[8px] border-l-4 border-l-rose-600 border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-950/50 flex flex-col gap-1"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                      Qurban: {playerNames[death.victimPlayerId] ?? death.victimPlayerId}
+                    </span>
+                    <Badge tone="red">{AZ_DEATH_CAUSES[death.cause] ?? death.cause}</Badge>
                   </div>
-                );
-              })}
+
+                  {death.isCleaned ? (
+                    <div className="text-xs text-rose-600 dark:text-rose-400 italic bg-rose-500/10 p-1.5 rounded">
+                      {AZ_UI.cleanedBodyDescription}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-stone-600 dark:text-stone-400">
+                      Ã–lÃ¼m SÉ™bÉ™bi: {AZ_DEATH_CAUSES[death.cause] ?? death.cause}
+                      {death.killerFaction && ` (${death.killerFaction})`}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -151,7 +132,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
           <div className="p-4 rounded-[8px] border border-blue-400/50 dark:border-blue-700/60 bg-blue-50/90 dark:bg-blue-950/40 font-sans flex flex-col gap-2.5 shadow-sm">
             <div className="flex items-center gap-2 text-xs font-black text-blue-900 dark:text-blue-300 uppercase tracking-wider">
               <Search className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span>Şəxsi Gecə İstintaq Nəticəniz (Yalnız Sizə Görünür)</span>
+              <span>ÅÉ™xsi GecÉ™ Ä°stintaq NÉ™ticÉ™niz (YalnÄ±z SizÉ™ GÃ¶rÃ¼nÃ¼r)</span>
             </div>
             {privateInvestigations.map((inv, idx) => (
               <div
@@ -159,13 +140,13 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
                 className="p-3 rounded-lg bg-white dark:bg-zinc-900 border border-blue-200 dark:border-blue-800/80 flex items-center justify-between gap-3 text-xs sm:text-sm"
               >
                 <div>
-                  <span className="text-zinc-500 dark:text-zinc-400">Şübhəli Hədəf:</span>{' '}
+                  <span className="text-zinc-500 dark:text-zinc-400">ÅÃ¼bhÉ™li HÉ™dÉ™f:</span>{' '}
                   <strong className="text-zinc-900 dark:text-zinc-100 font-bold">
                     {playerNames[inv.targetPlayerId] ?? inv.targetPlayerId}
                   </strong>
                 </div>
                 <Badge tone={inv.revealedFaction === 'MAFIA' ? 'red' : 'emerald'}>
-                  {inv.revealedFaction === 'MAFIA' ? 'MAFİYA ŞÜBHƏLİSİ' : 'MƏSUM VƏTƏNDAŞ'}
+                  {inv.revealedFaction === 'MAFIA' ? 'MAFÄ°YA ÅÃœBHÆLÄ°SÄ°' : 'MÆSUM VÆTÆNDAÅ'}
                 </Badge>
               </div>
             ))}
@@ -188,16 +169,16 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
         {hasMutinyOccurred && (
           <div className="p-4 rounded-[8px] border border-orange-400/60 dark:border-orange-600/50 bg-gradient-to-r from-orange-50 dark:from-orange-950/30 to-amber-50 dark:to-amber-950/20 font-sans">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-lg">⚡</span>
+              <span className="text-lg">âš¡</span>
               <div className="text-xs font-black uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
-                Xüsusi Kəşfiyyat Xəbəri
+                XÃ¼susi KÉ™ÅŸfiyyat XÉ™bÉ™ri
               </div>
             </div>
             <div className="text-sm font-bold text-orange-900 dark:text-orange-200">
-              Gecə ərzində şəhərin alt dünyasında daxili bir ixtilaf qeydə alındı.
+              GecÉ™ É™rzindÉ™ ÅŸÉ™hÉ™rin alt dÃ¼nyasÄ±nda daxili bir ixtilaf qeydÉ™ alÄ±ndÄ±.
             </div>
             <div className="text-xs text-orange-700 dark:text-orange-300 mt-1 opacity-80 italic">
-              Mənbə məxfi saxlanılır. Kəşfiyyatçılar yuxarı idarəyə hesabat verdi.
+              MÉ™nbÉ™ mÉ™xfi saxlanÄ±lÄ±r. KÉ™ÅŸfiyyatÃ§Ä±lar yuxarÄ± idarÉ™yÉ™ hesabat verdi.
             </div>
           </div>
         )}
@@ -206,7 +187,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
         {dante && (
           <div className="p-3.5 rounded-[8px] border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20 font-sans">
             <div className="text-xs font-bold text-red-700 dark:text-red-400">
-              Dante Cəhənnəmi: {AZ_DANTE_CIRCLES[dante.currentCircle]?.name ?? dante.currentCircle}
+              Dante CÉ™hÉ™nnÉ™mi: {AZ_DANTE_CIRCLES[dante.currentCircle]?.name ?? dante.currentCircle}
             </div>
             <div className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
               {AZ_DANTE_CIRCLES[dante.currentCircle]?.rule}
@@ -217,7 +198,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
         {/* Footer Dismiss Button */}
         <div className="pt-2 font-sans">
           <Button variant="secondary" size="md" onClick={onClose} fullWidth>
-            Oxundu &amp; Məhkəməyə Qayıt
+            Oxundu & MÉ™hkÉ™mÉ™yÉ™ QayÄ±t
           </Button>
         </div>
       </div>
