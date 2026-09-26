@@ -31,6 +31,7 @@ export interface PlayerSession {
   readonly currentDistrict?: AllInDistrict;
   readonly disconnectedAt: number | null; // Unix timestamp in ms or null
   readonly isAiBotControlled: boolean;
+  readonly lastWill?: string;
 }
 
 export type NightActionType =

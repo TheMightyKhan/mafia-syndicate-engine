@@ -11,6 +11,7 @@ import {
   LeaveLobbyPayload,
   RequestAdminDualUnlockPayload,
   ServerToClientEvents,
+  SubmitLastWillPayload,
   SubmitNightActionPayload,
 } from './events';
 import { redisStateAdapter } from '../state/redis';
@@ -108,6 +109,30 @@ export class SocketLobbyDispatcher {
     }
   }
 
+  /** Handle submitting last will */
+  public async handleSubmitLastWill(socket: TypedSocket, payload: SubmitLastWillPayload): Promise<void> {
+    const updatedLobby = await redisStateAdapter.updateLobby(payload.lobbyId, (lobby) => {
+      const player = lobby.players[payload.userId];
+      if (!player) return lobby;
+      
+      return {
+        ...lobby,
+        players: {
+          ...lobby.players,
+          [payload.userId]: {
+            ...player,
+            lastWill: payload.text
+          }
+        }
+      };
+    });
+    
+    if (updatedLobby) {
+      socket.broadcastToRoom(payload.lobbyId, 'LOBBY_STATE_SYNC', { lobby: updatedLobby });
+      socket.emit('LOBBY_STATE_SYNC', { lobby: updatedLobby });
+    }
+  }
+
   /** Handle night action submission into jittered buffer */
   public async handleSubmitNightAction(
     socket: TypedSocket,
@@ -146,6 +171,7 @@ export class SocketLobbyDispatcher {
     bindListener('LEAVE_LOBBY', (payload) => void this.handleLeaveLobby(socket, payload));
     bindListener('REQUEST_ADMIN_DUAL_UNLOCK', (payload) => void this.handleAdminDualUnlock(socket, payload));
     bindListener('GRANT_WAIVER', (payload) => void this.handleGrantWaiver(socket, payload));
+    bindListener('SUBMIT_LAST_WILL', (payload) => void this.handleSubmitLastWill(socket, payload));
     bindListener('SUBMIT_NIGHT_ACTION', (payload) => void this.handleSubmitNightAction(socket, payload));
   }
 }

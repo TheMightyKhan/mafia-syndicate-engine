@@ -669,6 +669,21 @@ export async function POST(request: Request, context: RouteContext) {
     } else if (action === 'PROGRESS_PHASE' || action === 'OVERRIDE_PHASE') {
       lobby = await progressLobbyPhase(lobbyId);
 
+    } else if (action === 'SUBMIT_LAST_WILL') {
+      const text = String(body.text || '');
+      inMemoryLobbyStore.updateLobby(lobbyId, (l) => {
+        if (!l.players[userId]) return l;
+        return {
+          ...l,
+          players: {
+            ...l.players,
+            [userId]: {
+              ...l.players[userId],
+              lastWill: text,
+            },
+          },
+        };
+      });
     } else if (action === 'DUAL_UNLOCK') {
       const role = body.role === 'THE_ARCHITECT' ? 'THE_ARCHITECT' : 'THE_BAILIFF';
       const unlockRes = inMemoryLobbyStore.submitAdminUnlock(lobbyId, userId, role);

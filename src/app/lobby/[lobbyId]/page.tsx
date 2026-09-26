@@ -22,6 +22,8 @@ import {
   Trophy,
   RotateCcw,
   X,
+  ScrollText,
+  Send,
 } from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
@@ -32,6 +34,7 @@ import { ExecutionOverlay } from '../../../components/game/ExecutionOverlay';
 import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
+import { LastWillModal } from '../../../components/ui/LastWillModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
@@ -380,6 +383,18 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       userId: p.userId,
       isAlive: p.isAlive,
     }));
+
+  
+  const [isLastWillOpen, setIsLastWillOpen] = useState<boolean>(false);
+  
+  const submitLastWill = (text: string) => {
+    dispatchAction({ action: 'SUBMIT_LAST_WILL', text });
+  };
+
+  const lastWills = Object.values(lobbyState.players).reduce((acc, p) => { 
+    if (p.lastWill) acc[p.userId] = p.lastWill; 
+    return acc; 
+  }, {} as Record<string, string>);
 
   const [isRoleRevealed, setIsRoleRevealed] = useState<boolean>(false);
   const [isNewspaperOpen, setIsNewspaperOpen] = useState<boolean>(false);
@@ -907,6 +922,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             onSpeakingChange={setSpeakingIds}
           />
 
+
           {/* Morning Newspaper Modal */}
           <MorningNewspaperModal
             isOpen={isNewspaperOpen}
@@ -917,6 +933,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             playerNames={playerNames}
             privateInvestigations={myPrivateInvestigations}
             hasMutinyOccurred={lobbyState.mafiaMutinyActive ?? false}
+            lastWills={lastWills}
             onClose={() => setIsNewspaperOpen(false)}
           />
         </div>

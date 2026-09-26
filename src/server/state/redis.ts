@@ -72,7 +72,11 @@ export class RedisStateAdapter implements LobbyStateStore {
     return this.inMemoryFallback.createLobby(lobbyId, hostUserId, hostSession, mode);
   }
 
-  public async joinPlayer(
+      public async updateLobby(lobbyId: string, updater: (lobby: LobbyState) => LobbyState): Promise<LobbyState | null> {
+    return this.inMemoryFallback.updateLobby(lobbyId, updater);
+  }
+
+public async joinPlayer(
     lobbyId: string,
     player: PlayerSession
   ): Promise<{ success: boolean; error?: string; lobby?: LobbyState }> {

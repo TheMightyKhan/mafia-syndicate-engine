@@ -33,6 +33,12 @@ export interface CastVotePayload {
   readonly candidateUserId: string;
 }
 
+export interface SubmitLastWillPayload {
+  readonly lobbyId: string;
+  readonly userId: string;
+  readonly text: string;
+}
+
 export interface SubmitNightActionPayload {
   readonly lobbyId: string;
   readonly actorPlayerId: string;
@@ -62,6 +68,7 @@ export interface ClientToServerEvents {
   JOIN_LOBBY: (payload: JoinLobbyPayload) => void;
   LEAVE_LOBBY: (payload: LeaveLobbyPayload) => void;
   CAST_VOTE: (payload: CastVotePayload) => void;
+  SUBMIT_LAST_WILL: (payload: SubmitLastWillPayload) => void;
   SUBMIT_NIGHT_ACTION: (payload: SubmitNightActionPayload) => void;
   REQUEST_ADMIN_DUAL_UNLOCK: (payload: RequestAdminDualUnlockPayload) => void;
   GRANT_WAIVER: (payload: GrantWaiverPayload) => void;
