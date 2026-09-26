@@ -377,3 +377,21 @@ export function playElimination(): void {
     // Never crash
   }
 }
+
+
+export function playTick(): void {
+  const ctx = getAudioContext();
+  if (!ctx || isSoundMuted()) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(800, now);
+  osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+  gain.gain.setValueAtTime(MASTER_VOLUME * 0.3, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.1);
+}

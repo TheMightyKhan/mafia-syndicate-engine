@@ -84,6 +84,7 @@ export interface LobbyState {
   readonly speakerQueue: readonly string[];
   readonly bufferedNightActions: readonly NightActionBufferItem[];
   readonly mafiaMutinyActive?: boolean;
+  readonly achievementsJustUnlocked?: Readonly<Record<string, string[]>>;
   readonly mutineerIds?: readonly string[];
   readonly minigameSubStates: MinigameSubStates;
   readonly roundNumber: number;

@@ -34,6 +34,7 @@ import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
 import { AchievementShowcaseModal } from '../../../components/modals/AchievementShowcaseModal';
+import { ProfileModal } from '../../../components/modals/ProfileModal';
 import { AmbientWeather } from '../../../components/game/AmbientWeather';
 import { GameIntroOverlay } from '../../../components/game/GameIntroOverlay';
 import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
@@ -391,6 +392,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [isLastWillOpen, setIsLastWillOpen] = useState<boolean>(false);
   const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
   const [isShowcaseOpen, setIsShowcaseOpen] = useState<boolean>(false);
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
     dispatchAction({ action: 'SUBMIT_LAST_WILL', text });
@@ -1076,6 +1078,18 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         isOpen={isShowcaseOpen}
         onClose={() => setIsShowcaseOpen(false)}
         userId={currentUserId}
+      />
+            <ProfileModal 
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        currentUsername={currentUsername}
+        onUpdateUsername={(name) => {
+          setCurrentUsername(name);
+          localStorage.setItem('mafia_username', name);
+          // Only updates local state, to update server requires a socket event.
+        }}
+        tier={currentUserTier}
+        totalXp={0}
       />
       {/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
       <AchievementToastSystem />
