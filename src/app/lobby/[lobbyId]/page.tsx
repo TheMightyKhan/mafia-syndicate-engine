@@ -22,7 +22,8 @@ import {
   PenTool,
   Check,
   Link as LinkIcon,
-  Bot, Play, Sliders, ChevronUp, ChevronDown, Eye
+  Bot, Play, Sliders, ChevronUp, ChevronDown, Eye,
+  BookOpen
 } from 'lucide-react';
 import { AdminDualLockPanel } from '../../../components/admin/AdminDualLockPanel';
 import { ArchitectConsole } from '../../../components/admin/ArchitectConsole';
@@ -1130,6 +1131,48 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           </button>
         </div>
       )}
+
+      {/* Son Vəsiyyət Button */}
+      {myPlayerSession && myPlayerSession.isAlive && lobbyState.phase !== 'ENDED' && (
+        <button
+          onClick={() => setIsLastWillOpen(true)}
+          title="Son Vəsiyyət"
+          className="fixed bottom-6 left-6 z-40 p-3 rounded-full bg-amber-900/90 hover:bg-amber-800 text-amber-100 shadow-[0_0_20px_rgba(120,53,15,0.5)] border border-amber-500/30 transition-transform hover:scale-110 active:scale-95"
+        >
+          <PenTool className="w-5 h-5" />
+        </button>
+      )}
+
+      {/* Qəzet Arxivi Button */}
+      {myPlayerSession && lobbyState.pastNewspapers && lobbyState.pastNewspapers.length > 0 && (
+        <button
+          onClick={() => setIsArchiveOpen(true)}
+          title="Qəzet Arxivi"
+          className="fixed bottom-6 left-24 z-40 p-3 rounded-full bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_20px_rgba(217,119,6,0.5)] border border-amber-500/30 transition-transform hover:scale-110 active:scale-95"
+        >
+          <BookOpen className="w-5 h-5" />
+        </button>
+      )}
+
+      <LastWillModal
+        isOpen={isLastWillOpen}
+        initialWill={''}
+        onClose={() => setIsLastWillOpen(false)}
+        onSave={(text) => {
+          localStorage.setItem(`mafia_lastwill_${currentUserId}_${lobbyId}`, text);
+          dispatchAction({ action: 'SUBMIT_LAST_WILL', willContent: text });
+          setIsLastWillOpen(false);
+          showToast('Son Vəsiyyət qeydə alındı.', 'success');
+        }}
+      />
+
+      <ArchiveModal 
+        isOpen={isArchiveOpen}
+        onClose={() => setIsArchiveOpen(false)}
+        pastNewspapers={lobbyState.pastNewspapers || []}
+        playerNames={playerNames}
+      />
+
     </div>
   );
 }
