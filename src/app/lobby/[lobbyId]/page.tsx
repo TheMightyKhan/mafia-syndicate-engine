@@ -33,6 +33,7 @@ import { ExecutionOverlay } from '../../../components/game/ExecutionOverlay';
 import { FactionChat } from '../../../components/game/FactionChat';
 import { GhostChat } from '../../../components/game/GhostChat';
 import { AchievementToastSystem } from '../../../components/ui/AchievementToast';
+import { AchievementShowcaseModal } from '../../../components/modals/AchievementShowcaseModal';
 import { AmbientWeather } from '../../../components/game/AmbientWeather';
 import { GameIntroOverlay } from '../../../components/game/GameIntroOverlay';
 import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
@@ -389,6 +390,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   
   const [isLastWillOpen, setIsLastWillOpen] = useState<boolean>(false);
   const [isNotebookOpen, setIsNotebookOpen] = useState<boolean>(false);
+  const [isShowcaseOpen, setIsShowcaseOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
     dispatchAction({ action: 'SUBMIT_LAST_WILL', text });
@@ -1070,7 +1072,12 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           roleFaction={myFaction === 'MAFIA' ? 'MAFIA' : myFaction === 'NEUTRAL' ? 'NEUTRAL' : 'TOWN'}
         />
       )}
-{/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
+      <AchievementShowcaseModal 
+        isOpen={isShowcaseOpen}
+        onClose={() => setIsShowcaseOpen(false)}
+        userId={currentUserId}
+      />
+      {/* ─── ACHIEVEMENT TOAST SYSTEM ──────────────────────────────── */}
       <AchievementToastSystem />
 
       {/* ─── FLOATING TOAST NOTIFICATION ─────────────────────────────── */}

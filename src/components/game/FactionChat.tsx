@@ -91,7 +91,7 @@ export const FactionChat: React.FC<FactionChatProps> = ({
   const isNightPhase = phase.includes('NIGHT');
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+    <div className="fixed bottom-6 right-24 z-40 flex flex-col items-end gap-3">
       {/* Chat Panel */}
       {isOpen && (
         <div
