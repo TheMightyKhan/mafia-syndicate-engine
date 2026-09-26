@@ -412,6 +412,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
   const [isCompactView, setIsCompactView] = useState<boolean>(false);
+  const [isGameOverDismissed, setIsGameOverDismissed] = useState<boolean>(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState<boolean>(false);
   
   const submitLastWill = (text: string) => {
@@ -989,10 +990,25 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         </div>
       )}
 
+      {/* RE-OPEN GAME OVER BUTTON */}
+      {isGameOver && isGameOverDismissed && (
+        <button
+          onClick={() => setIsGameOverDismissed(false)}
+          className="fixed top-24 left-1/2 -translate-x-1/2 z-40 bg-zinc-900/90 hover:bg-zinc-800 text-white px-4 py-2 rounded-full shadow-lg border border-zinc-700 font-bold tracking-widest text-xs uppercase animate-bounce"
+        >
+          YEKUN NƏTİCƏNİ GÖSTƏR
+        </button>
+      )}
       {/* ─── GAME OVER / VICTORY MODAL ───────────────────────────────── */}
-      {isGameOver && (
+      {isGameOver && !isGameOverDismissed && (
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn transition-colors duration-1000 ${isTownVictory ? 'bg-emerald-950/80' : isMafiaVictory ? 'bg-red-950/80' : 'bg-black/85'} backdrop-blur-sm`}>
-          <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80  text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8`}>
+          <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80  text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8 relative`}>
+            <button 
+              onClick={() => setIsGameOverDismissed(true)} 
+              className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50 text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
             <div className="relative">
               
               

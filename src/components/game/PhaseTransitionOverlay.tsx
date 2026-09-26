@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { GamePhase } from '@/types/index';
+import { GamePhase } from '../../types/game';
 import { Sun, Moon, Scale, Skull } from 'lucide-react';
 import { playNight, playDay, playGavel } from '../../utils/sfx';
 
@@ -10,9 +12,17 @@ interface PhaseTransitionOverlayProps {
 const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = ({ phase }) => {
   const [show, setShow] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<GamePhase | null>(null);
+  const [isRendered, setIsRendered] = useState(false);
 
   useEffect(() => {
-    // Only trigger if phase actually changes to a main phase
+    if (show) setIsRendered(true);
+    else {
+      const t = setTimeout(() => setIsRendered(false), 500);
+      return () => clearTimeout(t);
+    }
+  }, [show]);
+
+  useEffect(() => {
     if (
       phase !== currentPhase &&
       ['DAY_DISCUSSION', 'DAY_CENTRAL_ASSEMBLY', 'DAY_VOTING', 'NIGHT_ACTION', 'NIGHT_BUFFER'].includes(phase)
@@ -20,7 +30,6 @@ const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = (
       setCurrentPhase(phase);
       setShow(true);
       
-      // Play cinematic audio based on phase
       if (phase.includes('NIGHT')) {
         playNight();
       } else if (phase.includes('VOTING')) {
@@ -28,7 +37,6 @@ const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = (
       } else if (phase.includes('DAY')) {
         playDay();
       }
-      
     }
   }, [phase, currentPhase]);
 
@@ -39,7 +47,7 @@ const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = (
     }
   }, [show]);
 
-  if (!show) return null;
+  if (!isRendered) return null;
 
   let Icon = Sun;
   let title = 'Yeni Gün';
@@ -68,7 +76,7 @@ const PhaseTransitionOverlayComponent: React.FC<PhaseTransitionOverlayProps> = (
   }
 
   return (
-    <div className={`fixed inset-0 z-[60] flex items-center justify-center ${bgClass} transition-opacity duration-500 pointer-events-none`}>
+    <div className={`fixed inset-0 z-[60] flex items-center justify-center ${bgClass} transition-opacity duration-500 pointer-events-none ${show ? 'opacity-100' : 'opacity-0'}`}>
       <div className="flex flex-col items-center gap-6 animate-[scaleIn_0.5s_ease-out_forwards]">
         <Icon className={`w-24 h-24 ${textClass} drop-shadow-[0_0_20px_currentColor] animate-pulse`} strokeWidth={1} />
         <div className="text-center">
