@@ -998,6 +998,38 @@ export default function LobbyPage({ params }: LobbyPageProps) {
               </div>
             )}
 
+            {/* Post-Game True Roles Reveal Table */}
+            <div className="w-full mt-2 mb-2 p-1">
+              <div className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 mb-3 ml-2">
+                Tam İfşa (Bütün Rollar)
+              </div>
+              <div className="flex flex-col gap-2 max-h-[35vh] overflow-y-auto custom-scrollbar pr-2">
+                {Object.values(lobbyState.players).map(p => {
+                  const pFaction = p.allInIdentity?.layer1Faction || 'TOWN';
+                  const isPMafia = pFaction === 'MAFIA' || pFaction === 'YAKUZA' || pFaction === 'VOID_CULT' || pFaction === 'NEUTRAL_KILLER';
+                  return (
+                    <div key={p.userId} className={`flex items-center justify-between p-3 rounded-xl border ${isPMafia ? 'bg-red-950/20 border-red-900/30' : pFaction.includes('NEUTRAL') ? 'bg-purple-950/20 border-purple-900/30' : 'bg-emerald-950/20 border-emerald-900/30'}`}>
+                      <div className="flex flex-col">
+                        <span className={`font-bold ${!p.isAlive ? 'line-through opacity-50' : ''}`}>
+                          {p.username} {p.userId === currentUserId ? '(Siz)' : ''}
+                        </span>
+                        <span className={`text-xs font-black uppercase tracking-wider ${isPMafia ? 'text-red-400' : pFaction.includes('NEUTRAL') ? 'text-purple-400' : 'text-emerald-400'}`}>
+                          {p.displayRole.localizedRoleName || p.displayRole.originalRoleName}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {p.isAlive ? (
+                          <span className="px-2 py-1 rounded bg-green-500/20 text-green-400 text-[10px] font-bold uppercase tracking-wider">Sağdır</span>
+                        ) : (
+                          <span className="px-2 py-1 rounded bg-zinc-500/20 text-zinc-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"><Skull className="w-3 h-3"/> Ölü</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="w-full mt-4">
               <Button
                 variant="primary"
