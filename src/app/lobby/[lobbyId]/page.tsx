@@ -44,6 +44,8 @@ import { DetectiveNotebook } from '../../../components/game/DetectiveNotebook';
 import { LastWillModal } from '../../../components/ui/LastWillModal';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
+import { PlayerProfileCard } from '../../../components/ui/PlayerProfileCard';
+import { recordGameResult } from '../../../utils/stats';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
 import { ChatBox } from '../../../components/game/ChatBox';
 import { formatRoleDisplay } from '../../../types/roles';
