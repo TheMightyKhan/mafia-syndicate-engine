@@ -38,7 +38,7 @@ const DISTRICT_TONES: Record<AllInDistrict, BadgeTone> = {
   INDUSTRIAL: 'amber',
 };
 
-export const PlayerCard: React.FC<PlayerCardProps> = ({
+const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   player,
   isLobbyPhase = false,
   isSelf = false,
@@ -162,7 +162,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           <div className="absolute bottom-4 right-1 w-16 h-8 bg-red-800/40 rounded-full blur-lg filter mix-blend-multiply rotate-45"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-1 bg-red-600 shadow-[0_0_10px_red] -rotate-[25deg] opacity-70"></div>
           
-          <div className="transform -rotate-[15deg] bg-red-700/90 text-red-50 font-black text-[10px] tracking-[0.4em] uppercase px-14 py-2 shadow-[0_0_30px_rgba(220,38,38,0.8)] whitespace-nowrap backdrop-blur-md border-y border-red-400/80 z-10 animate-pulse">
+          <div className="transform -rotate-[15deg] bg-red-700/90 text-red-50 font-black text-[10px] tracking-[0.4em] uppercase px-14 py-2 shadow-[0_0_30px_rgba(220,38,38,0.8)] whitespace-nowrap border-y border-red-400/80 z-10 animate-pulse">
             MƏHV EDİLİB
           </div>
         </div>
@@ -276,3 +276,23 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     </div>
   );
 };
+
+// Deep compare function to prevent useless re-renders of heavy cards on mobile
+export const PlayerCard = React.memo(PlayerCardComponent, (prev, next) => {
+  return (
+    prev.isLobbyPhase === next.isLobbyPhase &&
+    prev.isSelf === next.isSelf &&
+    prev.isCurrentTurn === next.isCurrentTurn &&
+    prev.hasVoteOnTarget === next.hasVoteOnTarget &&
+    prev.isSelected === next.isSelected &&
+    prev.isAccused === next.isAccused &&
+    prev.voteCount === next.voteCount &&
+    prev.isReady === next.isReady &&
+    prev.isSpeaking === next.isSpeaking &&
+    prev.isViewerMafia === next.isViewerMafia &&
+    prev.isGameOver === next.isGameOver &&
+    prev.targetIntent === next.targetIntent &&
+    JSON.stringify(prev.voterUsernames) === JSON.stringify(next.voterUsernames) &&
+    JSON.stringify(prev.player) === JSON.stringify(next.player)
+  );
+});

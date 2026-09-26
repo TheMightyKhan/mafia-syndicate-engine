@@ -204,7 +204,10 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         if (res.ok) {
           const data = await res.json();
           if (data?.rawLobby) {
-            setLobbyState(data.rawLobby);
+            setLobbyState((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(data.rawLobby)) return prev;
+              return data.rawLobby;
+            });
           }
         }
       } catch {
@@ -247,7 +250,10 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         if (res.ok) {
           const data = await res.json();
           if (data?.rawLobby) {
-            setLobbyState(data.rawLobby);
+            setLobbyState((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(data.rawLobby)) return prev;
+              return data.rawLobby;
+            });
           }
         }
       } catch {
@@ -274,7 +280,10 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         if (res.ok) {
           const data = await res.json();
           if (data?.rawLobby) {
-            setLobbyState(data.rawLobby);
+            setLobbyState((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(data.rawLobby)) return prev;
+              return data.rawLobby;
+            });
           }
         }
       } catch {
