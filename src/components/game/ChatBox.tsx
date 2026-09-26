@@ -45,7 +45,7 @@ export const ChatBox = React.memo(({ messages, currentUserId, onSendMessage, ava
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-[50%] right-0 z-40 bg-zinc-900/90 hover:bg-zinc-800 text-white p-3 rounded-l-xl shadow-[-5px_0_15px_rgba(0,0,0,0.5)] border-y border-l border-zinc-700 backdrop-blur-md transition-transform flex items-center justify-center group"
+        className="fixed top-[50%] right-0 z-40 bg-zinc-900/90 hover:bg-zinc-800 text-white p-3 rounded-l-xl shadow-[-5px_0_15px_rgba(0,0,0,0.5)] border-y border-l border-zinc-700  transition-transform flex items-center justify-center group"
       >
         <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
       </button>
@@ -53,7 +53,7 @@ export const ChatBox = React.memo(({ messages, currentUserId, onSendMessage, ava
   }
 
   return (
-    <div className="fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-zinc-950/95 sm:border-l border-zinc-800 z-50 flex flex-col shadow-2xl backdrop-blur-xl animate-[slideInRight_0.3s_ease-out]">
+    <div className="fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-zinc-950/95 sm:border-l border-zinc-800 z-50 flex flex-col shadow-2xl  animate-[slideInRight_0.3s_ease-out]">
       {/* Header */}
       <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
         <h3 className="font-bold text-white flex items-center gap-2">

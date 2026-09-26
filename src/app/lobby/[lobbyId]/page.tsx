@@ -984,9 +984,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn transition-colors duration-1000 ${isTownVictory ? 'bg-emerald-950/80' : isMafiaVictory ? 'bg-red-950/80' : 'bg-black/85'} backdrop-blur-sm`}>
           <div className={`w-full max-w-2xl rounded-[32px] border ${isTownVictory ? 'border-emerald-500/40' : isMafiaVictory ? 'border-red-500/40' : 'border-purple-500/40'} bg-white/5 dark:bg-zinc-950/80  text-zinc-950 dark:text-white p-8 sm:p-12 shadow-2xl flex flex-col items-center text-center gap-8`}>
             <div className="relative">
-              {isTownVictory && <div className="absolute inset-0 bg-emerald-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
-              {isMafiaVictory && <div className="absolute inset-0 bg-red-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
-              {!isTownVictory && !isMafiaVictory && <div className="absolute inset-0 bg-purple-500 blur-[60px] opacity-30 rounded-full animate-pulse" />}
+              
+              
+              
               
               <div className={`relative z-10 w-32 h-32 rounded-[40px] flex items-center justify-center shadow-2xl ${isTownVictory ? 'bg-gradient-to-tr from-emerald-600 to-teal-400 shadow-emerald-500/40' : isMafiaVictory ? 'bg-gradient-to-tr from-red-600 to-orange-500 shadow-red-500/40' : 'bg-gradient-to-tr from-purple-600 to-amber-500 shadow-purple-500/40'}`}>
                 {isTownVictory ? <Shield className="w-16 h-16 text-white" /> : isMafiaVictory ? <Target className="w-16 h-16 text-white" /> : <Skull className="w-16 h-16 text-white" />}
@@ -1011,7 +1011,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             </div>
 
             {winnerNames.length > 0 && (
-              <div className={`w-full p-6 rounded-[20px] bg-black/20 border ${isTownVictory ? 'border-emerald-500/20' : isMafiaVictory ? 'border-red-500/20' : 'border-purple-500/20'} text-left backdrop-blur-md`}>
+              <div className={`w-full p-6 rounded-[20px] bg-black/20 border ${isTownVictory ? 'border-emerald-500/20' : isMafiaVictory ? 'border-red-500/20' : 'border-purple-500/20'} text-left`}>
                 <div className={`text-xs font-black uppercase tracking-[0.2em] mb-4 ${isTownVictory ? 'text-emerald-500' : isMafiaVictory ? 'text-red-500' : 'text-purple-500'}`}>
                   QALİB HEYƏT:
                 </div>
@@ -1083,7 +1083,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
           <button
             onClick={() => setIsNotebookOpen(true)}
             title="Detektiv Qeydləri"
-            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-indigo-900/90 text-indigo-100 shadow-[0_0_20px_rgba(49,46,129,0.5)] backdrop-blur-md flex items-center justify-center hover:bg-indigo-800 hover:scale-105 active:scale-95 transition-all border border-indigo-500/30"
+            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-indigo-900/90 text-indigo-100 shadow-[0_0_20px_rgba(49,46,129,0.5)] flex items-center justify-center hover:bg-indigo-800 hover:scale-105 active:scale-95 transition-all border border-indigo-500/30"
           >
             <PenTool className="w-6 h-6" />
           </button>
@@ -1159,7 +1159,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       {/* ─── FLOATING TOAST NOTIFICATION ─────────────────────────────── */}
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border shadow-2xl flex items-center gap-3 backdrop-blur-md transition-all animate-bounceIn max-w-md ${
+          className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl border shadow-2xl flex items-center gap-3 transition-all animate-bounceIn max-w-md ${
             toast.tone === 'success'
               ? 'border-emerald-500/40 bg-emerald-950/95 text-emerald-100 shadow-emerald-500/20'
               : toast.tone === 'warning'

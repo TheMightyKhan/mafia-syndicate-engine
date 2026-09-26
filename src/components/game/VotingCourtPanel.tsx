@@ -143,7 +143,7 @@ export const VotingCourtPanel: React.FC<VotingCourtPanelProps> = ({
       {/* Dynamic Top Suspects Leaderboard */}
 
       {canSeeVotes && topSuspects.length > 0 && !isTreacheryBlind && (
-        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm">
+        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/50">
           <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3 flex items-center gap-2">
             <Scale className="w-3 h-3 text-red-500" />
             Cari Məhkəmə Liderləri (Ən çox səs toplayanlar)

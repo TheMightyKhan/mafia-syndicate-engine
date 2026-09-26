@@ -13,7 +13,7 @@ export const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 animate-fadeIn">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80  p-4 sm:p-6 animate-fadeIn">
       <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
         <div className="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/50">
           <div className="flex items-center gap-2 text-indigo-400">

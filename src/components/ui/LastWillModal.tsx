@@ -31,7 +31,7 @@ export const LastWillModal: React.FC<LastWillModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80  animate-fadeIn">
       <div className="w-full max-w-md bg-[url('https://www.transparenttextures.com/patterns/lined-paper.png')] bg-amber-50 dark:bg-zinc-900 border border-amber-200 dark:border-zinc-700 rounded-xl shadow-2xl overflow-hidden relative">
         {/* Header */}
         <div className="bg-amber-100/80 dark:bg-zinc-950/80 p-4 border-b border-amber-200 dark:border-zinc-800 flex items-center justify-between">

@@ -51,7 +51,7 @@ const MorningNewspaperModalComponent: React.FC<MorningNewspaperModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 z-50 bg-zinc-950/80  flex items-center justify-center p-4 animate-fadeIn"
       onClick={onClose}
     >
       <div

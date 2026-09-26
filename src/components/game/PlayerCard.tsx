@@ -103,7 +103,7 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
   if (!isAlive && !isLobbyPhase) {
     containerClasses = 'bg-zinc-100/60 dark:bg-zinc-950/60 border-zinc-200 dark:border-zinc-800/60 opacity-60 grayscale-[40%]';
   } else if (isAccused) {
-    containerClasses = 'bg-red-500/10 dark:bg-red-950/40 border-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]/80 shadow-[0_0_25px_rgba(239,68,68,0.5)] animate-pulse';
+    containerClasses = 'bg-red-500/10 dark:bg-red-950/40 border-red-500 border border-red-500/50 shadow-[0_0_25px_rgba(239,68,68,0.4)]';
   } else if (isSelected) {
     containerClasses = 'bg-blue-50/90 dark:bg-blue-950/50 border-blue-500 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]/40 shadow-lg shadow-blue-500/20';
   } else if (isSpeaking) {
@@ -138,13 +138,13 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
       {isSelected && targetIntent && (
          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden rounded-[20px]">
             {targetIntent === 'KILL' && (
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(239,68,68,0.2)_100%)] flex items-center justify-center animate-pulse">
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(239,68,68,0.2)_100%)] flex items-center justify-center">
                   <Target className="w-24 h-24 text-red-500/30 absolute animate-ping" />
                   <Target className="w-24 h-24 text-red-500/60 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" />
                </div>
             )}
             {targetIntent === 'PROTECT' && (
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(16,185,129,0.2)_100%)] flex items-center justify-center animate-pulse">
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(16,185,129,0.2)_100%)] flex items-center justify-center">
                   <Shield className="w-24 h-24 text-emerald-500/30 absolute animate-ping" />
                   <Shield className="w-24 h-24 text-emerald-500/60 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
                </div>
@@ -158,11 +158,11 @@ const PlayerCardComponent: React.FC<PlayerCardProps> = ({
           <div className="absolute inset-0 bg-red-950/20 backdrop-grayscale-[40%] transition-all"></div>
           
           {/* Blood splatters (CSS only) */}
-          <div className="absolute top-2 left-2 w-12 h-12 bg-red-600/30 rounded-full blur-md filter mix-blend-multiply"></div>
-          <div className="absolute bottom-4 right-1 w-16 h-8 bg-red-800/40 rounded-full blur-lg filter mix-blend-multiply rotate-45"></div>
+          
+          
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-1 bg-red-600 shadow-[0_0_10px_red] -rotate-[25deg] opacity-70"></div>
           
-          <div className="transform -rotate-[15deg] bg-red-700/90 text-red-50 font-black text-[10px] tracking-[0.4em] uppercase px-14 py-2 shadow-[0_0_30px_rgba(220,38,38,0.8)] whitespace-nowrap border-y border-red-400/80 z-10 animate-pulse">
+          <div className="transform -rotate-[15deg] bg-red-700/90 text-red-50 font-black text-[10px] tracking-[0.4em] uppercase px-14 py-2 shadow-[0_0_30px_rgba(220,38,38,0.8)] whitespace-nowrap border-y border-red-400/80 z-10">
             MƏHV EDİLİB
           </div>
         </div>
