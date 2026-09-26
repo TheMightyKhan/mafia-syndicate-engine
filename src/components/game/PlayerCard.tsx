@@ -24,6 +24,7 @@ export interface PlayerCardProps {
   readonly isViewerMafia?: boolean;
   readonly isGameOver?: boolean;
   readonly onSelect?: (player: PlayerSession | ScrubbedPlayerView) => void;
+  readonly onKick?: () => void;
   readonly targetIntent?: 'KILL' | 'PROTECT' | 'INVESTIGATE' | 'BLOCK' | 'MISDIRECT';
 }
 
@@ -53,6 +54,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   isGameOver = false,
   onSelect,
   targetIntent,
+  onKick,
 }) => {
   const isAlive = player.isAlive;
   const isHost = player.isHost;
@@ -118,7 +120,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`relative p-4 rounded-[20px] p-2 border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
+      className={`group relative p-4 rounded-[20px] p-2 border transition-all duration-300 flex flex-col justify-between gap-3 overflow-hidden select-none ${
         onSelect ? 'cursor-pointer hover:-translate-y-1 hover:' : 'cursor-default'
       } ${containerClasses}`}
     >
