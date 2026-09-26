@@ -16,22 +16,21 @@ export const GameIntroOverlay: React.FC<GameIntroOverlayProps> = ({ phase, roleN
   const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
-    // Only show once when the game starts (transitions out of LOBBY)
     if (phase !== 'LOBBY' && phase !== 'ENDED' && !hasShown) {
       setHasShown(true);
       setShow(true);
       
-      // Dramatic sound
       playGavel();
       setTimeout(playGavel, 600);
-      
-      const timer = setTimeout(() => {
-        setShow(false);
-      }, 5000); // Show for 5 seconds
-      
-      return () => clearTimeout(timer);
     }
   }, [phase, hasShown]);
+
+  useEffect(() => {
+    if (show) {
+      const timer = setTimeout(() => setShow(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
 
   if (!show) return null;
 
