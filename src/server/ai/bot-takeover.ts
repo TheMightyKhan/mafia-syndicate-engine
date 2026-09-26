@@ -154,6 +154,7 @@ export interface BotSession {
   /** Chain of stateful interaction IDs for multi-turn context */
   previousInteractionId: string | null;
   readonly actionLog: BotActionRecord[];
+  lastChatRound?: number;
 }
 
 /** Internal tracker entry for a player's disconnect timer */
@@ -196,6 +197,8 @@ function buildSystemInstruction(player: PlayerSession, lobby: LobbyState): strin
     `- Refer to deception roles as "Gözbağlayıcı / Illusionist".`,
     `- Refer to disruption/block roles as "Disrupter".`,
     `- Use clinical, strategic language. Keep responses concise (1–3 sentences max).`,
+    `- ALL IN-CHARACTER CHAT AND RATIONALES MUST BE IN AZERBAIJANI LANGUAGE (Azərbaycan dilində).`,
+    `- DO NOT sound like an AI assistant. Sound like a real player playing mafia. Be natural, sometimes emotional or suspicious.`,
     ``,
     `Faction objectives:`,
     faction === 'MAFIA'          ? `Eliminate Town and other factions to achieve Mafia majority.` :
@@ -221,16 +224,26 @@ function buildNightActionPrompt(player: PlayerSession, lobby: LobbyState): strin
     ? `Last night's public report: Round ${lobby.roundNumber - 1} deaths have been publicly announced.`
     : 'This is the first night — no prior deaths.';
 
+  const recentChats = (lobby.chatMessages || [])
+    .filter(msg => msg.channel === 'LOBBY' || (msg.channel === 'MAFIA' && player.allInIdentity?.layer1Faction === 'MAFIA'))
+    .slice(-10)
+    .map(msg => `[${msg.senderName}]: ${msg.content}`)
+    .join('\n');
+
   return [
     `PHASE: NIGHT_BUFFER (Round ${lobby.roundNumber}).`,
     lastPaper,
     `Alive targets you may act on:`,
     alivePlayers,
     ``,
+    `Recent chat history:`,
+    recentChats || '(None)',
+    ``,
     `Based on your faction (${player.allInIdentity?.layer1Faction ?? 'TOWN'}) and office (${player.allInIdentity?.layer2Office ?? 'CITY_INVESTIGATOR'}), choose ONE action.`,
+    `Use the chat history to inform your decision (e.g. kill the person acting suspicious, protect the person claiming Sheriff).`,
     ``,
     `Respond ONLY with valid JSON in this exact format (no markdown, no prose):`,
-    `{"actionType":"KILL|PROTECT|INVESTIGATE|BLOCK|MISDIRECT|FRAME","targetPlayerId":"<userId>","rationale":"<1-sentence strategic reason>"}`,
+    `{"actionType":"KILL|PROTECT|INVESTIGATE|BLOCK|MISDIRECT|FRAME","targetPlayerId":"<userId>","rationale":"<1-sentence strategic reason in Azerbaijani>"}`,
   ].join('\n');
 }
 
@@ -243,13 +256,23 @@ function buildDayVotePrompt(player: PlayerSession, lobby: LobbyState): string {
     .filter(p => p.isAlive && p.userId !== player.userId)
     .map(p => `- ${p.userId} (${p.username})`).join('\n');
 
+  const recentChats = (lobby.chatMessages || [])
+    .filter(msg => msg.channel === 'LOBBY')
+    .slice(-10)
+    .map(msg => `[${msg.senderName}]: ${msg.content}`)
+    .join('\n');
+
   return [
     `PHASE: DAY_VOTING (Round ${lobby.roundNumber}).`,
-    `You must cast a vote for elimination. Suspects:`,
+    `You must cast a vote for elimination. Use the recent chat history to find suspects or protect allies.`,
+    `Recent public chats:`,
+    recentChats || '(None)',
+    ``,
+    `Valid Suspects:`,
     suspects,
     ``,
     `Respond ONLY with valid JSON (no markdown):`,
-    `{"candidateUserId":"<userId>","rationale":"<1-sentence strategic reason>"}`,
+    `{"candidateUserId":"<userId>","rationale":"<1-sentence strategic reason in Azerbaijani>"}`,
   ].join('\n');
 }
 
@@ -258,13 +281,24 @@ function buildDayVotePrompt(player: PlayerSession, lobby: LobbyState): string {
  * Outputs: { message }.
  */
 function buildDayChatPrompt(player: PlayerSession, lobby: LobbyState): string {
+  const recentChats = (lobby.chatMessages || [])
+    .filter(msg => msg.channel === 'LOBBY' || (msg.channel === 'MAFIA' && player.allInIdentity?.layer1Faction === 'MAFIA'))
+    .slice(-8)
+    .map(msg => `[${msg.senderName}]: ${msg.content}`)
+    .join('\n');
+
   return [
     `PHASE: DAY deliberation (Round ${lobby.roundNumber}).`,
-    `You are ${player.username}. Contribute ONE concise in-character statement to defend yourself or cast suspicion.`,
-    `Do NOT reveal your faction. Use clean language. Max 2 sentences.`,
+    `You are ${player.username}. Contribute ONE concise in-character statement to the conversation.`,
+    `Recent chat history:`,
+    recentChats ? recentChats : `(No recent messages)`,
+    ``,
+    `Based on the chat history and your objectives, write a natural response. React to accusations or accuse someone else. DO NOT sound like a bot.`,
+    `Write strictly in AZERBAIJANI language.`,
+    `Do NOT reveal your faction directly. Max 2 short sentences.`,
     ``,
     `Respond ONLY with valid JSON:`,
-    `{"message":"<your in-character statement>"}`,
+    `{"message":"<your in-character statement in Azerbaijani>"}`,
   ].join('\n');
 }
 
@@ -645,7 +679,38 @@ export class BotTakeoverController {
         } else if (lobby.phase === 'DAY_VOTING') {
           const alreadyVoted = Boolean(lobby.liveVotes[bot.userId]);
           if (!alreadyVoted) {
-            await this.submitBotDayVote(bot.userId, lobbyId);
+            // Randomly delay vote to feel natural (15% chance per sync tick)
+            if (Math.random() > 0.85) {
+              await this.submitBotDayVote(bot.userId, lobbyId);
+            }
+          }
+        } else if (lobby.phase === 'DAY_REGIONAL_CAUCUS' || lobby.phase === 'DAY_CENTRAL_ASSEMBLY') {
+          const botSession = this.activeBots.get(bot.userId);
+          if (botSession && botSession.lastChatRound !== lobby.roundNumber) {
+            // Randomly delay their chat so they don't all speak at once
+            if (Math.random() > 0.75) {
+              const chatRecord = await this.synthesizeBotChatMessage(bot.userId, lobbyId);
+              if (chatRecord) {
+                botSession.lastChatRound = lobby.roundNumber;
+                // Add to lobby chat
+                inMemoryLobbyStore.updateLobby(lobbyId, (l) => {
+                  return {
+                    ...l,
+                    chatMessages: [
+                      ...l.chatMessages,
+                      {
+                        id: `chat-${Date.now()}-${Math.random().toString(36).substring(2,9)}`,
+                        senderId: bot.userId,
+                        senderName: bot.username,
+                        content: chatRecord.message,
+                        timestamp: Date.now(),
+                        channel: 'LOBBY'
+                      }
+                    ]
+                  };
+                });
+              }
+            }
           }
         }
       } catch (err: unknown) {
