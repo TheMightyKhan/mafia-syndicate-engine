@@ -19,6 +19,7 @@ export interface MorningNewspaperModalProps {
   readonly privateInvestigations?: readonly InvestigationResult[];
   readonly onClose: () => void;
   readonly isAllIn?: boolean;
+  readonly hasMutinyOccurred?: boolean;
   readonly packId?: string;
 }
 
@@ -33,6 +34,7 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
   onClose,
   isAllIn = false,
   packId = '',
+  hasMutinyOccurred = false,
 }) => {
   if (!isOpen || !newspaper) return null;
 
@@ -160,6 +162,24 @@ export const MorningNewspaperModal: React.FC<MorningNewspaperModalProps> = ({
             <p className="text-sm italic text-purple-900 dark:text-purple-200">
               {newspaper.heresyClue}
             </p>
+          </div>
+        )}
+
+        {/* Syndicate Internal Tension Alert */}
+        {hasMutinyOccurred && (
+          <div className="p-4 rounded-[8px] border border-orange-400/60 dark:border-orange-600/50 bg-gradient-to-r from-orange-50 dark:from-orange-950/30 to-amber-50 dark:to-amber-950/20 font-sans">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-lg">⚡</span>
+              <div className="text-xs font-black uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
+                Xüsusi Kəşfiyyat Xəbəri
+              </div>
+            </div>
+            <div className="text-sm font-bold text-orange-900 dark:text-orange-200">
+              Gecə ərzində şəhərin alt dünyasında daxili bir ixtilaf qeydə alındı.
+            </div>
+            <div className="text-xs text-orange-700 dark:text-orange-300 mt-1 opacity-80 italic">
+              Mənbə məxfi saxlanılır. Kəşfiyyatçılar yuxarı idarəyə hesabat verdi.
+            </div>
           </div>
         )}
 

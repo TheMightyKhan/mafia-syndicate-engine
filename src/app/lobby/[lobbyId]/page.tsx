@@ -29,6 +29,7 @@ import { BailiffConsole } from '../../../components/admin/BailiffConsole';
 import { GameBoard } from '../../../components/game/GameBoard';
 import { PhaseTransitionOverlay } from '../../../components/game/PhaseTransitionOverlay';
 import { ExecutionOverlay } from '../../../components/game/ExecutionOverlay';
+import { FactionChat } from '../../../components/game/FactionChat';
 import { MorningNewspaperModal } from '../../../components/game/MorningNewspaperModal';
 import { PlayerCard } from '../../../components/game/PlayerCard';
 import { VoiceChat } from '../../../components/voice/VoiceChat';
@@ -913,6 +914,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
             lastLynchedPlayerName={lastLynchedName}
             playerNames={playerNames}
             privateInvestigations={myPrivateInvestigations}
+            hasMutinyOccurred={lobbyState.mafiaMutinyActive ?? false}
             onClose={() => setIsNewspaperOpen(false)}
           />
         </div>
