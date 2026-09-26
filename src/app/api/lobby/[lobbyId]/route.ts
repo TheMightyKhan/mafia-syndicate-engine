@@ -57,30 +57,19 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
 
   // Deck generation based on player count and mode
   const isInferno = lobby.mode === 'DANTES_INFERNO';
-  const mafiaCount = count >= 6 ? 2 : 1;
-  const docCount = count >= 3 ? 1 : 0;
-  const sheriffCount = count >= 4 ? 1 : 0;
-
   const roleDeck: Array<{ nickname: string; base: string; az: string; faction: CoreFaction; office: any }> = [];
-  for (let i = 0; i < mafiaCount; i++) {
-    roleDeck.push({
-      nickname: isInferno ? 'Malebranche İblisi' : 'Qatil (Don)',
-      base: 'Killer',
-      az: 'Mafiya',
-      faction: 'MAFIA',
-      office: 'PUBLIC_DEFENDER',
-    });
-  }
-  if (docCount > 0) {
-    roleDeck.push({
-      nickname: isInferno ? 'Mərhəmət Mələyi' : 'Həkim',
-      base: 'Doctor',
-      az: 'Həkim',
-      faction: 'TOWN',
-      office: 'CITY_SURGEON',
-    });
-  }
-  if (sheriffCount > 0) {
+  
+  // 1. Qatil (Həmişə 1 ədəd olur)
+  roleDeck.push({
+    nickname: isInferno ? 'Malebranche İblisi' : 'Qatil (Don)',
+    base: 'Killer',
+    az: 'Mafiya',
+    faction: 'MAFIA',
+    office: 'PUBLIC_DEFENDER',
+  });
+
+  // 2. Şərif (Həmişə 1 ədəd olur, əgər 3-dən çox oyunçu varsa)
+  if (count > 2) {
     roleDeck.push({
       nickname: isInferno ? 'Vergili' : 'Şərif',
       base: 'Investigator',
@@ -89,6 +78,52 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
       office: 'CITY_INVESTIGATOR',
     });
   }
+
+  // 3. Həkim (4-dən çox oyunçu)
+  if (count > 3) {
+    roleDeck.push({
+      nickname: isInferno ? 'Mərhəmət Mələyi' : 'Həkim',
+      base: 'Doctor',
+      az: 'Həkim',
+      faction: 'TOWN',
+      office: 'CITY_SURGEON',
+    });
+  }
+
+  // 4. Şantajçı / Framer (5-dən çox oyunçu - İkinci Mafiya)
+  if (count >= 5) {
+    roleDeck.push({
+      nickname: isInferno ? 'Yalançı Ruh' : 'Şərr Atan (Framer)',
+      base: 'Framer',
+      az: 'Şərr Atan',
+      faction: 'MAFIA',
+      office: 'MEDIA_MANIPULATOR',
+    });
+  }
+
+  // 5. Gözbağlayıcı / Escort (6-dan çox oyunçu)
+  if (count >= 6) {
+    roleDeck.push({
+      nickname: isInferno ? 'Sirena' : 'Gözbağlayıcı',
+      base: 'Blocker',
+      az: 'Gözbağlayıcı',
+      faction: 'TOWN',
+      office: 'CITY_NIGHTLIFE',
+    });
+  }
+
+  // 6. Neytral Dəli (7-dən çox oyunçu)
+  if (count >= 7) {
+    roleDeck.push({
+      nickname: isInferno ? 'Kafirlərin Lideri' : 'Dəli (Jester)',
+      base: 'Jester',
+      az: 'Dəli',
+      faction: 'NEUTRAL_EVIL',
+      office: 'PUBLIC_DEFENDER',
+    });
+  }
+
+  // Qalan hamısı Məsum Vətəndaş
   while (roleDeck.length < count) {
     roleDeck.push({
       nickname: isInferno ? 'Günahkar Ruh' : 'Vətəndaş',
@@ -98,6 +133,7 @@ function distributeSecretRoles(lobby: LobbyState): LobbyState {
       office: 'PUBLIC_DEFENDER',
     });
   }
+
 
   // Shuffle deck
   roleDeck.sort(() => Math.random() - 0.5);
@@ -220,6 +256,8 @@ async function progressLobbyPhase(lobbyId: string): Promise<LobbyState> {
       players: resolution.updatedPlayers,
       lastLynchedUserId: null,
       bufferedNightActions: [],
+      mafiaMutinyActive: resolution.mutinyActive,
+      mutineerIds: resolution.mutineerIds,
       latestNewspaper: resolution.newspaper,
       roundNumber: l.roundNumber + 1,
       privateInvestigations: {
