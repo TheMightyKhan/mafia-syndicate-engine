@@ -468,10 +468,22 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         currentPhase === 'DAY_CENTRAL_ASSEMBLY' ||
         currentPhase === 'DAY_REGIONAL_CAUCUS'
       ) {
-        playDay();
-        // If coming from night, automatically reveal morning newspaper
         if (prevPhase === 'NIGHT_BUFFER') {
+          const deaths = lobbyState.latestNewspaper?.publicDeaths?.length || 0;
+          if (deaths > 0) {
+            playElimination();
+            const flash = document.createElement('div');
+            flash.className = 'fixed inset-0 z-[200] bg-red-600 pointer-events-none transition-opacity duration-1000 mix-blend-overlay';
+            flash.style.opacity = '0.8';
+            document.body.appendChild(flash);
+            setTimeout(() => { flash.style.opacity = '0'; }, 50);
+            setTimeout(() => { flash.remove(); }, 1050);
+          } else {
+            playDay();
+          }
           setIsNewspaperOpen(true);
+        } else {
+          playDay();
         }
       }
     }
